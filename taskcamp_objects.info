@@ -1,0 +1,4 @@
+name = "Taskcamp Objects"
+description = "Provides the PHP classes to support Taskcamp; this library is intended to CMS agnostic."
+version = 0.0.1
+author = Aaron Klump <sourcecode@intheloftstudios.com>
