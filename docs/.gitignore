@@ -1,6 +1,6 @@
-/core/Markdown.pl
-/source
-/html
-/advanced_help
-/kit
-/config
+*
+!.gitignore
+!core-config.sh
+!source
+!source/*
+source/.*
