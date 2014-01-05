@@ -5,14 +5,18 @@ namespace AKlump\Taskcamp;
  * Represents a Taskcamp Feature.
  */
 class Feature extends Object implements ObjectInterface {
-  protected $urls, $todos;
+  protected $urls, $todos, $files;
 
   public function getAvailableFlags() {
-    return array('g', 'w', 'p', 'bc', 'man', 'm', 'f', 'e', 's', 'd');
+    return array('g', 'w', 'p', 'qb', 'bc', 'man', 'm', 'f', 'e', 's', 'd');
   }
 
   public function getUrls() {
     return (array) $this->urls;
+  }
+
+  public function getFiles() {
+    return $this->files;
   }
 
   public function getTodos() {
@@ -23,6 +27,10 @@ class Feature extends Object implements ObjectInterface {
   }
 
   public function parse() {
+    $this->urls = array();
+    $this->files = new ObjectList();
+    $this->todos = new PriorityList();
+
     if (strlen($this->source) < 1) {
       return;
     }
@@ -30,8 +38,6 @@ class Feature extends Object implements ObjectInterface {
     $lines = explode(PHP_EOL, $this->source);
     $todos = $urls = array();
     $candidates = array();
-    $this->urls = array();
-    $this->todos = new PriorityList();
     foreach ($lines as $key => $line) {
 
       if (trim($line)) {
@@ -60,6 +66,14 @@ class Feature extends Object implements ObjectInterface {
           $matches[2],
           (string) $description,
         );
+      }
+    }
+
+    // Grab the files
+    if (preg_match_all('/#+\s*Files(.*?)\n\n/si', $this->source, $matches)
+      && ($files = explode(PHP_EOL, trim($matches[1][0])))) {
+      foreach ($files as $path) {
+        $this->files->add($this->files->count(), new File($path));
       }
     }
 

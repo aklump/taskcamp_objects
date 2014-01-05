@@ -13,11 +13,11 @@ class Todo extends Object implements TodoInterface {
   public function __toString() {
     $output  = '- ';
 
-    if (!$this->parsed->valid_syntax) {
+    if (!$this->getParsed('valid_syntax')) {
       $output .= $this->source;
     }
     else {
-      $output .= '[' . ($this->parsed->complete ? 'X' : ' ') . '] ';
+      $output .= '[' . ($this->getParsed('complete') ? 'X' : ' ') . '] ';
       $output .= $this->getTitle();
       $output .= ' ' . $this->getFlags();      
     }
@@ -26,7 +26,7 @@ class Todo extends Object implements TodoInterface {
   }
 
   public function isComplete() {
-    return (bool) ($this->getFlag('done') || $this->parsed->complete);
+    return (bool) ($this->getFlag('done') || $this->getParsed('complete'));
   }
 
   public function getMarkdown() {
@@ -51,9 +51,9 @@ class Todo extends Object implements TodoInterface {
       if ($time === NULL) {
         $time = $this->getDateTime();
       }
-      $this->parsed->done = $time;
+      $this->flags['done'] = $time;
       $this->parsed->complete = TRUE;      
-      $this->parsed->weight += $this->config->weight;
+      $this->flags['weight'] += $this->config->weight;
     }
 
     return $this;
@@ -61,10 +61,10 @@ class Todo extends Object implements TodoInterface {
 
   public function unComplete() {
     if ($this->parsed->complete !== FALSE) {
-      $this->parsed->done = NULL;
+      $this->flags['done'] = NULL;
       $this->parsed->complete = FALSE;
-      if ($this->parsed->weight != 0) {
-        $this->parsed->weight -= $this->config->weight;
+      if ($this->flags['weight'] != 0) {
+        $this->flags['weight'] -= $this->config->weight;
       }
     }
 

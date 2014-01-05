@@ -5,7 +5,7 @@ namespace AKlump\Taskcamp;
  * Class Object
  */
 abstract class Object implements ObjectInterface {
-  protected $source, $config, $parsed, $title, $description;
+  protected $source, $config, $parsed, $flags, $title, $description;
 
   /**
    * Constructor
@@ -13,6 +13,7 @@ abstract class Object implements ObjectInterface {
    */
   public function __construct($source = '', $config = array()) {
     $this->parsed = new \stdClass;
+    $this->flags = array();
     $this->config = new \stdClass;
     $this->config($config);
     $this->set($source);
@@ -126,7 +127,9 @@ abstract class Object implements ObjectInterface {
     if (!in_array($flag, $valid_flags)) {
       return NULL;
     }
-    return isset($this->parsed->{$flag}) ? $this->parsed->{$flag} : NULL;
+    $flag = isset($this->flags[$flag]) ? $this->flags[$flag] : NULL;
+
+    return $flag;
   }
 
   public function getFlags() {
@@ -136,6 +139,9 @@ abstract class Object implements ObjectInterface {
         if ($value === TRUE) {
           $value = '';
         }
+        if (strpos($value, ' ') !== FALSE) {
+          $value = '"' . $value . '"';
+        }        
         $flags[] = $this->config->flag_prefix . $data->flag . $value;
       }
     }
@@ -214,21 +220,7 @@ abstract class Object implements ObjectInterface {
           'description' => 'The name of the person responsible.',
           'id' => 'person',
           'name' => 'Assigned To',
-          'regex' => '(p)([^ ]+)',
-        ),
-        (object) array(
-          'flag' => 'bc', 
-          'description' => 'The Basecamp unique ID.',
-          'id' => 'basecamp',
-          'name' => 'Basecamp Id',
-          'regex' => '(bc)(\d{6,})',
-        ),
-        (object) array(
-          'flag' => 'man', 
-          'description' => 'The Mantis unique ID.',
-          'id' => 'mantis',
-          'name' => 'Mantis Id',
-          'regex' => '(man)(\d+)',
+          'regex' => '(p)("[^"]+"|[^\s]+)',
         ),
         (object) array(
           'flag' => 'e', 
@@ -242,7 +234,7 @@ abstract class Object implements ObjectInterface {
           'description' => 'The name of a group this belongs to, e.g. Wednesday.',
           'id' => 'group',
           'name' => 'Group',
-          'regex' => '(g)([^\s]+)',
+          'regex' => '(g)("[^"]+"|[^\s]+)',
         ),
         (object) array(
           'flag' => 's', 
@@ -271,6 +263,29 @@ abstract class Object implements ObjectInterface {
           'id' => 'done',
           'name' => 'Completed',
           'regex' => '(d)(' . $this->dateRegex() . ')?',
+        ),
+
+        // Third party integration
+        (object) array(
+          'flag' => 'bc', 
+          'description' => 'The Basecamp unique ID.',
+          'id' => 'basecamp',
+          'name' => 'Basecamp Id',
+          'regex' => '(bc)(\d{6,})',
+        ),
+        (object) array(
+          'flag' => 'man', 
+          'description' => 'The Mantis unique ID.',
+          'id' => 'mantis',
+          'name' => 'Mantis Id',
+          'regex' => '(man)(\d+)',
+        ),        
+        (object) array(
+          'flag' => 'qb', 
+          'description' => 'The Quickbooks job.',
+          'id' => 'quickbooks',
+          'name' => 'Quickbooks Job',
+          'regex' => '(qb)("[^"]+"|[^\s]+)',
         ),
       );
 
@@ -308,29 +323,29 @@ abstract class Object implements ObjectInterface {
   protected function parseFlags($text) {
     $flags = $this->getFlagSchema();
     foreach ($flags as $flag) {
-      $this->parsed->{$flag->id} = NULL;
+      $this->flags[$flag->id] = NULL;
       $regex = '/\\' . $this->config->flag_prefix . $flag->regex . '/';
       if (preg_match($regex, $text, $found)) {
         $text = str_replace($found[0], '', $text);
-        $value = array_key_exists(2, $found) ? $found[2] : TRUE;
-        $this->parsed->{$flag->id} = $value;
+        $value = array_key_exists(2, $found) ? trim($found[2], ' "') : TRUE;
+        $this->flags[$flag->id] = $value;
       }
     }
 
     // Append start time
-    if ($this->parsed->start === TRUE) {
-      $this->parsed->start = $this->getTime();
+    if ($this->flags['start'] === TRUE) {
+      $this->flags['start'] = $this->getTime();
     }
 
     // Adjust a boolean done to complete
-    if ($this->parsed->done) {
-      $time = $this->parsed->done === TRUE ? $this->getDateTime() : $this->parsed->done;
+    if ($this->flags['done']) {
+      $time = $this->flags['done'] === TRUE ? $this->getDateTime() : $this->flags['done'];
       $this->complete($time);
     }
 
     // @todo move to getFlag?
-    if ($this->parsed->milestone === TRUE) {
-      $this->parsed->milestone = $this->getDateTime("+ {$this->config->milestone} seconds");
+    if ($this->flags['milestone'] === TRUE) {
+      $this->flags['milestone'] = $this->getDateTime("+ {$this->config->milestone} seconds");
     }
 
     return trim($text);

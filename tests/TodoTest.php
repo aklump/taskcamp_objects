@@ -9,7 +9,7 @@
 require_once '../vendor/autoload.php';
 use \AKlump\Taskcamp\Todo as Todo;
 
-class TodoTestTest extends PHPUnit_Framework_TestCase {
+class TodoTest extends PHPUnit_Framework_TestCase {
 
   function testStaticMethods() {
     $this->assertNotEmpty(Todo::dateRegex());

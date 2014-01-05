@@ -7,6 +7,7 @@
  * @{
  */
 
+use \AKlump\Taskcamp\PriorityList as PriorityList;
 use \AKlump\Taskcamp\Feature as Feature;
 require_once '../vendor/autoload.php';
 
@@ -37,20 +38,40 @@ A description of R2.
 
 # References
 http://www.digitaltrends.com/how-to/how-to-use-rss/
+
+## Files
+/Library/Packages/php/taskcamp_objects/index.html
+/Library/Packages/php/taskcamp_objects/cover.html
+/Library/Packages/php/taskcamp_objects/import.php
+file:///Library/Packages/php/taskcamp_objects/index.html
+http:///Library/Packages/php/taskcamp_objects/index.html
+
+anything else
 EOD;
+  }
+
+  public function testFiles() {
+    $feature = new Feature($this->getSubject());
+    $this->assertEquals(5, $feature->getFiles()->count());
+  }
+
+  public function testGroup() {
+    $feature = new Feature('Feature @g"After Launch" @p"Jim Barkley"');
+    $this->assertEquals('After Launch', $feature->getFlag('group'));
+    $this->assertEquals('Jim Barkley', $feature->getFlag('person'));
   }
 
   public function testFlags() {
     $subject = <<<EOD
 A little preamble
 
-# Security Updates to Core @w-10 @pAaron @bc123456 @f2014-01-31 @e3 @s2014-01-05 @gWednesday
+# Security Updates to Core @w-10 @pAaron @bc123456 @f2014-01-31 @e3 @s2014-01-05 @gWednesday @qb"In the Loft:Taskcamp"
 -- download drupal
 -- upgrade    
 EOD;
     $feature = new Feature($subject);
     $this->assertEquals('Security Updates to Core', $feature->getTitle());
-    $this->assertEquals('@gWednesday @w-10 @pAaron @bc123456 @f2014-01-31 @e3 @s2014-01-05', $feature->getFlags());
+    $this->assertEquals('@gWednesday @w-10 @pAaron @qb"In the Loft:Taskcamp" @bc123456 @f2014-01-31 @e3 @s2014-01-05', $feature->getFlags());
     $this->assertEquals('Wednesday', $feature->getFlag('group'));
     $this->assertEquals(-10, $feature->getFlag('weight'));
     $this->assertEquals('Aaron', $feature->getFlag('person'));
@@ -58,6 +79,7 @@ EOD;
     $this->assertEquals('2014-01-31', $feature->getFlag('finish'));
     $this->assertEquals(3, $feature->getFlag('estimate'));
     $this->assertEquals('2014-01-05', $feature->getFlag('start'));
+    $this->assertEquals("In the Loft:Taskcamp", $feature->getFlag('quickbooks'));
   }
 
   public function testGetTodos() {
@@ -71,11 +93,12 @@ EOD;
 
   public function testGetURLS() {
     $feature = new Feature($this->getSubject());
-    $this->assertCount(2, $feature->getUrls());
+    $this->assertCount(3, $feature->getUrls());
 
     $control = array(
       'http://en.wikipedia.org/wiki/RSS',
       'http://www.digitaltrends.com/how-to/how-to-use-rss/',
+      'http:///Library/Packages/php/taskcamp_objects/index.html',
     );
     $this->assertEquals($control, $feature->getUrls());
   }

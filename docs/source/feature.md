@@ -5,6 +5,7 @@ A Feature is a block of markdown text that is parsed to extract the following ty
 * Description
 * URLS
 * Todos (as a Priority List)
+* Files
 
 ### Title
 The highest markdown heading e.g. `# My title`, or the first line of text if no headings exist.
@@ -30,3 +31,10 @@ Any string of text that begins with `http://` through to the first whitespace.  
 
 ### Todos
 All todo items will be copied into and are available as a Priority List whose title and description inherit those of the Feature. See also [Todos](todo.html), [Priority Lists](priority_list.html).
+
+### Files
+A list of file paths preceeded by a header of `Files`, e.g.
+
+    ## Files
+    /some/great/path/index.html
+    /some/great/path/import.php
