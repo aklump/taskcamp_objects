@@ -20,12 +20,6 @@ php = $(which php)
 lynx = $(which lynx)
 
 ##
- # File path to Markdown.pl e.g., core/Markdown.pl
- #
-markdown = 'core/Markdown.pl'
-#markdown = '/Users/aklump/bin/Markdown_1.0.1/Markdown.pl'
-
-##
  # The drupal credentials for a user who can access your iframe content
  #
 #credentials = "http://user:pass@www.my-site.com/user/login";
@@ -50,3 +44,13 @@ markdown = 'core/Markdown.pl'
 
 # This would also copy README.md as well as README.txt
 #README = '../README.txt ../README.md'
+
+#root_dir      = ""
+
+#
+# Defines pre/post hooks, shell or php scripts to call, space separated.
+# 
+#pre_hooks = "pre_compile.sh pre_compile.php"
+#post_hooks = "post_compile.sh post_compile.php"
+
+#version_file  = "web_package.info"

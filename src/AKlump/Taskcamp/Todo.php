@@ -17,7 +17,7 @@ class Todo extends Object implements TodoInterface {
       $output .= $this->source;
     }
     else {
-      $output .= '[' . ($this->getParsed('complete') ? 'X' : ' ') . '] ';
+      $output .= '[' . ($this->getParsed('complete') ? 'x' : ' ') . '] ';
       $output .= $this->getTitle();
       $output .= ' ' . $this->getFlags();      
     }
@@ -113,9 +113,11 @@ class Todo extends Object implements TodoInterface {
     $parsed = $this->source;
 
     // Expand lazy prefixes
-    if (preg_match('/^--(X|x) ?(.*)/', $parsed, $matches)
-      || preg_match('/^(?:(?:-{2} ?)|(?:- ?\[([ xX])?\] ?))(.*)/', $parsed, $matches)) {
-      $parsed = '- [' . (trim($matches[1]) ? 'X' : ' ') . '] ' . $matches[2];
+    if (preg_match('/^- (\[ \]) (.*)(?:x| )x$/i', $parsed, $matches)
+      || preg_match('/^- ?\[([ x])? ?\] ?(.*)/i', $parsed, $matches)
+      || preg_match('/^-(x) ?(.*)/i', $parsed, $matches)
+      || preg_match('/^-\s*()(.*)/', $parsed, $matches)) {
+      $parsed = '- [' . (trim($matches[1]) ? 'x' : ' ') . '] ' . $matches[2];
     }
 
     // Setup the defaults
@@ -130,7 +132,7 @@ class Todo extends Object implements TodoInterface {
     $this->parsed = (object) $this->parsed;
 
     // First parse to see if it's valid
-    if (preg_match('/^- \[(X| )\]\s*(.*)/', $parsed, $found)) {
+    if (preg_match('/^- \[(x| )\]\s*(.*)/', $parsed, $found)) {
       $this->parsed->valid_syntax = TRUE;
 
       // Complete based on presence of an X or not; no date involved here.

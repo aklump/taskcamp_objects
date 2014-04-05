@@ -20,10 +20,10 @@ class ObjectListTest extends PHPUnit_Framework_TestCase {
   function getList() {
     $list = new ObjectList();
     $items = array(
-      new Todo('-- layout the bread'),
-      new Todo('-- eat it @w10'),
-      new Todo('-- spread the PB'),
-      new Todo('-- spread the honey'),
+      new Todo('- layout the bread'),
+      new Todo('- eat it @w10'),
+      new Todo('- spread the PB'),
+      new Todo('- spread the honey'),
     );
     foreach ($items as $item) {
       $list->add($item->getTitle(), $item);
@@ -59,7 +59,7 @@ class ObjectListTest extends PHPUnit_Framework_TestCase {
     $list = $this->getList();
     $this->assertEquals(4, count($list->get()));
 
-    $subject = new Todo('-- layout the bread carefully');
+    $subject = new Todo('- layout the bread carefully');
     $id = 'layout the bread';
     $return = $list->add($id, $subject);
     $this->assertInstanceOf('AKlump\Taskcamp\ObjectList', $return);

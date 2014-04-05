@@ -50,9 +50,9 @@ EOD;
   function testToString() {
     $priorities = new PriorityList("Title", "Description");
     $priorities->getList()
-      ->add('mi', new Todo('-- Mi @w10'))
-      ->add('do', new Todo('-- Do'))
-      ->add('re', new Todo('-- Re'))
+      ->add('mi', new Todo('- Mi @w10'))
+      ->add('do', new Todo('- Do'))
+      ->add('re', new Todo('- Re'))
       ->add('br', new Todo ('Below here after vacation...'));
 
     $this->assertCount(4, $priorities->getList()->getSorted()); 

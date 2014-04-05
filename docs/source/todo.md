@@ -8,43 +8,44 @@ The inspiration for this markup comes from [Markdown][md] and [Github flavored m
 ##Format
 
 1. A todo is a single line of text (no line breaks).
-1. It must begin with `--` or `- [ ]`; however see the note below about sloppy format.
+1. It begins with `- [ ]`; however see the note below about sloppy format.
 2. Various time flags are based on the [DateTime format][datetime].
 1. See also [github.com][gittodo].
 
 
 ### Sloppy Format
-All of the following are shorthand methods that expand on compile to become todo items.
+All of the following are shorthand methods that expand on compile...
 
-    --a todo item
-    -- a todo item
+    -a todo item
+    - a todo item
     -[]a todo item
     -[ ]a todo item
     - []a todo item
-    --x a todo item
-    --X a todo item
-    --xa todo item
-    --Xa todo item
-    -[x]a todo item
-    -[X]a todo item
-    - [x]a todo item
-    - [X]a todo item
-    
-Becomes...
+
+...to become...
 
     - [ ] a todo item
-    - [ ] a todo item
-    - [ ] a todo item
-    - [ ] a todo item
-    - [ ] a todo item
-    - [X] a todo item
-    - [X] a todo item
-    - [X] a todo item
-    - [X] a todo item
-    - [X] a todo item
-    - [X] a todo item
-    - [X] a todo item
-    - [X] a todo item
+
+All of these completed todos...   
+
+    -x a todo item
+    -X a todo item
+    -xa todo item
+    -Xa todo item
+    -[x]a todo item
+    -[x ]a todo item
+    -[X]a todo item
+    -[X ]a todo item
+    - [x]a todo item
+    - [x ]a todo item
+    - [X]a todo item
+    - [X ]a todo item
+    - [ ] a todo item x
+    - [ ] a todo itemxx
+    
+...become...
+
+    - [x] a todo item
 
 ###Completed Status
 
@@ -56,7 +57,7 @@ This item is pending
 
 This item is complete
 
-    - [X] A complete item
+    - [x] A complete item
     
 ### Completed Items
 Completed items will have 1000 added to their weight flag value to move them to the bottom of lists.
