@@ -1,3 +1,21 @@
+## Table of Flags/Headers
+`@see Object::getFlagSchema()`
+
+| flag | type | header key | meaning |
+|------|---------|----------|----------|
+| @bc | string     | Basecamp  | Basecamp uuid of the item |
+| @d  | date       | Completed  | When it was done/finished/completed |
+| @e  | float      | Estimate | Estimated Time To Complete  |
+| @f  | date       | Finish  | Targeted finish date |
+| @g  | string     | Group  | The group name |
+| @h  | float      | Hours | Actual hours from start to finish |
+| @m  | date       | Milestone  | Milestone other than finish date |
+| @mt  | string    | Mantis  | Mantis uuid |
+| @p  | string     | Person  | Person responsible |
+| @qb | string     | Quickbooks | Quickbooks uuid |
+| @s  | datetime   | Start  | Start Time |
+| @w  | int\|float | Weight | Weight (or Priority Rank) |
+
 ##Feature with Headers instead of Flags
     Client: In the Loft Studios, LLC
     Project: intheloftstudios.com

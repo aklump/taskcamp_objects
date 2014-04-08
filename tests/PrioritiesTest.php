@@ -1,27 +1,27 @@
 <?php
 /**
  * @file
- * Tests for the PriorityList class
+ * Tests for the Priorities class
  *
  * @ingroup taskcamp_objects
  * @{
  */
 
 use \AKlump\Taskcamp\Todo as Todo;
-use \AKlump\Taskcamp\PriorityList as PriorityList;
+use \AKlump\Taskcamp\Priorities as Priorities;
 
 require_once '../vendor/autoload.php';
 
-class PriorityListTest extends PHPUnit_Framework_TestCase {
+class PrioritiesTest extends PHPUnit_Framework_TestCase {
 
   function testConstruct() {
-    $list = new PriorityList();
+    $list = new Priorities();
     $this->assertEquals('', $list->getTitle());
     $this->assertEquals('', $list->getDescription());
   }
 
   function testGetHTML() {
-    $list = new PriorityList('Old Title', 'Old Description');
+    $list = new Priorities('Old Title', 'Old Description');
     $control = <<<EOD
 <h1>Old Title</h1>
 <p>Old Description</p>
@@ -38,7 +38,7 @@ EOD;
   }
 
   function testSetTitleDescription() {
-    $list = new PriorityList('Old Title', 'Old Description');
+    $list = new Priorities('Old Title', 'Old Description');
     $control = <<<EOD
 Old Title
 Old Description
@@ -48,12 +48,12 @@ EOD;
   }
 
   function testToString() {
-    $priorities = new PriorityList("Title", "Description");
+    $priorities = new Priorities("Title", "Description");
     $priorities->getList()
-      ->add('mi', new Todo('- Mi @w10'))
-      ->add('do', new Todo('- Do'))
-      ->add('re', new Todo('- Re'))
-      ->add('br', new Todo ('Below here after vacation...'));
+      ->add(new Todo('- Mi @w10'), 'mi')
+      ->add(new Todo('- Do'), 'do')
+      ->add(new Todo('- Re'), 're')
+      ->add(new Todo ('Below here after vacation...'), 'br');
 
     $this->assertCount(4, $priorities->getList()->getSorted()); 
 

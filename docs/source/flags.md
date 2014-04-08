@@ -1,8 +1,9 @@
 # Flags
 Flags give meta information about the object including the estimate time to complete, who it's assigned to and when it was finished, to name a few.
 
+1. You can escape a non flag like this `\@d`, using the backslash.
 1. Multiple flags should be separated by a single space.
-2. Flags should come at the end of the line, not in the middle.
+2. By convention, flags should come at the end of the line, not in the middle.
 3. Flag values with a space should be wrapped in double quotes, e.g. `@qb"In the Loft Studios"`
 4. Flag values cannot contain double quotes.
 

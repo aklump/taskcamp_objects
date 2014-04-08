@@ -11,6 +11,60 @@ use \AKlump\Taskcamp\Todo as Todo;
 
 class TodoTest extends PHPUnit_Framework_TestCase {
 
+  function testEscapingAFlag() {
+    $obj = new Todo('- Can we escape \@w300 a 300 weight');
+    $this->assertSame('Can we escape \@w300 a 300 weight', $obj->getTitle());
+  }
+
+  function testId() {
+    $obj = new Todo('- Do this @w-10', array('show_ids' => FALSE));
+    $obj->setFlag('id', 'apple');
+    $this->assertSame('apple', $obj->getFlag('id'));
+    $this->assertSame('- [ ] Do this @w-10', (string) $obj);
+
+    $obj = new Todo('- Do this @w-10', array('show_ids' => TRUE));
+    $obj->setFlag('id', 'apple');
+    $this->assertSame('apple', $obj->getFlag('id'));
+    $this->assertSame('- [ ] Do this @idapple @w-10', (string) $obj);
+  
+    $obj->setFlag('id', '1234');
+    $this->assertSame('1234', $obj->getFlag('id'));
+    $this->assertSame('- [ ] Do this @id1234 @w-10', (string) $obj);
+
+    $obj->setFlag('id', 'apple muffin');
+    $this->assertSame('apple muffin', $obj->getFlag('id'));
+    $this->assertSame('- [ ] Do this @id"apple muffin" @w-10', (string) $obj);    
+
+    $obj = new Todo('- Do this @idapple', array('show_ids' => TRUE));
+    $this->assertSame('apple', $obj->getFlag('id'));
+    $this->assertSame('- [ ] Do this @idapple', (string) $obj);
+
+    $obj = new Todo('- Do this @id1234', array('show_ids' => TRUE));
+    $this->assertSame('1234', $obj->getFlag('id'));
+    $this->assertSame('- [ ] Do this @id1234', (string) $obj);
+
+    $obj = new Todo('- Do this @id"apple muffin"', array('show_ids' => TRUE));
+    $this->assertSame('apple muffin', $obj->getFlag('id'));
+    $this->assertSame('- [ ] Do this @id"apple muffin"', (string) $obj);
+  }
+
+  function testGetFlagDate() {
+    $obj = new Todo('- [ ] finish this thing @s16:06 @d2014-04-13T12:54', array('timezone' => 'UTC'));
+    $control = new \DateTime('2014-04-13T12:54', new \DateTimeZone('UTC'));
+    $return = $obj->getFlag('done', TRUE);
+    $this->assertEquals($control, $return);
+
+    $control = new \DateTime('now', new \DateTimeZone('UTC'));
+    $control->setTime(16, 06, 00);
+    $return = $obj->getFlag('start', TRUE);
+    $this->assertEquals($control, $return);
+
+    $obj = new Todo('- [ ] finish this thing', array('timezone' => 'UTC'));
+    $control = NULL;
+    $return = $obj->getFlag('done', TRUE);
+    $this->assertEquals($control, $return);
+  }
+
   function testStaticMethods() {
     $this->assertNotEmpty(Todo::dateRegex());
   }
@@ -48,7 +102,7 @@ class TodoTest extends PHPUnit_Framework_TestCase {
 
   function testGetFlags() {
     $todo = new Todo('- my item to get done @pJoe @e3.5 @s2014-01-31T13:44 @m2014-02-14 @bc123456 @w4 @d13:44');
-    $this->assertEquals('@w1004 @pJoe @bc123456 @m2014-02-14 @e3.5 @s2014-01-31T13:44 @d13:44', $todo->getFlags(), 'getFlags() returns all values as expected');
+    $this->assertEquals('@pJoe @bc123456 @m2014-02-14 @e3.5 @s2014-01-31T13:44 @d13:44 @w1004', $todo->getFlags(), 'getFlags() returns all values as expected');
   }
 
   function testDuration() {
@@ -130,27 +184,27 @@ class TodoTest extends PHPUnit_Framework_TestCase {
     $todo = new todo('- [ ] Do css');
     $now = $todo->getDateTime();
     $todo->complete($now);
-    $this->assertEquals("- [x] Do css @w1000 @d$now", (string) $todo, 'Completing incomplete with date arg marks is done.');
+    $this->assertEquals("- [x] Do css @d$now @w1000", (string) $todo, 'Completing incomplete with date arg marks is done.');
 
     $todo->complete($todo->getTime());
-    $this->assertEquals("- [x] Do css @w1000 @d$now", (string) $todo, 'Completing complete makes no change.');
+    $this->assertEquals("- [x] Do css @d$now @w1000", (string) $todo, 'Completing complete makes no change.');
 
     $todo = new todo('- [ ] Do css');
     $now = $todo->getTime();
     $todo->complete($now);
-    $this->assertEquals("- [x] Do css @w1000 @d$now", (string) $todo, 'Completing incomplete with time arg marks is done.');
+    $this->assertEquals("- [x] Do css @d$now @w1000", (string) $todo, 'Completing incomplete with time arg marks is done.');
 
     $todo = new todo('- [ ] Do css');
     $now = $todo->getDateTime();
     $return = $todo->complete();
-    $this->assertEquals("- [x] Do css @w1000 @d$now", (string) $todo, 'Completing incomplete with no arg marks is done.');
+    $this->assertEquals("- [x] Do css @d$now @w1000", (string) $todo, 'Completing incomplete with no arg marks is done.');
     $this->assertEquals($todo, $return, '$this is returned');
 
     $todo = new todo('- [ ] important task @w50', array('weight' => 100));
     $this->assertEquals('- [ ] important task @w50', (string) $todo);
     $time = $todo->getTime();
     $todo->complete($time);
-    $this->assertEquals("- [x] important task @w150 @d$time", (string) $todo);
+    $this->assertEquals("- [x] important task @d$time @w150", (string) $todo);
   }
 
   function testUncomplete() {
@@ -170,8 +224,9 @@ class TodoTest extends PHPUnit_Framework_TestCase {
       'flag_prefix' => '@', 
       'weight' => 1000,
       'milestone' => 1209600, 
+      'show_ids' => FALSE, 
     );
-    $this->assertEquals($control, $todo->config(), 'Default config is set correctly.');
+    $this->assertEquals($control, $todo->getConfig(), 'Default config is set correctly.');
 
     $todo = new todo('', array(
       'timezone' => 'UTC', 
@@ -183,14 +238,15 @@ class TodoTest extends PHPUnit_Framework_TestCase {
       'weight' => 1000,
       'hair_color' => 'blonde',
       'milestone' => 1209600,  
+      'show_ids' => FALSE,      
     );
-    $this->assertEquals($control, $todo->config(), 'Setting config vars works correctly.');    
+    $this->assertEquals($control, $todo->getConfig(), 'Setting config vars works correctly.');    
   }
 
   function testToString() {
     $todo = new todo('- Buy milk @d', array('weight' => 1000));
     $now = $todo->getDateTime();
-    $this->assertEquals("- [x] Buy milk @w1000 @d$now", (string) $todo);
+    $this->assertEquals("- [x] Buy milk @d$now @w1000", (string) $todo);
 
     $todo = new todo('- Buy milk');
     $this->assertEquals('- [ ] Buy milk', (string) $todo);
@@ -216,7 +272,7 @@ class TodoTest extends PHPUnit_Framework_TestCase {
 
   function testDescription() {
     $todo = new todo('- This is the description @e14 @w10 @pAaron');
-    $this->assertEquals('This is the description @w10 @pAaron @e14', $todo->getDescription());
+    $this->assertEquals('This is the description @pAaron @e14 @w10', $todo->getDescription());
   }
 
   function testIsDone() {

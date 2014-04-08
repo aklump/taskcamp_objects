@@ -31,7 +31,7 @@ Taskcamp headers can be thought of and are represented in the same way as email 
 
     This will be a revamp of the current website to allow for responsive design.
 
-## A priority list is seen here:
+## Priorities can be seen here:
 
     - [ ] meet with designer @pAaron
     - [ ] design the site @pSturla

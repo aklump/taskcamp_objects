@@ -1,7 +1,7 @@
 <?php
 namespace AKlump\Taskcamp;
 
-interface PriorityListInterface extends ObjectInterface {
+interface PrioritiesInterface extends ObjectInterface {
 
   /**
    * Return a sorted list object

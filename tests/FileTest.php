@@ -62,7 +62,7 @@ EOD;
     $this->assertEquals($path, $file->getDescription());
     $this->assertEquals('txt', $file->getParsed('extension'));
 
-    $file->set("$path @bc123456 @m2014-01-15");
+    $file->setSource("$path @bc123456 @m2014-01-15");
     $this->assertEquals(pathinfo($path, PATHINFO_BASENAME), $file->getTitle());
     $this->assertEquals($path, $file->getDescription());
     $this->assertEquals(123456, $file->getFlag('basecamp'));

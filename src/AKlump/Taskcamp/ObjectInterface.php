@@ -7,13 +7,63 @@ namespace AKlump\Taskcamp;
 interface ObjectInterface {
 
   /**
-   * Create an object from a string
+   * Mark an object complete and add a done timestamp
    *
-   * @param   string $string
+   * @param  string $time The datetime string or NULL for now
    *
    * @return $this
    */
-  public function set($string);
+  public function complete($time = NULL);
+  
+  /**
+   * Remove the complete status and done timestamp from an object
+   *
+   * @return $this
+   */
+  public function unComplete();  
+
+  /**
+   * Set the config array.
+   *
+   * @param array||object $config
+   *
+   * @return $this
+   */
+  public function setConfig($config);
+  
+  /**
+   * Adds a single config
+   *
+   * @param mixed $config   
+   *  
+   * @return $this
+   */
+  public function setConfigItem($key, $value);
+  
+  /**
+   * Return the config object or a single item by key.
+   *
+   * @param  string $key  Omit to return all config items.
+   *
+   * @return mixed||object
+   */
+  public function getConfig($key = NULL);
+
+  /**
+   * Set the source.
+   *
+   * @param string $source
+   *
+   * @return $this
+   */
+  public function setSource($source);
+  
+  /**
+   * Return the source.
+   *
+   * @return string
+   */
+  public function getSource();
 
   /**
    * Return the Markdown text for the object
@@ -66,24 +116,37 @@ interface ObjectInterface {
   public function getDescription();
 
   /**
+   * Set a flag.
+   *
+   * @param string $flag The machine name of the flag.
+   * @param mixed $value
+   *
+   * @return $this
+   */
+  public function setFlag($flag, $value);
+
+  /**
    * Return an a flag value
    *
    * @param  string The flag id
+   * @param bool $typecast Set to true to typecase the flag value based on schema
    *
-   * @return object
+   * @return mixed
    */
-  public function getFlag($key);
+  public function getFlag($key, $typecast = FALSE);
 
   /**
    * Return a string of flags and values
    *
    * The flag order is defined by the order of elements in getFlagSchema().
    *
+   * @param  bool $implode Set to false to return an array, instead of a string.
+   *
    * @return string
    *
    * @see getFlagSchema();
    */
-  public function getFlags();
+  public function getFlags($implode = TRUE);
 
   /**
    * Return a key from $this->parsed

@@ -4,22 +4,6 @@ namespace AKlump\Taskcamp;
 interface TodoInterface extends ObjectInterface {
 
   /**
-   * Mark a todo complete and add a done timestamp
-   *
-   * @param  string $time The datetime string or NULL for now
-   *
-   * @return $this
-   */
-  public function complete($time = NULL);
-  
-  /**
-   * Remove the complete status and done timestamp from an object
-   *
-   * @return $this
-   */
-  public function unComplete();
-
-  /**
    * Tells if a todo has been completed
    *
    * @return boolean

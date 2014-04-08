@@ -5,53 +5,71 @@ namespace AKlump\Taskcamp;
  * Class Object
  */
 abstract class Object implements ObjectInterface {
-  protected $source, $config, $parsed, $flags, $title, $description;
+  protected $parsed, $flags;
 
+  protected $source = '';
+  protected $title = '';
+  protected $description = '';
+
+  protected $data = array(
+    'source' => '',
+    'config' => array(),
+  );
+  
   /**
    * Constructor
    * @param mixed $source
+   * @param  array $config key/value pairs
    */
   public function __construct($source = '', $config = array()) {
     $this->parsed = new \stdClass;
     $this->flags = array();
-    $this->config = new \stdClass;
-    $this->config($config);
-    $this->set($source);
+    $this->setConfig($config);
+    $this->setSource($source);
+  }
+  
+  public function setConfig($config) {
+    $this->data['config'] = new \stdClass;
+    $config = (array) $config + array(
+      'timezone' => 'America/Los_Angeles', 
+      'milestone' => 14 * 86400, 
+      'flag_prefix' => '@', 
+      'weight' => 1000, 
+    );    
+    foreach($config as $key => $value) {
+      $this->setConfigItem($key, $value);
+    }
+  
+    return $this;
+  }
+  
+  public function setConfigItem($key, $value) {
+    $this->data['config']->{$key} = $value;
+  
+    return $this;
+  }
+  
+  public function getConfig($key = NULL) {
+    if ($key === NULL) {
+      return $this->data['config'];
+    }
+
+    return isset($this->data['config']->{$key}) ? $this->data['config']->{$key} : NULL;
   }
 
   public static function dateRegex() {
     return '((\d{4})\-?(\d{1,2})\-?(\d{1,2}))T(\d{1,2}:\d{2})|(\d{4})\-?(\d{1,2})\-?(\d{1,2})|(\d{1,2}:\d{2})';
   }
 
-  /**
-   * Get/Set configuration variables
-   *
-   * @param  object $config
-   *   Optional.  Omit this to retrieve current configuration.  NOTE:
-   *   Subsequent calls to this function will overwrite, current values, but
-   *   include current values not provided in $config.  The only way to have
-   *   a clean config is to instantiate a new object.
-   *
-   * @return object
-   *   The current configuration object
-   */
-  public function config($config = NULL) {
-    $defaults = array(
-      'timezone' => 'America/Los_Angeles', 
-      'milestone' => 14 * 86400, 
-      'flag_prefix' => '@', 
-      'weight' => 1000, 
-    );
-    if ($config !== NULL) {
-      $this->config = (object) ((array) $config + (array) $this->config + (array) $defaults);
-    }
-
-    return $this->config;
-  }
-
-  public function set($source) {
-    $this->source = (string) $source;
+  public function setSource($source) {
+    $this->data['source'] = (string) $source;
     $this->parse();
+  
+    return $this;
+  }
+  
+  public function getSource() {
+    return $this->data['source'];
   }
 
   /**
@@ -68,7 +86,7 @@ abstract class Object implements ObjectInterface {
     if ($missing_date && !empty($context[1])) {
       $string = $context[1] . 'T' . $string;
     }
-    $date = new \DateTime($string, new \DateTimeZone($this->config->timezone));
+    $date = new \DateTime($string, new \DateTimeZone($this->getConfig('timezone')));
 
     return $date;
   }
@@ -116,37 +134,66 @@ abstract class Object implements ObjectInterface {
     return isset($this->parsed->{$key}) ? $this->parsed->{$key} : NULL;
   }
 
-  public function getFlag($flag) {
-    static $valid_flags = NULL;
+  public function complete($time = NULL) {
+    return $this;
+  }
+
+  public function unComplete() {
+    return $this;
+  }
+
+  public function setFlag($flag, $value) {
+    $this->flags[$flag] = $value;
+  
+    return $this;
+  }  
+
+  public function getFlag($flag, $typecast = FALSE) {
+    static $valid_flags, $types = NULL;
     if ($valid_flags === NULL) {
       $valid_flags = array();
+      $types = array();
       foreach ($this->getFlagSchema() as $key => $value) {
         $valid_flags[$key] = $value->id;
+        $types[$value->id] = $value->type;
       }
     }
     if (!in_array($flag, $valid_flags)) {
       return NULL;
     }
-    $flag = isset($this->flags[$flag]) ? $this->flags[$flag] : NULL;
+    $value = isset($this->flags[$flag]) ? $this->flags[$flag] : NULL;
 
-    return $flag;
+
+    if ($typecast) {
+      switch ($types[$flag]) {
+        case 'datetime':
+          $value = $value ? $this->createDate($value) : $value;
+          break;
+
+        case 'string':
+          $value = (string) $value;
+          break;
+      }
+    }
+
+    return $value;
   }
 
-  public function getFlags() {
+  public function getFlags($implode = TRUE) {
     $flags = array();
     foreach ($this->getFlagSchema() as $data) {
-      if ($value = $this->getFlag($data->id)) {
+      if ($value = $this->getFlag($data->id, FALSE)) {
         if ($value === TRUE) {
           $value = '';
         }
         if (strpos($value, ' ') !== FALSE) {
           $value = '"' . $value . '"';
         }        
-        $flags[] = $this->config->flag_prefix . $data->flag . $value;
+        $flags[$data->id] = $this->getConfig('flag_prefix') . $data->flag . $value;
       }
     }
 
-    return implode(' ', $flags);
+    return $implode ? implode(' ', $flags) : $flags;
   }
 
   public function setTitle($title) {
@@ -209,7 +256,16 @@ abstract class Object implements ObjectInterface {
       
       $all_flags = array(
         (object) array(
+          'flag' => 'id', 
+          'type' => 'string',
+          'description' => 'A unique ID.',
+          'id' => 'id',
+          'name' => 'Id',
+          'regex' => '(id)("[^"]+"|[^\s]+)',
+        ),
+        (object) array(
           'flag' => 'w', 
+          'type' => 'float',
           'description' => 'Lower numbers are ranked higher in priority.',
           'id' => 'weight',
           'name' => 'Priority',
@@ -217,6 +273,7 @@ abstract class Object implements ObjectInterface {
         ),      
         (object) array(
           'flag' => 'p', 
+          'type' => 'string',
           'description' => 'The name of the person responsible.',
           'id' => 'person',
           'name' => 'Assigned To',
@@ -224,6 +281,7 @@ abstract class Object implements ObjectInterface {
         ),
         (object) array(
           'flag' => 'e', 
+          'type' => 'float',
           'description' => 'The estimated hours to done.',
           'id' => 'estimate',
           'name' => 'Estimate',
@@ -231,6 +289,7 @@ abstract class Object implements ObjectInterface {
         ),
         (object) array(
           'flag' => 'g', 
+          'type' => 'string',
           'description' => 'The name of a group this belongs to, e.g. Wednesday.',
           'id' => 'group',
           'name' => 'Group',
@@ -238,6 +297,7 @@ abstract class Object implements ObjectInterface {
         ),
         (object) array(
           'flag' => 's', 
+          'type' => 'datetime',
           'description' => 'The date to start work.',
           'id' => 'start',
           'name' => 'Start Time',
@@ -245,6 +305,7 @@ abstract class Object implements ObjectInterface {
         ),
         (object) array(
           'flag' => 'm', 
+          'type' => 'datetime',
           'description' => 'The next milestone date.',
           'id' => 'milestone',
           'name' => 'Milestone',
@@ -252,6 +313,7 @@ abstract class Object implements ObjectInterface {
         ),  
         (object) array(
           'flag' => 'f', 
+          'type' => 'datetime',
           'description' => 'The date it needs to be finished.',
           'id' => 'finish',
           'name' => 'Finish',
@@ -259,22 +321,33 @@ abstract class Object implements ObjectInterface {
         ),  
         (object) array(
           'flag' => 'd', 
+          'type' => 'datetime',
           'description' => 'The date it was done and complete.',
           'id' => 'done',
           'name' => 'Completed',
           'regex' => '(d)(' . $this->dateRegex() . ')?',
         ),
+        (object) array(
+          'flag' => 'h', 
+          'type' => 'float',
+          'description' => 'Actual hours from start to finish.',
+          'id' => 'hours',
+          'name' => 'Hours',
+          'regex' => '(h)([.\d]+)',
+        ),        
 
         // Third party integration
         (object) array(
           'flag' => 'bc', 
+          'type' => 'string',
           'description' => 'The Basecamp unique ID.',
           'id' => 'basecamp',
           'name' => 'Basecamp Id',
           'regex' => '(bc)(\d{6,})',
         ),
         (object) array(
-          'flag' => 'man', 
+          'flag' => 'mt', 
+          'type' => 'string',
           'description' => 'The Mantis unique ID.',
           'id' => 'mantis',
           'name' => 'Mantis Id',
@@ -282,6 +355,7 @@ abstract class Object implements ObjectInterface {
         ),        
         (object) array(
           'flag' => 'qb', 
+          'type' => 'string',
           'description' => 'The Quickbooks job.',
           'id' => 'quickbooks',
           'name' => 'Quickbooks Job',
@@ -324,10 +398,10 @@ abstract class Object implements ObjectInterface {
     $flags = $this->getFlagSchema();
     foreach ($flags as $flag) {
       $this->flags[$flag->id] = NULL;
-      $regex = '/\\' . $this->config->flag_prefix . $flag->regex . '/';
-      if (preg_match($regex, $text, $found)) {
-        $text = str_replace($found[0], '', $text);
-        $value = array_key_exists(2, $found) ? trim($found[2], ' "') : TRUE;
+      $regex = '/(?<!\\\)\\' . $this->getConfig('flag_prefix') . $flag->regex . '/';
+      if (preg_match($regex, $text, $matches)) {
+        $text = str_replace($matches[0], '', $text);
+        $value = array_key_exists(2, $matches) ? trim($matches[2], ' "') : TRUE;
         $this->flags[$flag->id] = $value;
       }
     }
@@ -345,7 +419,7 @@ abstract class Object implements ObjectInterface {
 
     // @todo move to getFlag?
     if ($this->flags['milestone'] === TRUE) {
-      $this->flags['milestone'] = $this->getDateTime("+ {$this->config->milestone} seconds");
+      $this->flags['milestone'] = $this->getDateTime("+ {$this->getConfig('milestone')} seconds");
     }
 
     return trim($text);

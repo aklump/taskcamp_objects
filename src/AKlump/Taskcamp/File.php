@@ -22,7 +22,7 @@ class File extends Object implements ObjectInterface {
   }
 
   public function parse(){
-    $path = $this->parseFlags($this->source);
+    $path = $this->parseFlags($this->getSource());
     $this->parsed = (object) ((array) $this->parsed + pathinfo($path));
     list($path) = explode('@', $path);
     if (($path = trim($path))) {

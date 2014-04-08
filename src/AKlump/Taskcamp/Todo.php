@@ -10,11 +10,35 @@ namespace AKlump\Taskcamp;
 
 class Todo extends Object implements TodoInterface {
 
+  /**
+   * Add in todo specific 'show_ids' config key.
+   *
+   * @param array||object $config
+   */
+  public function setConfig($config) {
+    $config = (array) $config + array(
+
+      // Set this to true and id flags will be included in the string
+      'show_ids' => FALSE,
+    );
+
+    return parent::setConfig($config);
+  }
+
+  public function getFlags($implode = TRUE) {
+    $flags = parent::getFlags(FALSE);
+    if (!$this->getConfig('show_ids')) {
+      unset($flags['id']);
+    }
+
+    return implode(' ', $flags);
+  }  
+
   public function __toString() {
     $output  = '- ';
 
     if (!$this->getParsed('valid_syntax')) {
-      $output .= $this->source;
+      $output .= $this->getSource();
     }
     else {
       $output .= '[' . ($this->getParsed('complete') ? 'x' : ' ') . '] ';
@@ -53,7 +77,7 @@ class Todo extends Object implements TodoInterface {
       }
       $this->flags['done'] = $time;
       $this->parsed->complete = TRUE;      
-      $this->flags['weight'] += $this->config->weight;
+      $this->flags['weight'] += $this->getConfig('weight');
     }
 
     return $this;
@@ -64,7 +88,7 @@ class Todo extends Object implements TodoInterface {
       $this->flags['done'] = NULL;
       $this->parsed->complete = FALSE;
       if ($this->flags['weight'] != 0) {
-        $this->flags['weight'] -= $this->config->weight;
+        $this->flags['weight'] -= $this->getConfig('weight');
       }
     }
 
@@ -98,7 +122,7 @@ class Todo extends Object implements TodoInterface {
   }
 
   public function getAvailableFlags() {
-    return array('w', 'p', 'bc', 'man', 'm', 'e', 's', 'd');;
+    return array('id', 'p', 'bc', 'mt', 'm', 'e', 's', 'd', 'h', 'w');
   }
 
   /**
@@ -110,7 +134,7 @@ class Todo extends Object implements TodoInterface {
    *   FALSE means the todo couldn't be parsed
    */
   protected function parse() {
-    $parsed = $this->source;
+    $parsed = $this->getSource();
 
     // Expand lazy prefixes
     if (preg_match('/^- (\[ \]) (.*)(?:x| )x$/i', $parsed, $matches)

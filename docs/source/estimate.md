@@ -1,7 +1,7 @@
-[priority]:priority_list.html
+[priorities]:priorities.html
 
 ## Start with Basecamp
-1. Create a [Priority List][priority]
+1. Create [Priorities][priorities]
 1. Create the _Basecamp Todo List_ and entitle it.
 2. Fill out the description of the list.
 3. Enter single action items with using the @e flag for time estimation.

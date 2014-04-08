@@ -4,7 +4,7 @@ namespace AKlump\Taskcamp;
 /**
  * Class List
  */
-class PriorityList extends Object implements ObjectInterface {
+class Priorities extends Object implements ObjectInterface {
   protected $list;
 
   public function __construct($title = '', $description = '', $config = array()) {

@@ -5,25 +5,77 @@ class ObjectList {
 
   protected $items = array();
 
-  public function add($id, ObjectInterface $item) {
-    $this->items[(string) $id] = $item;
-
+  public function add(ObjectInterface $item) {
+    // Do not try to add a key here.
+    $this->items[] = $item;
+    
     return $this;
   }
 
   public function get($id = NULL, $sorted = TRUE) {
     if ($id === NULL) {
-      return $this->items;
+      return (array) $this->items;
     }
 
-    return isset($this->items[$id]) ? $this->items[$id] : NULL;
+    // Locate by id
+    $results = array();
+    foreach ($this->items as $index => $item) {
+      if ($item->getFlag('id') == $id) {
+        $results[$index] = $item;
+      }
+    }
+    if (!empty($results)) {
+      /// @todo how to handle multiple ids?
+      return $results;
+    }
+
+    // Locate by array index
+    return is_numeric($id) && array_key_exists($id, $this->items)
+    ? array($id => $this->items[$id])
+    : array();
   }
+
+  /**
+   * Return all completed todos
+   *
+   * @return array
+   */
+  public function getCompleted() {
+    $array = $this->get();
+    foreach ($array as $id => $todo) {
+      if (!$todo->isComplete()) {
+        unset($array[$id]);
+      }
+    }
+
+    return array_values($array);
+  }  
+
+  /**
+   * Returns all incomplete todos
+   *
+   * @return array
+   */
+  public function getIncomplete() {
+    $array = $this->get();
+    foreach ($array as $id => $todo) {
+      if ($todo->isComplete()) {
+        unset($array[$id]);
+      }
+    }
+
+    return array_values($array);
+  }    
 
   public function remove($id = NULL) {
     if ($id === NULL) {
       $this->items = array();
     }
     else {
+      $items = $this->get($id);
+      foreach (array_keys($items) as $index) {
+        unset($this->items[$index]);
+      }
       unset($this->items[$id]);
     }
 
@@ -39,11 +91,12 @@ class ObjectList {
 
     // Thanks! http://notmysock.org/blog/php/schwartzian-transform.html
     array_walk($items, array('self', 'dec'));
+
     uasort($items, array('self', 'sort'));
     array_walk($items, array('self', 'undec'));
 
     return $items;
-  }
+  } 
 
   protected static function dec(&$v, $k) {
     static $counter = 0;

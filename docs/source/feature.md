@@ -13,9 +13,13 @@ The highest markdown heading e.g. `# My title`, or the first line of text if no 
 ### Flags
 Flags should be appended to the title.  See Features::getAvailableTags().
 ### Description
-The description is the first markdown paragraph to follow the title; that is it:
-1. Starts with the first non-blank line following the title
-2. Continues with each line until a blank line is encountered.
+The description is the first markdown paragraph to follow the title.  It should follow this pattern:
+
+1. '# some title'
+2. blank line
+3. series of one or more lines = description
+4. blank line
+5. rest of document
 
     # Title @w-10 @pAaron
 
@@ -30,7 +34,7 @@ The description is the first markdown paragraph to follow the title; that is it:
 Any string of text that begins with `http://` through to the first whitespace.  All URLS are available as a _unique_ array, in the order they appear in the text.
 
 ### Todos
-All todo items will be copied into and are available as a Priority List whose title and description inherit those of the Feature. See also [Todos](todo.html), [Priority Lists](priority_list.html).
+All todo items will be copied into and are available as a Priority List whose title and description inherit those of the Feature. See also [Todos](todo.html), [Priorities](priorities.html).
 
 ### Files
 A list of file paths preceeded by a header of `Files`, e.g.
