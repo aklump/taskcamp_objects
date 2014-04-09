@@ -7,6 +7,11 @@ namespace AKlump\Taskcamp;
 class Feature extends Object implements ObjectInterface {
   protected $urls, $todos, $files;
 
+  public function __construct($source = '', $config = array()) {
+    $this->todos = new Priorities;
+    parent::__construct($source, $config);
+  }
+
   /**
    * Add in todo specific 'show_ids' config key.
    *
@@ -23,15 +28,85 @@ class Feature extends Object implements ObjectInterface {
   }
 
   public function __toString() {
-
-    // Explode all todos
-    if ($this->getConfig('rewrite_todos') && !empty($this->parsed->todos_by_line)) {
-      foreach ($this->parsed->todos_by_line as $key => $value) {
-        $this->parsed->lines[$key] = (string) $this->parsed->todos_by_line[$key];
-      }
+    $output   = array();
+    
+    // (Optional) Title
+    if (($title = $this->getTitle())) {
+      $output[] = "# $title";
+      $output[] = '';
     }
 
-    return implode(PHP_EOL, $this->getParsed('lines'));
+    // (Optional) Description
+    if (($description = $this->getDescription())) {
+      $output[] = $description;
+      $output[] = '';
+    }
+
+    // These are all todos in the object, we're going to remove from this array
+    // based on any in parsed lines.
+    $missing_todo_list = clone $this->getTodos()->getList();
+    $lines = $this->getParsed('lines');
+    foreach ($this->getParsed('todos_by_line') as $line_number => $line_todo) {
+      
+      // Remove from the missing list
+      $id = $line_todo->getFlag('id');
+      $missing_todo_list->remove($id);
+
+      // Now rewrite line_todo if config calls for it
+      if ($this->getConfig('rewrite_todos')) {
+        $lines[$line_number] = (string) $line_todo;
+      }      
+    }
+
+    $output = array_merge($output, $lines);
+
+    // Append todos not present in the parsed lines
+    foreach ($missing_todo_list->getSorted() as $todo) {
+      $output[] = (string) $todo;
+    }
+    
+    return trim(implode(PHP_EOL, $output));
+
+
+
+
+
+
+
+
+    // $lines = $this->getParsed('lines');
+    
+    // // Look for todo items not in the parsed array
+    // $missing_todos = clone $this->getTodos()->getList();
+
+    // if (!empty($this->parsed->todos_by_line)) {
+    //   foreach ($this->parsed->todos_by_line as $line_number => $todo) {
+
+    //     // Remove this from our additional since it's already present in our parsed lines array.
+    //     $id = $todo->getFlag('id');
+    //     $missing_todos->remove($id);
+
+
+    //   }
+    // }
+
+    // // Append any missing todo items not in the parsed array
+    // foreach ($missing_todos->get() as $todo) {
+    //   $lines[] = (string) $todo;
+    // }
+
+    // $header = array();
+    // $header[] = '# ' . $this->getTitle();
+
+    // // The description
+    // if (($d = $this->getDescription())) {
+    //   $header[] = '';
+    //   $header[] = $d;
+    // }
+
+    // $header[] = '';    
+
+    // return implode(PHP_EOL, $header) . PHP_EOL . trim(implode(PHP_EOL, $lines));
   }    
 
   public function getAvailableFlags() {
@@ -74,7 +149,7 @@ class Feature extends Object implements ObjectInterface {
     // Grab all paragraphs and trim each
     $this->parsed->p   = array_values(array_filter(preg_split('/\n\n|\r\n\r\n?/', $source)));
     foreach ($this->parsed->p as $key => $value) {
-      $this->parsed->p[$key] = trim($value);
+      $this->parsed->p[$key] = trim(str_replace("\r\n", "\n", $value));
     }
 
     // find h1's and title
@@ -83,14 +158,23 @@ class Feature extends Object implements ObjectInterface {
       $this->parsed->headings = array();
       foreach ($matches[2] as $key => $title) {
         $element = 'h' . strlen($matches[1][$key]);
-        $this->parsed->headings[$element][] = $title;
+        $find = $matches[0][$key];
+        $this->parsed->headings[$element][$find] = $title;
       }
       ksort($this->parsed->headings);
       
-      $title = reset(reset($this->parsed->headings));
+      $top_level = reset($this->parsed->headings);
+      $title = reset($top_level);
+      
+      // Remove the line that contains the title
+      $find = key($top_level);
+      $remove = array_search($find, $this->parsed->lines);
+      unset($this->parsed->lines[$remove]);
+
     }
-    else {
+    elseif (preg_match('/^\w/', $this->parsed->lines[0])) {
       $title = $this->parsed->lines[0];
+      unset($this->parsed->lines[0]);
     }
 
     $title = $this->parseFlags($title);
@@ -99,6 +183,18 @@ class Feature extends Object implements ObjectInterface {
     // Find description
     if (isset($this->parsed->p[1]) && preg_match('/^\w/', $this->parsed->p[1], $matches)) {
       $this->setDescription($this->parsed->p[1]);
+
+      // Strip it out of lines
+      $haystack = implode(PHP_EOL, $this->parsed->lines);
+      $needle = $this->getDescription();
+      $result = trim(str_replace($needle, '', $haystack));
+      $this->parsed->lines = explode(PHP_EOL, $result);
+    }
+
+    // Trim empty front and back lines so we don't have title troubles of 
+    // extra spacing.
+    while (count($this->parsed->lines) && !trim(reset($this->parsed->lines))) {
+      array_shift($this->parsed->lines);
     }
 
     // Grab the files
@@ -148,6 +244,7 @@ class Feature extends Object implements ObjectInterface {
       //   );
       // }
     }
+    $this->todos->getList()->generateIds();
 
 
     // // Set the title

@@ -22,11 +22,11 @@ interface ObjectListInterface {
   /**
    * Return all items or by id, or index.
    *
-   * @param  mixed $id Optional. Omit to return all items.  First items having
-   * this as an id flag will be searched, if none found, then we'll take this
-   * to be the array index if it's numeric.
+   * @param  mixed $id Optional. Omit to return all items.  Otherwise all items
+   * having this id will be returned.
    *
    * @return array
+   *   - When $id is provided the keys will match $this->items.
    */
   public function get($id = NULL);
 

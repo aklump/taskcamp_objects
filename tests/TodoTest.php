@@ -11,6 +11,37 @@ use \AKlump\Taskcamp\Todo as Todo;
 
 class TodoTest extends PHPUnit_Framework_TestCase {
 
+  public function testPrintingSAndDFlags() {
+    $obj = new Todo('- [x] do this');
+    $obj->setFlag('start', '2014-04-09T08:28');
+    $obj->setFlag('done', '2014-04-09T08:37');
+    $this->assertSame('- [x] do this @s08:28 @d2014-04-09T08:37', (string) $obj);
+
+    $obj->setFlag('start', '2014-04-08T23:28');
+    $obj->setFlag('done', '2014-04-09T08:37');
+    $this->assertSame('- [x] do this @s2014-04-08T23:28 @d2014-04-09T08:37', (string) $obj);
+  }
+
+  function testGetFlagIdZero() {
+    $obj = new Todo('- here it is @id0', array('show_ids' => TRUE));
+    $this->assertSame('0', $obj->getFlag('id'));
+    $this->assertSame('- [ ] here it is @id0', (string) $obj);
+
+    $obj = new Todo('- here it is @id1', array('show_ids' => TRUE));
+    $this->assertSame('1', $obj->getFlag('id'));
+    $this->assertSame('- [ ] here it is @id1', (string) $obj);
+
+    $obj = new Todo('- here it is', array('show_ids' => TRUE));
+    $obj->setFlag('id', 0);
+    $this->assertSame(0, $obj->getFlag('id'));
+    $this->assertSame('- [ ] here it is @id0', (string) $obj);
+
+    $obj = new Todo('- here it is', array('show_ids' => TRUE));
+    $obj->setFlag('id', '0');
+    $this->assertSame('0', $obj->getFlag('id'));
+    $this->assertSame('- [ ] here it is @id0', (string) $obj);
+  }
+
   function testEscapingAFlag() {
     $obj = new Todo('- Can we escape \@w300 a 300 weight');
     $this->assertSame('Can we escape \@w300 a 300 weight', $obj->getTitle());
@@ -224,7 +255,7 @@ class TodoTest extends PHPUnit_Framework_TestCase {
       'flag_prefix' => '@', 
       'weight' => 1000,
       'milestone' => 1209600, 
-      'show_ids' => FALSE, 
+      'show_ids' => TRUE, 
     );
     $this->assertEquals($control, $todo->getConfig(), 'Default config is set correctly.');
 
@@ -238,7 +269,7 @@ class TodoTest extends PHPUnit_Framework_TestCase {
       'weight' => 1000,
       'hair_color' => 'blonde',
       'milestone' => 1209600,  
-      'show_ids' => FALSE,      
+      'show_ids' => TRUE,      
     );
     $this->assertEquals($control, $todo->getConfig(), 'Setting config vars works correctly.');    
   }

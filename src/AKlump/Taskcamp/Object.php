@@ -182,15 +182,25 @@ abstract class Object implements ObjectInterface {
   public function getFlags($implode = TRUE) {
     $flags = array();
     foreach ($this->getFlagSchema() as $data) {
-      if ($value = $this->getFlag($data->id, FALSE)) {
-        if ($value === TRUE) {
-          $value = '';
-        }
-        if (strpos($value, ' ') !== FALSE) {
-          $value = '"' . $value . '"';
-        }        
-        $flags[$data->id] = $this->getConfig('flag_prefix') . $data->flag . $value;
+      $value = $this->getFlag($data->id, FALSE);
+      $show_zero = is_numeric($value) && !$value && !$data->hide_empty;
+
+      if (!$value && !$show_zero) {
+        continue;
       }
+      if (!$value) {
+        $value = $this->getFlag($data->id, TRUE);
+      }
+      // if (!$value && is_numeric($value) && $data->hide_empty) {
+      //   continue;
+      // }
+      if ($value === TRUE) {
+        $value = '';
+      }
+      if (strpos($value, ' ') !== FALSE) {
+        $value = '"' . $value . '"';
+      }        
+      $flags[$data->id] = $this->getConfig('flag_prefix') . $data->flag . $value;
     }
 
     return $implode ? implode(' ', $flags) : $flags;
@@ -245,9 +255,11 @@ abstract class Object implements ObjectInterface {
    *   Keys are the flags.
    *   Each element is an object with these properties:
    *   - flag
+   *   - type string for typecasting
    *   - id
    *   - name
    *   - regex
+   *   - hide_empty bool Should we hide an empty flag, say for @id0 or @w0
    */  
   public function getFlagSchema() {
     static $schema = NULL;
@@ -262,6 +274,7 @@ abstract class Object implements ObjectInterface {
           'id' => 'id',
           'name' => 'Id',
           'regex' => '(id)("[^"]+"|[^\s]+)',
+          'hide_empty' => FALSE,
         ),
         (object) array(
           'flag' => 'w', 
@@ -270,6 +283,7 @@ abstract class Object implements ObjectInterface {
           'id' => 'weight',
           'name' => 'Priority',
           'regex' => '(w)(\-?[\d]+)',
+          'hide_empty' => TRUE,
         ),      
         (object) array(
           'flag' => 'p', 
@@ -278,6 +292,7 @@ abstract class Object implements ObjectInterface {
           'id' => 'person',
           'name' => 'Assigned To',
           'regex' => '(p)("[^"]+"|[^\s]+)',
+          'hide_empty' => TRUE,
         ),
         (object) array(
           'flag' => 'e', 
@@ -286,6 +301,7 @@ abstract class Object implements ObjectInterface {
           'id' => 'estimate',
           'name' => 'Estimate',
           'regex' => '(e)([.\d]+)',
+          'hide_empty' => TRUE,
         ),
         (object) array(
           'flag' => 'g', 
@@ -294,6 +310,7 @@ abstract class Object implements ObjectInterface {
           'id' => 'group',
           'name' => 'Group',
           'regex' => '(g)("[^"]+"|[^\s]+)',
+          'hide_empty' => TRUE,
         ),
         (object) array(
           'flag' => 's', 
@@ -302,6 +319,7 @@ abstract class Object implements ObjectInterface {
           'id' => 'start',
           'name' => 'Start Time',
           'regex' => '(s)(' . $this->dateRegex() . ')?',
+          'hide_empty' => TRUE,
         ),
         (object) array(
           'flag' => 'm', 
@@ -310,6 +328,7 @@ abstract class Object implements ObjectInterface {
           'id' => 'milestone',
           'name' => 'Milestone',
           'regex' => '(m)(' . $this->dateRegex() . ')?',
+          'hide_empty' => TRUE,
         ),  
         (object) array(
           'flag' => 'f', 
@@ -318,6 +337,7 @@ abstract class Object implements ObjectInterface {
           'id' => 'finish',
           'name' => 'Finish',
           'regex' => '(f)(' . $this->dateRegex() . ')?',
+          'hide_empty' => TRUE,
         ),  
         (object) array(
           'flag' => 'd', 
@@ -326,6 +346,7 @@ abstract class Object implements ObjectInterface {
           'id' => 'done',
           'name' => 'Completed',
           'regex' => '(d)(' . $this->dateRegex() . ')?',
+          'hide_empty' => TRUE,
         ),
         (object) array(
           'flag' => 'h', 
@@ -334,6 +355,7 @@ abstract class Object implements ObjectInterface {
           'id' => 'hours',
           'name' => 'Hours',
           'regex' => '(h)([.\d]+)',
+          'hide_empty' => TRUE,
         ),        
 
         // Third party integration
@@ -344,6 +366,7 @@ abstract class Object implements ObjectInterface {
           'id' => 'basecamp',
           'name' => 'Basecamp Id',
           'regex' => '(bc)(\d{6,})',
+          'hide_empty' => TRUE,
         ),
         (object) array(
           'flag' => 'mt', 
@@ -352,6 +375,7 @@ abstract class Object implements ObjectInterface {
           'id' => 'mantis',
           'name' => 'Mantis Id',
           'regex' => '(man)(\d+)',
+          'hide_empty' => TRUE,
         ),        
         (object) array(
           'flag' => 'qb', 
@@ -360,6 +384,7 @@ abstract class Object implements ObjectInterface {
           'id' => 'quickbooks',
           'name' => 'Quickbooks Job',
           'regex' => '(qb)("[^"]+"|[^\s]+)',
+          'hide_empty' => TRUE,
         ),
       );
 

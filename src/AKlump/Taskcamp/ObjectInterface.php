@@ -9,6 +9,9 @@ interface ObjectInterface {
   /**
    * Mark an object complete and add a done timestamp
    *
+   * This will only work if the object is not already completed.  If you want
+   * to update the @d flag use setFlag('done', ...) instead.
+   *
    * @param  string $time The datetime string or NULL for now
    *
    * @return $this

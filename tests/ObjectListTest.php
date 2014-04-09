@@ -12,6 +12,52 @@ use \AKlump\Taskcamp\Todo as Todo;
 
 class ObjectListTest extends PHPUnit_Framework_TestCase {
 
+  function testGenerateIds() {
+    $obj = new ObjectList();
+    $todo = new Todo('- do this', array('show_ids' => FALSE));
+    $todo->setFlag('id', 'do');
+    $obj->add($todo);
+    $obj->add(new Todo('- do this now', array('show_ids' => FALSE)));
+    $obj->generateIds();
+    $result = reset($obj->get(0));
+    $this->assertSame('do this now', $result->getTitle());
+
+    $obj = new ObjectList();
+    $obj->add(new Todo('- do this', array('show_ids' => FALSE)));
+    $obj->add(new Todo('- do this', array('show_ids' => FALSE)));
+    $obj->add(new Todo('- do this', array('show_ids' => FALSE)));
+    $obj->add(new Todo('- do this last', array('show_ids' => FALSE)));
+    $obj->generateIds();
+
+    $result = reset($obj->get(3));
+    $this->assertSame('do this last', $result->getTitle());
+    $this->assertSame('3', $result->getFlag('id', TRUE));
+
+    $obj->generateIds();
+    $result = reset($obj->get(3));
+    $this->assertSame('do this last', $result->getTitle());
+    $this->assertSame('3', $result->getFlag('id', TRUE));
+
+    $todos = $obj->get();
+    $todo = array_shift($todos);
+    $this->assertSame('0', $todo->getFlag('id'));
+    $todo = array_shift($todos);
+    $this->assertSame('1', $todo->getFlag('id'));
+    $todo = array_shift($todos);
+    $this->assertSame('2', $todo->getFlag('id'));
+
+    $obj = new ObjectList();
+    $todo = new Todo('- do this', array('show_ids' => FALSE));
+    $todo->setFlag('id', 7);
+    $obj->add($todo);
+    $obj->add(new Todo('- do this now', array('show_ids' => FALSE)));
+    $obj->generateIds();
+    $result = reset($obj->get(8));
+    $this->assertSame('do this now', $result->getTitle());
+  
+
+  }
+
   /**
    * Factory method to get a new list
    *
@@ -20,10 +66,10 @@ class ObjectListTest extends PHPUnit_Framework_TestCase {
   function getList() {
     $list = new ObjectList();
     $items = array(
-      new Todo('- layout the bread'),
-      new Todo('- eat it @w10'),
-      new Todo('- spread the PB'),
-      new Todo('- spread the honey'),
+      new Todo('- layout the bread', array('show_ids' => FALSE)),
+      new Todo('- eat it @w10', array('show_ids' => FALSE)),
+      new Todo('- spread the PB', array('show_ids' => FALSE)),
+      new Todo('- spread the honey', array('show_ids' => FALSE)),
     );
     foreach ($items as $item) {
       $item->setFlag('id', $item->getTitle());
@@ -39,10 +85,11 @@ class ObjectListTest extends PHPUnit_Framework_TestCase {
     $obj->add(new Todo('- do this'));
     $obj->add(new Todo('- do this'));
     $obj->add(new Todo('- do this last'));
+    $obj->generateIds();
 
     $result = reset($obj->get(3));
     $this->assertSame('do this last', $result->getTitle());
-    $this->assertSame('', $result->getFlag('id', TRUE));
+    $this->assertSame('3', $result->getFlag('id', TRUE));
   }
 
   function testToString() {

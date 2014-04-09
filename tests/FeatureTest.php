@@ -7,11 +7,158 @@
  * @{
  */
 
-use \AKlump\Taskcamp\PriorityList as PriorityList;
-use \AKlump\Taskcamp\Feature as Feature;
+use \AKlump\Taskcamp\Feature;
+use \AKlump\Taskcamp\Todo;
+
 require_once '../vendor/autoload.php';
 
 class FeatureTest extends PHPUnit_Framework_TestCase {
+
+  public function testExtraTodo() {
+    $subject = <<<EOD
+# Title
+
+- item
+- another item    
+EOD;
+    $obj = new Feature($subject);
+    $obj->getTodos()->getList()->add(new Todo('- third item', array('show_ids' => TRUE)));
+    $control = <<<EOD
+# Title
+
+- [ ] item @id0
+- [ ] another item @id1
+- [ ] third item
+EOD;
+    $this->assertSame($control, (string) $obj);
+
+    $control = <<<EOD
+# Title
+
+- [ ] item @id0
+- [ ] another item @id1
+- [ ] third item @id2
+EOD;
+    $obj->getTodos()->getList()->generateIds();
+    $this->assertSame($control, (string) $obj);
+  }  
+
+  public function testDoNotEraseTitleWhenParsing() {
+    $subject = <<<EOD
+- a single todo in a feature    
+EOD;
+    $obj = new Feature($subject);
+    $obj->parse();
+    $obj->setTitle('Once upon a time');
+    $obj->setDescription('...in a galaxy far...');    
+
+    $control = <<<EOD
+# Once upon a time
+
+...in a galaxy far...
+
+- [ ] a single todo in a feature @id0
+EOD;
+
+    $this->assertSame($control, (string) $obj);
+  }
+
+  public function testSetTitleAndDescription() {
+    $subject = <<<EOD
+# a Title
+
+a description.
+
+- [ ] first todo @id0
+EOD;
+    $obj = new Feature($subject);
+    $this->assertSame($subject, (string) $obj);
+
+    $control = <<<EOD
+# A different title
+
+a description.
+
+- [ ] first todo @id0
+EOD;
+    $obj->setTitle('A different title');
+    $this->assertSame($control, (string) $obj);
+
+    $control = <<<EOD
+# A different title
+
+Eat breakfast soon!
+
+- [ ] first todo @id0
+EOD;
+    $obj->setDescription('Eat breakfast soon!');
+    $this->assertSame($control, (string) $obj);
+  }
+
+  public function testToString() {
+    $subject = <<<EOD
+# Make cookies
+
+Here is the
+description
+to see if it works.
+
+- mill the flour @e1 @d
+- melt the chocolate @e2
+
+# when something is marked @d
+- reset the running timer
+- stamp the done item with @s based on timer @d and @h
+- remove it from field_body
+- add it to object_active
+EOD;
+    $obj = new Feature($subject, array('rewrite_todos' => FALSE));
+    $this->assertSame($subject, (string) $obj);
+
+
+    $subject = <<<EOD
+# Make cookies
+- mill the flour @e1 @d
+- melt the chocolate @e2
+
+# when something is marked @d
+- reset the running timer
+- stamp the done item with @s based on timer @d and @h
+- remove it from field_body
+- add it to object_active
+EOD;
+    $control = <<<EOD
+# Make cookies
+
+- mill the flour @e1 @d
+- melt the chocolate @e2
+
+# when something is marked @d
+- reset the running timer
+- stamp the done item with @s based on timer @d and @h
+- remove it from field_body
+- add it to object_active
+EOD;
+
+    $obj = new Feature($subject, array('rewrite_todos' => FALSE));
+    $this->assertSame($control, (string) $obj);
+
+
+    $subject = <<<EOD
+# Make cookies
+
+- mill the flour @e1 @d
+- melt the chocolate @e2
+
+# when something is marked @d
+- reset the running timer
+- stamp the done item with @s based on timer @d and @h
+- remove it from field_body
+- add it to object_active
+EOD;
+    $obj = new Feature($subject, array('rewrite_todos' => FALSE));
+    $this->assertSame($subject, (string) $obj);
+  }
 
   public function testAddingWithoutId() {
     $subject = <<<EOD
@@ -30,23 +177,7 @@ EOD;
     $this->assertCount(0, $obj->getTodos()->getList()->getIncomplete());
   }
 
-  public function testToString() {
-    $subject = <<<EOD
-# Make cookies
-
-- mill the flour @e1 @d
-- melt the chocolate @e2
-
-# when something is marked @d
-- reset the running timer
-- stamp the done item with @s based on timer @d and @h
-- remove it from field_body
-- add it to object_active
-EOD;
-    $obj = new Feature($subject, array('rewrite_todos' => FALSE));
-    $this->assertSame($subject, (string) $obj);
-  }
-
+ 
   public function testLineBreakChars() {
     $subject = "# Make cookies\r\n\r\n- mill the flour @e1 @d\r\n- melt the chocolate @e2\r\n\r\n# when something is marked @d\r\n- reset the running timer\r\n- stamp the done item with @s based on timer @d and @h\r\n- remove it from field_body\r\n- add it to object_active\r\n";
     $obj = new Feature($subject);

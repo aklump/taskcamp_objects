@@ -19,7 +19,7 @@ class Todo extends Object implements TodoInterface {
     $config = (array) $config + array(
 
       // Set this to true and id flags will be included in the string
-      'show_ids' => FALSE,
+      'show_ids' => TRUE,
     );
 
     return parent::setConfig($config);
@@ -31,7 +31,7 @@ class Todo extends Object implements TodoInterface {
       unset($flags['id']);
     }
 
-    return implode(' ', $flags);
+    return $implode ? implode(' ', $flags) : $flags;
   }  
 
   public function __toString() {
@@ -43,7 +43,22 @@ class Todo extends Object implements TodoInterface {
     else {
       $output .= '[' . ($this->getParsed('complete') ? 'x' : ' ') . '] ';
       $output .= $this->getTitle();
-      $output .= ' ' . $this->getFlags();      
+
+      $temp = clone $this;
+
+      // Reduce the start date down to hours only, if possible
+      $flags  = $temp->getFlags(FALSE);
+
+      // These are strait values, so we use them, as opposed to $flags['start...']
+      $start  = $temp->getFlag('start');
+      $done   = $temp->getFlag('done');
+      if ($start && $done && substr($start, 2, 11) == substr($done, 2, 11)) {
+        $temp->setFlag('start', substr($start, 11));
+        $flags['start'] = $temp->getFlag('start');
+      }
+
+      $output .= ' ' . $temp->getFlags();
+      unset($temp);
     }
     
     return trim($output);    

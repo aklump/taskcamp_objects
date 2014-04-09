@@ -20,19 +20,38 @@ class ObjectList {
     // Locate by id
     $results = array();
     foreach ($this->items as $index => $item) {
-      if ($item->getFlag('id') == $id) {
+      $flag = $item->getFlag('id');
+      if ((string) $flag === (string) $id) {
         $results[$index] = $item;
       }
     }
-    if (!empty($results)) {
-      /// @todo how to handle multiple ids?
-      return $results;
+
+    return $results;
+  }
+
+  /**
+   * Generate numeric ids for all items missing them starting with the the
+   * next highest number of 0 if no numeric ids exist.
+   *
+   * @return [type] [description]
+   */
+  public function generateIds() {
+    $start = 0;
+    $missing = array();
+    foreach ($this->items as $todo) {
+      if (($id = $todo->getFlag('id')) === NULL) {
+        $missing[] = $todo;
+      }
+      elseif (is_numeric($id)) {
+        $ids[] = $id * 1;
+      }
+    }
+    $primary = empty($ids) ? 0 : max($ids) + 1;
+    foreach ($missing as $todo) {
+      $todo->setFlag('id', (string) $primary++);
     }
 
-    // Locate by array index
-    return is_numeric($id) && array_key_exists($id, $this->items)
-    ? array($id => $this->items[$id])
-    : array();
+    return $this;
   }
 
   /**
@@ -72,11 +91,8 @@ class ObjectList {
       $this->items = array();
     }
     else {
-      $items = $this->get($id);
-      foreach (array_keys($items) as $index) {
-        unset($this->items[$index]);
-      }
-      unset($this->items[$id]);
+      $remove = $this->get($id);
+      $this->items = array_diff_key($this->items, $remove);
     }
 
     return $this;
