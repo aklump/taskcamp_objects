@@ -157,7 +157,18 @@ class Feature extends Object implements ObjectInterface {
           continue;
         }
 
-        if ($passed_title && $value && preg_match('/^\w/', $value, $matches)) {
+        if ($passed_title && $value
+
+          // Not a question
+          && !$this->isQuestion($value)
+          
+          // Not an url
+          && !$this->isUrl($value)
+          
+          // Not a file
+          // @todo
+
+          && preg_match('/^\w/', $value, $matches)) {
           $this->setDescription($value);
 
           // Strip it out of lines
@@ -168,6 +179,12 @@ class Feature extends Object implements ObjectInterface {
           break;
         }
       }
+    }
+
+    if ($title
+      && !$this->getDescription()
+      && ($d = $this->getConfig('default_description'))) {
+      $this->setDescription($d);
     }
 
     // Trim empty front and back lines so we don't have title troubles of 

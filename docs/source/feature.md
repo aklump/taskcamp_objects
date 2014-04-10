@@ -58,6 +58,8 @@ Example 2:
 
     and this is just a paragraph.
 
+**Please note that paragraphs that are questions, or which start with http are not allowed as descriptions.**
+
 ### Todos
 All todo items will be copied into and are available as a Priority List whose title and description inherit those of the Feature. See also [Todos](todo.html), [Priorities](priorities.html).
 
