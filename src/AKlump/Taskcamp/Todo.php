@@ -52,9 +52,21 @@ class Todo extends Object implements TodoInterface {
       // These are strait values, so we use them, as opposed to $flags['start...']
       $start  = $temp->getFlag('start');
       $done   = $temp->getFlag('done');
-      if ($start && $done && substr($start, 0, 11) == substr($done, 0, 11)) {
-        $temp->setFlag('start', substr($start, 11));
-        $flags['start'] = $temp->getFlag('start');
+      if ($start && $done) {
+
+        // Strip the date
+        if (substr($start, 0, 11) == substr($done, 0, 11)) {
+          $start = substr($start, 11);
+          $temp->setFlag('start', $start);
+          $flags['start'] = $temp->getFlag('start');
+        }
+
+        // Strip timezone
+        if (substr($start, -5) == substr($done, -5)) {
+          $start = substr($start, 0, -5);
+          $temp->setFlag('start', $start);
+          $flags['start'] = $temp->getFlag('start');
+        }
       }
 
       $output .= ' ' . $temp->getFlags();

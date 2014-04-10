@@ -11,6 +11,38 @@ use \AKlump\Taskcamp\Todo as Todo;
 
 class TodoTest extends PHPUnit_Framework_TestCase {
 
+  public function testCreateDate() {
+    $obj = new Todo();
+    $date = $obj->createDate('00:02', '2014-04-10T00:10+0200');
+    $this->assertSame('2014', $date->format('Y'));
+    $this->assertSame('04', $date->format('m'));
+    $this->assertSame('10', $date->format('d'));
+    $this->assertSame('00', $date->format('H'));
+    $this->assertSame('02', $date->format('i'));
+    $this->assertSame('+0200', $date->format('O'));
+  }
+
+  public function testDateRegex() {
+    $regex = '/' . Todo::dateRegex() .'/';
+
+    preg_match($regex, 'hi @m2014-04-09 ho', $matches);
+    $this->assertSame('2014-04-09', $matches[0]);
+
+    preg_match($regex, 'hi @d2014-04-09T23:34-0700 ho', $matches);
+    $this->assertSame('2014-04-09T23:34-0700', $matches[0]);
+
+    preg_match($regex, 'hi @s23:34 ho', $matches);
+    $this->assertSame('23:34', $matches[0]);
+
+    preg_match($regex, 'hi @s23:34-0800 ho', $matches);
+    $this->assertSame('23:34-0800', $matches[0]);
+  }
+
+  public function testSimplifyStartWithTimezone() {
+    $obj = new Todo('- something important @s2014-04-09T22:42-0700 @d2014-04-09T23:10-0700');
+    $this->assertSame('- [x] something important @s22:42 @d2014-04-09T23:10-0700 @w1000', (string) $obj);
+  }
+
   public function testSloppyCompleted() {
     $control = '- [x] when creating a node, the original should be reprinted @id4';
 
@@ -45,8 +77,8 @@ class TodoTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testSimplify() {
-    $obj = new Todo('- [x] some done todo @id5 @s2014-04-09T19:35 @d2014-04-09T13:16 @w1000');
-    $control = '- [x] some done todo @id5 @s19:35 @d2014-04-09T13:16 @w1000';
+    $obj = new Todo('- [x] some done todo @id5 @s2014-04-09T19:35+0000 @d2014-04-09T13:16+0000 @w1000');
+    $control = '- [x] some done todo @id5 @s19:35 @d2014-04-09T13:16+0000 @w1000';
     $this->assertSame($control, (string) $obj);
   }
 
@@ -120,8 +152,8 @@ class TodoTest extends PHPUnit_Framework_TestCase {
   }
 
   function testGetFlagDate() {
-    $obj = new Todo('- [ ] finish this thing @s16:06 @d2014-04-13T12:54', array('timezone' => 'UTC'));
-    $control = new \DateTime('2014-04-13T12:54', new \DateTimeZone('UTC'));
+    $obj = new Todo('- [ ] finish this thing @s16:06 @d2014-04-13T12:54+0000', array('timezone' => 'UTC'));
+    $control = new \DateTime('2014-04-13T12:54+0000', new \DateTimeZone('UTC'));
     $return = $obj->getFlag('done', TRUE);
     $this->assertEquals($control, $return);
 
@@ -155,11 +187,23 @@ class TodoTest extends PHPUnit_Framework_TestCase {
   }
 
   function testDateStrings() {
-    $datetime = '2004-02-12T15:19:21+00:00';
+    $datetime = '2004-02-12T15:19:21';
+
     $todo = new Todo('', array('timezone' => 'UTC'));
     $this->assertEquals('2004-02-12', $todo->getDate($datetime));
-    $this->assertEquals('15:19', $todo->getTime($datetime));
-    $this->assertEquals('2004-02-12T15:19', $todo->getDateTime($datetime));
+    $this->assertEquals('15:19+0000', $todo->getTime($datetime));
+    $this->assertEquals('2004-02-12T15:19+0000', $todo->getDateTime($datetime));
+    // When the timezone portion is here; it doesn't care the config timezone setting
+    $this->assertEquals('2004-02-12T15:19-0800', $todo->getDateTime('2004-02-12T15:19-0800'));
+    $this->assertEquals('2004-02-12T15:19+0000', $todo->getDateTime('2004-02-12T15:19+0000'));
+
+    $todo->setConfig(array('timezone' => 'America/Los_Angeles'));
+    $this->assertEquals('2004-02-12', $todo->getDate($datetime));
+    $this->assertEquals('15:19-0800', $todo->getTime($datetime));
+    $this->assertEquals('2004-02-12T15:19-0800', $todo->getDateTime($datetime));
+    // When the timezone portion is here; it doesn't care the config timezone setting
+    $this->assertEquals('2004-02-12T15:19-0800', $todo->getDateTime('2004-02-12T15:19-0800'));
+    $this->assertEquals('2004-02-12T15:19+0000', $todo->getDateTime('2004-02-12T15:19+0000'));
   }
 
   function testMilestone() {
@@ -172,18 +216,18 @@ class TodoTest extends PHPUnit_Framework_TestCase {
   }  
 
   function testGetFlags() {
-    $todo = new Todo('- my item to get done @pJoe @e3.5 @s2014-01-31T13:44 @m2014-02-14 @bc123456 @w4 @d13:44');
-    $this->assertEquals('@pJoe @bc123456 @m2014-02-14 @e3.5 @s2014-01-31T13:44 @d13:44 @w1004', $todo->getFlags(), 'getFlags() returns all values as expected');
+    $todo = new Todo('- my item to get done @pJoe @e3.5 @s2014-01-31T13:44+0000 @m2014-02-14 @bc123456 @w4 @d13:44');
+    $this->assertEquals('@pJoe @bc123456 @m2014-02-14 @e3.5 @s2014-01-31T13:44+0000 @d13:44 @w1004', $todo->getFlags(), 'getFlags() returns all values as expected');
   }
 
   function testDuration() {
 
     // Test creating a date which is a time string and has context, pulls
     // the context day into the time string
-    $todo = new Todo('- a long time ago @s11:47 @d2000-01-01T12:47');
+    $todo = new Todo('- a long time ago @s11:47 @d2000-01-01T12:47+0000');
     $this->assertEquals(3600, $todo->getDuration(), 'Assert start without date uses the date element from the done flag for duration');
 
-    $todo = new Todo('- a long time ago @s2000-01-01T11:47 @d12:47');
+    $todo = new Todo('- a long time ago @s2000-01-01T11:47+0000 @d12:47');
     $this->assertEquals(3600, $todo->getDuration(), 'Assert done without date uses the date element from the start flag for duration');
 
     $todo = new todo('- design the logo @s15:12');
@@ -192,7 +236,7 @@ class TodoTest extends PHPUnit_Framework_TestCase {
     $todo = new todo('- design the logo @s15:12 @d16:12');
     $this->assertEquals(3600, $todo->getDuration());
 
-    $todo = new todo('- design the logo @s2014-01-01T15:12 @d2014-01-02T16:12');
+    $todo = new todo('- design the logo @s2014-01-01T15:12+0000 @d2014-01-02T16:12+0000');
     $this->assertEquals(3600 + 86400, $todo->getDuration());
   }
 
@@ -324,11 +368,11 @@ class TodoTest extends PHPUnit_Framework_TestCase {
   }
 
   function testGetFlag() {
-    $todo = new Todo('- my item to get done @pJoe @e3.5 @s2014-01-31T13:44 @bc123456 @w4 @d13:44');
+    $todo = new Todo('- my item to get done @pJoe @e3.5 @s2014-01-31T13:44+0000 @bc123456 @w4 @d13:44');
     $this->assertEquals('123456', $todo->getFlag('basecamp'), 'Basecamp is retrieved');
     $this->assertEquals(3.5, $todo->getFlag('estimate'), 'Estimate is retrieved');
     $this->assertEquals('Joe', $todo->getFlag('person'), 'Person is retrieved');
-    $this->assertEquals('2014-01-31T13:44', $todo->getFlag('start'), 'Start is retrieved');
+    $this->assertEquals('2014-01-31T13:44+0000', $todo->getFlag('start'), 'Start is retrieved');
     $this->assertEquals(1004, $todo->getFlag('weight'), 'Weight is retrieved');
     $this->assertEquals('13:44', $todo->getFlag('done'), 'Done is retrieved');
 
