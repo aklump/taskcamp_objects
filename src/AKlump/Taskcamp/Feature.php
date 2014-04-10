@@ -35,7 +35,11 @@ class Feature extends Object implements ObjectInterface {
     
     // (Optional) Title
     if (($title = $this->getTitle())) {
-      $output[] = "# $title";
+      $title = "# $title";
+      if ($flags = $this->getFlags()) {
+        $title .= " $flags";
+      }
+      $output[] = $title;
       $output[] = '';
     }
 
@@ -114,7 +118,7 @@ class Feature extends Object implements ObjectInterface {
   }    
 
   public function getAvailableFlags() {
-    return array('g', 'w', 'p', 'id', 'qb', 'bc', 'mt', 'm', 'f', 'e', 's', 'd', 'h');
+    return array('g', 'id', 'p', 'h', 'e', 's', 'm', 'f', 'd', 'qb', 'bc', 'mt', 'w');
   }
 
   public function getUrls() {
@@ -206,10 +210,10 @@ class Feature extends Object implements ObjectInterface {
     // Grab all todos and assign ids if none.
     $todos = $urls = array();
     $candidates = array();
-    foreach ($this->parsed->lines as $line_index => $line) {
+    foreach ((array) $this->parsed->lines as $line_index => $line) {
 
       if (trim($line)) {
-        $candidate = new Todo($line);
+        $candidate = new Todo($line, $this->getConfig());
         if ($candidate->getParsed('valid_syntax')) {
 
           // Add the next available numeric id if we don't have one.

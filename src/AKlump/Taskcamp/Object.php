@@ -68,23 +68,42 @@ abstract class Object implements ObjectInterface {
   }
 
   public static function dateRegex() {
-    return '((\d{4})\-?(\d{1,2})\-?(\d{1,2}))T(\d{1,2}:\d{2})|(\d{4})\-?(\d{1,2})\-?(\d{1,2})|(\d{1,2}:\d{2})';
+    return '(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}[+-]\d{4})|(\d{4}-\d{2}-\d{2})|(\d{2}:\d{2}[+-]\d{4})|(\d{2}:\d{2})';
+
+    // return '((\d{4})\-?(\d{1,2})\-?(\d{1,2}))(T(\d{1,2}:\d{2})|(\d{4})\-?(\d{1,2})\-?(\d{1,2})|(\d{1,2}:\d{2})?)?';
+
+    return '((\d{4})\-?(\d{1,2})\-?(\d{1,2}))T(?:(\d{1,2}:\d{2})|(\d{4})\-?(\d{1,2})\-?(\d{1,2})|(\d{1,2}:\d{2}))([-+]\d{4})?';
   }
 
   /**
    * Create a DateTime object from a string using config timezone
    *
    * @param  string $string DateTime string
+   * @param  string $context DateTime string The date and timezone will be
+   * pulled from this string if missing from $string.
    *
    * @return DateTime
    */
   public function createDate($string = 'now', $context = NULL) {
-    preg_match('/' . $this->dateRegex() . '/', $string, $matches);
-    preg_match('/' . $this->dateRegex() . '/', $context, $context);
-    $missing_date = strpos($matches[0], 'T') === FALSE;
-    if ($missing_date && !empty($context[1])) {
-      $string = $context[1] . 'T' . $string;
+    $date_parts = '(?:(\d{4}-\d{2}-\d{2}))?T?(?:(\d{2}:\d{2}))?(?:([+-]\d{4}))?';
+    preg_match("/$date_parts/", $string, $matches);
+    array_shift($matches);
+
+    if (preg_match("/$date_parts/", $context, $context)) {
+      array_shift($context);
     }
+
+    if (empty($matches[0]) && !empty($context[0])) {
+      $matches[0] = $context[0];
+    }
+
+    if (empty($matches[2]) && !empty($context[2])) {
+      $matches[2] = $context[2];
+    }
+
+    $matches[0] .= 'T';
+    $string = implode('', $matches);
+
     $date = new \DateTime($string, new \DateTimeZone($this->getConfig('timezone')));
 
     return $date;
@@ -113,7 +132,7 @@ abstract class Object implements ObjectInterface {
    * @see  ObjectInterface::createDate()
    */
   public function getTime($string = 'now') {
-    return $this->createDate($string)->format('G:i');
+    return $this->createDate($string)->format('G:iO');
   }
 
   /**
@@ -126,7 +145,7 @@ abstract class Object implements ObjectInterface {
    * @see  ObjectInterface::createDate()
    */
   public function getDateTime($string = 'now') {
-    return $this->createDate($string)->format('Y-m-d\TH:i');
+    return $this->createDate($string)->format('Y-m-d\TH:iO');
   }
   
   public function getParsed($key) {

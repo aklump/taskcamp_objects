@@ -35,12 +35,12 @@ class Todo extends Object implements TodoInterface {
   }  
 
   public function __toString() {
-    $output  = '- ';
-
+    $output = '';
     if (!$this->getParsed('valid_syntax')) {
       $output .= $this->getSource();
     }
     else {
+      $output .= '- ';
       $output .= '[' . ($this->getParsed('complete') ? 'x' : ' ') . '] ';
       $output .= $this->getTitle();
 
@@ -52,9 +52,21 @@ class Todo extends Object implements TodoInterface {
       // These are strait values, so we use them, as opposed to $flags['start...']
       $start  = $temp->getFlag('start');
       $done   = $temp->getFlag('done');
-      if ($start && $done && substr($start, 0, 11) == substr($done, 0, 11)) {
-        $temp->setFlag('start', substr($start, 11));
-        $flags['start'] = $temp->getFlag('start');
+      if ($start && $done) {
+
+        // Strip the date
+        if (substr($start, 0, 11) == substr($done, 0, 11)) {
+          $start = substr($start, 11);
+          $temp->setFlag('start', $start);
+          $flags['start'] = $temp->getFlag('start');
+        }
+
+        // Strip timezone
+        if (substr($start, -5) == substr($done, -5)) {
+          $start = substr($start, 0, -5);
+          $temp->setFlag('start', $start);
+          $flags['start'] = $temp->getFlag('start');
+        }
       }
 
       $output .= ' ' . $temp->getFlags();
@@ -149,11 +161,11 @@ class Todo extends Object implements TodoInterface {
    *   FALSE means the todo couldn't be parsed
    */
   protected function parse() {
-    $parsed = $this->getSource();
+    $parsed = $source = $this->getSource();
 
     // Expand lazy prefixes
     if (preg_match('/^- (\[ \]) (.*)(?:x| )x$/i', $parsed, $matches)
-      || preg_match('/^- ?\[([ x])? ?\] ?(.*)/i', $parsed, $matches)
+      || preg_match('/^- ?\[ *(x)? *\] ?(.*)/i', $parsed, $matches)
       || preg_match('/^-(x) ?(.*)/i', $parsed, $matches)
       || preg_match('/^-\s*()(.*)/', $parsed, $matches)) {
       $parsed = '- [' . (trim($matches[1]) ? 'x' : ' ') . '] ' . $matches[2];
@@ -164,6 +176,11 @@ class Todo extends Object implements TodoInterface {
       'valid_syntax' => FALSE,
       'complete' => FALSE,
     );
+
+    // Do not allow '---' to be construed as a todo
+    if ($source === '---') {
+      return FALSE;
+    }
 
     foreach ($this->getFlagSchema() as $data) {
       $this->parsed[$data->id] = NULL;

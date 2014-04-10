@@ -14,6 +14,54 @@ require_once '../vendor/autoload.php';
 
 class FeatureTest extends PHPUnit_Framework_TestCase {
 
+  public function testFlagsInTitleToString() {
+    $subject = <<<EOD
+# Demo of saving @s2014-04-10 @m2014-04-10 @f2014-04-10
+
+Use this to test the saving and completion process.
+
+- [ ] when marking done with id in master, make it replace original @id0
+- [ ] when marking done with no id, make it append to the original @id1
+- [ ] when done make it add the effective start date @id2
+- [ ] when done it should be removed from notes @id3
+- [ ] when creating a node, the original should be reprinted @id4
+- [ ] print the feature flags in the title @id7 @e.5
+- [ ] add to field_todos_completed with UTC timestamp when marking complete @id8 @e.25
+EOD;
+    $obj = new Feature($subject);
+    $this->assertSame($subject, (string) $obj);
+  }
+
+  public function testPurgeScenario() {
+    $subject = <<<EOD
+- [ ] get things using the correct timezone @id10
+
+- timezone woking correctly @d
+
+- [ ] when done make it add the effective start date @id2
+- [x] timezone woking correctly @id9 @s21:42 @d2014-04-09T22:05 @w1000    
+EOD;
+    $obj = new Feature($subject);
+    $obj->purgeCompleted();
+    $control = <<<EOD
+- [ ] get things using the correct timezone @id10
+
+
+- [ ] when done make it add the effective start date @id2
+EOD;
+    $this->assertSame($control, (string) $obj);
+  }
+
+  public function testTimeZoneInheritance() {
+    $tz = "Antarctica/Casey";
+    $obj = new Feature('- a todo with an inherited timezone', array('timezone' => $tz));
+    $this->assertSame($tz, $obj->getConfig('timezone'));
+
+    foreach ($obj->getTodos()->getList()->get() as $todo) {
+      $this->assertSame($tz, $todo->getConfig('timezone'));
+    }
+  }
+
   public function testPurgeCompleted() {
     $subject = <<<EOD
 # Title
@@ -508,7 +556,7 @@ A little preamble
 EOD;
     $feature = new Feature($subject);
     $this->assertEquals('Security Updates to Core', $feature->getTitle());
-    $this->assertEquals('@gWednesday @w-10 @pAaron @qb"In the Loft:Taskcamp" @bc123456 @f2014-01-31 @e3 @s2014-01-05', $feature->getFlags());
+    $this->assertEquals('@gWednesday @pAaron @e3 @s2014-01-05 @f2014-01-31 @qb"In the Loft:Taskcamp" @bc123456 @w-10', $feature->getFlags());
     $this->assertEquals('Wednesday', $feature->getFlag('group'));
     $this->assertEquals(-10, $feature->getFlag('weight'));
     $this->assertEquals('Aaron', $feature->getFlag('person'));
