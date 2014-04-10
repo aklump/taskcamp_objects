@@ -1,0 +1,53 @@
+Table of Flags/Headers
+
+   @see Object::getFlagSchema()
+
+   flag   type    header key               meaning
+   @bc  string    Basecamp   Basecamp uuid of the item
+   @d   date      Completed  When it was done/finished/completed
+   @e   float     Estimate   Estimated Time To Complete
+   @f   date      Finish     Targeted finish date
+   @g   string    Group      The group name
+   @h   float     Hours      Actual hours from start to finish
+   @m   date      Milestone  Milestone other than finish date
+   @mt  string    Mantis     Mantis uuid
+   @p   string    Person     Person responsible
+   @qb  string    Quickbooks Quickbooks uuid
+   @s   datetime  Start      Start Time
+   @w   int|float Weight     Weight (or Priority Rank)
+
+Feature with Headers instead of Flags
+
+Client: In the Loft Studios, LLC
+Project: intheloftstudios.com
+Weight: 190
+Person: Aaron Klump
+Estimate: 100
+Group: Next Week
+Start: 2014-01-12
+Milestone: 2014-03-01
+Finish: 2014-06-01
+Completed:
+Basecamp: https://intheloftstudios.basecamphq.com/projects/1234-intheloftstudios
+-com/todo_lists
+Mantis: http://mantis.intheloftstudios.com.com/view.php?id=49
+Quickbooks: In the Loft:Redesign
+
+# New Feature
+
+Todo with Headers instead of Flags
+
+Client: In the Loft Studios, LLC
+Project: intheloftstudios.com
+Feature: Responsive Design
+Weight: 190
+Person: Aaron Klump
+Estimate: 3
+Start: 2014-01-12
+Milestone: 2014-03-01
+Finish: 2014-06-01
+Completed:
+Basecamp: https://intheloftstudios.basecamphq.com/projects/1234-intheloftstudios
+-com/todo_lists
+
+- [ ] meet with the designer

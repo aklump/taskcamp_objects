@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Headers</title>
+    <style type="text/css" media="all">
+      @import url("default.css");
+      @import url("style.css");
+    </style>
+</head>
+
+<body class="page-headers">
+<header>
+<div class="pager">
+  <a href="todo.html" class="prev todo" >&laquo;Todos</a>
+  <a href="index.html" class="index">Index</a>
+  <a href="available_headers.html" class="next available_headers">List of Header Keys&raquo;</a>
+</div>
+
+</header>
+<h1>Headers</h1>
+<div class="breadcrumb"><a href="index.html">Index</a></div>
+
+
+<p>Taskcamp headers can be thought of and are represented in the same way as email headers or HTTP headers.  Basically the first lines of text can provide meta information (sometimes equivalent to (flags)[flags.html]).  Headers are key/value pairs, separated by a colon.  The keys are NOT case-sensitive. The header is separated from the body by the a blank line.  Here is an example document (a Feature) showing headers.  Headers can be applied to anything but they make the most sense in Projects or Features.  As you can see too, they serve to tie Clients, Projects and Features together.  Notice that header values do not need to be wrapped in double quotes (as do flags).</p>
+
+<pre><code>Project: intheloftstudios.com
+Client: In the Loft Studios, LLC
+Weight: 10
+Finish: 2014-06-01
+
+# Website Redesign
+
+This will be a revamp of the current website to allow for responsive design.
+
+- [ ] meet with designer @pAaron
+- [ ] design the site @pSturla
+- [ ] approve design @pAaron
+- [ ] implement design @pAaron
+</code></pre>
+
+<h2>The header is:</h2>
+
+<pre><code>Project: intheloftstudios.com
+Client: In the Loft Studios, LLC
+Weight: 10
+Finish: 2014-06-01
+</code></pre>
+
+<h2>The title is:</h2>
+
+<pre><code># Website Redesign
+</code></pre>
+
+<h2>The description is:</h2>
+
+<pre><code>This will be a revamp of the current website to allow for responsive design.
+</code></pre>
+
+<h2>Priorities can be seen here:</h2>
+
+<pre><code>- [ ] meet with designer @pAaron
+- [ ] design the site @pSturla
+- [ ] approve design @pAaron
+- [ ] implement design @pAaron
+</code></pre>
+
+<h2>Alternative Respresentation using flags for headers.</h2>
+
+<p>Notice some of the meta information can be represented with flags.  This is an equivalent way to write the same information using flags for weight and finish.  However some meta information is not available as a flag, in this case <code>Project</code> and <code>Client</code>.</p>
+
+<pre><code>Project: intheloftstudios.com
+Client: In the Loft Studios, LLC
+
+# Website Redesign @w10 @f2014-06-01
+
+This will be a revamp of the current website to allow for responsive design.
+
+- [ ] meet with designer @pAaron
+- [ ] design the site @pSturla
+- [ ] approve design @pAaron
+- [ ] implement design @pAaron
+</code></pre>
+<footer>
+<div class="pager">
+  <a href="todo.html" class="prev todo" >&laquo;Todos</a>
+  <a href="index.html" class="index">Index</a>
+  <a href="available_headers.html" class="next available_headers">List of Header Keys&raquo;</a>
+</div>
+
+
+  <div id="footer-legaleeze">
+    <p class="legaleeze center">Version: 0.5.2 &bull; Last Updated: Thu, 10 Apr 2014 10:45:43 -0700</p>
+  </div>
+</footer>
+</body>
+</html>
+

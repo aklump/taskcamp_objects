@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Todos</title>
+    <style type="text/css" media="all">
+      @import url("default.css");
+      @import url("style.css");
+    </style>
+</head>
+
+<body class="page-todo">
+<header>
+<div class="pager">
+  <a href="feature.html" class="prev feature" >&laquo;Features</a>
+  <a href="index.html" class="index">Index</a>
+  <a href="headers.html" class="next headers">Headers&raquo;</a>
+</div>
+
+</header>
+<h1>Todos</h1>
+<div class="breadcrumb"><a href="index.html">Index</a></div>
+
+<p>The inspiration for this markup comes from <a href="http://daringfireball.net/projects/markdown/syntax">Markdown</a> and <a href="https://help.github.com/articles/github-flavored-markdown">Github flavored markdown</a>.</p>
+
+<h2>Format</h2>
+
+<ol>
+<li>A todo is a single line of text (no line breaks).</li>
+<li>It begins with <code>- [ ]</code>; however see the note below about sloppy format.</li>
+<li>Various time flags are based on the <a href="http://www.w3.org/TR/NOTE-datetime">DateTime format</a>.</li>
+<li>See also <a href="https://github.com/blog/1375-task-lists-in-gfm-issues-pulls-comments">github.com</a>.</li>
+</ol>
+
+<h3>Sloppy Format</h3>
+
+<p>All of the following are shorthand methods that expand on compile...</p>
+
+<pre><code>-a todo item
+- a todo item
+-[]a todo item
+-[ ]a todo item
+- []a todo item
+</code></pre>
+
+<p>...to become...</p>
+
+<pre><code>- [ ] a todo item
+</code></pre>
+
+<p>All of these completed todos...</p>
+
+<pre><code>-x a todo item
+-X a todo item
+-xa todo item
+-Xa todo item
+-[x]a todo item
+-[x ]a todo item
+-[X]a todo item
+-[X ]a todo item
+- [x]a todo item
+- [x ]a todo item
+- [X]a todo item
+- [X ]a todo item
+- [ ] a todo item x
+- [ ] a todo itemxx
+</code></pre>
+
+<p>...become...</p>
+
+<pre><code>- [x] a todo item
+</code></pre>
+
+<h3>Completed Status</h3>
+
+<p>The completed status is shown by the presence or absence of an x in the todo prefix.</p>
+
+<p>This item is pending</p>
+
+<pre><code>- [ ] A pending item
+</code></pre>
+
+<p>This item is complete</p>
+
+<pre><code>- [x] A complete item
+</code></pre>
+
+<h3>Completed Items</h3>
+
+<p>Completed items will have 1000 added to their weight flag value to move them to the bottom of lists.</p>
+
+<h2>UML</h2>
+
+<p><img src="images/uml-todo.png" alt="Todo UML" /></p>
+<footer>
+<div class="pager">
+  <a href="feature.html" class="prev feature" >&laquo;Features</a>
+  <a href="index.html" class="index">Index</a>
+  <a href="headers.html" class="next headers">Headers&raquo;</a>
+</div>
+
+
+  <div id="footer-legaleeze">
+    <p class="legaleeze center">Version: 0.5.2 &bull; Last Updated: Thu, 10 Apr 2014 10:45:44 -0700</p>
+  </div>
+</footer>
+</body>
+</html>
+

@@ -6,7 +6,7 @@
 ##
  # An array of output formats to disable, if any
  #
-#disabled = "website drupal html text mediawiki doxygene"
+disabled = "drupal html mediawiki doxygene"
 
 ##
  # File path to the php you want to use for compiling
