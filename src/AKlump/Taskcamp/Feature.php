@@ -35,7 +35,11 @@ class Feature extends Object implements ObjectInterface {
     
     // (Optional) Title
     if (($title = $this->getTitle())) {
-      $output[] = "# $title";
+      $title = "# $title";
+      if ($flags = $this->getFlags()) {
+        $title .= " $flags";
+      }
+      $output[] = $title;
       $output[] = '';
     }
 
@@ -114,7 +118,7 @@ class Feature extends Object implements ObjectInterface {
   }    
 
   public function getAvailableFlags() {
-    return array('g', 'w', 'p', 'id', 'qb', 'bc', 'mt', 'm', 'f', 'e', 's', 'd', 'h');
+    return array('g', 'id', 'p', 'h', 'e', 's', 'm', 'f', 'd', 'qb', 'bc', 'mt', 'w');
   }
 
   public function getUrls() {
