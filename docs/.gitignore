@@ -1,6 +1,10 @@
 *
 !.gitignore
 !core-config.sh
+!public_html
+!public_html/*
+!text
+!text/*
 !source
 !source/*
 source/.*

@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Features</title>
+    <style type="text/css" media="all">
+      @import url("default.css");
+      @import url("style.css");
+    </style>
+</head>
+
+<body class="page-feature">
+<header>
+<div class="pager">
+  <a href="project.html" class="prev project" >&laquo;Projects</a>
+  <a href="index.html" class="index">Index</a>
+  <a href="todo.html" class="next todo">Todos&raquo;</a>
+</div>
+
+</header>
+<h1>Features</h1>
+<div class="breadcrumb"><a href="index.html">Index</a></div>
+
+<h2>Overview</h2>
+
+<p>A Feature is a block of markdown text that is parsed to extract the following types of information:</p>
+
+<ul>
+<li>Title</li>
+<li>Description</li>
+<li>URLS</li>
+<li>Todos (as a Priority List)</li>
+<li>Files</li>
+</ul>
+
+<h3>Title</h3>
+
+<p>The highest markdown heading e.g. <code># My title</code>, or the first line of text if no headings exist.</p>
+
+<h3>Flags</h3>
+
+<p>Flags should be appended to the title.  See Features::getAvailableTags().</p>
+
+<h3>Description</h3>
+
+<p>The description is the first markdown paragraph to follow the title.  It should follow this pattern:</p>
+
+<ol>
+<li>'# some title'</li>
+<li>blank line</li>
+<li>series of one or more lines = description</li>
+<li>blank line</li>
+<li><p>rest of document</p>
+
+
+<p>This
+is
+the
+description.</p>
+
+<p>but this is not.</p></li>
+</ol>
+
+<h3>URLS</h3>
+
+<p>Any string of text that begins with <code>http://</code> through to the first whitespace.  All URLS are available as a <em>unique</em> array, in the order they appear in the text.</p>
+
+<h3>Todos</h3>
+
+<p>All todo items will be copied into and are available as a Priority List whose title and description inherit those of the Feature. See also <a href="todo.html">Todos</a>, <a href="priorities.html">Priorities</a>.</p>
+
+<h3>Files</h3>
+
+<p>A list of file paths preceeded by a header of <code>Files</code>, e.g.</p>
+
+<pre><code>## Files
+/some/great/path/index.html
+/some/great/path/import.php
+</code></pre>
+<footer>
+<div class="pager">
+  <a href="project.html" class="prev project" >&laquo;Projects</a>
+  <a href="index.html" class="index">Index</a>
+  <a href="todo.html" class="next todo">Todos&raquo;</a>
+</div>
+
+
+  <div id="footer-legaleeze">
+    <p class="legaleeze center">Version: 0.5.2 &bull; Last Updated: Thu, 10 Apr 2014 10:45:43 -0700</p>
+  </div>
+</footer>
+</body>
+</html>
+

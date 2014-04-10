@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Flags</title>
+    <style type="text/css" media="all">
+      @import url("default.css");
+      @import url("style.css");
+    </style>
+</head>
+
+<body class="page-flags">
+<header>
+<div class="pager">
+  <a href="available_headers.html" class="prev available_headers" >&laquo;List of Header Keys</a>
+  <a href="index.html" class="index">Index</a>
+  <a href="priorities.html" class="next priorities">Priorities&raquo;</a>
+</div>
+
+</header>
+<h1>Flags</h1>
+<div class="breadcrumb"><a href="index.html">Index</a></div>
+
+
+<p>Flags give meta information about the object including the estimate time to complete, who it's assigned to and when it was finished, to name a few.</p>
+
+<ol>
+<li>You can escape a non flag like this <code>\@d</code>, using the backslash.</li>
+<li>Multiple flags should be separated by a single space.</li>
+<li>By convention, flags should come at the end of the line, not in the middle.</li>
+<li>Flag values with a space should be wrapped in double quotes, e.g. <code>@qb"In the Loft Studios"</code></li>
+<li>Flag values cannot contain double quotes.</li>
+</ol>
+
+<p>This is incorrect:</p>
+
+<pre><code>- [ ] @s6:33 This todo was @d today.
+</code></pre>
+
+<p>This is correct:</p>
+
+<pre><code>- [ ] This todo was today. @s6:33 @d
+</code></pre>
+
+<h2>Time</h2>
+
+<ul>
+<li>This regex is used in all time regexes below...</li>
+</ul>
+
+<h2>Estimated Time To Complete</h2>
+
+<ul>
+<li>Estimates are written in hours.</li>
+<li>For minutes enter the decimal fraction, where 30 minutes is written as <code>.5</code>.</li>
+</ul>
+
+<p>The following todo item is estimated to take 15 minutes:</p>
+
+<pre><code>- [ ] Refactor the css @e.25
+</code></pre>
+
+<h2>Start Time</h2>
+
+<p><em>Default</em>: Current time, HH:SS (Current time will be appended if only <code>@s</code> is present)</p>
+
+<p>The following todo item was begun at 5:45 am</p>
+
+<pre><code>- [ ] Refactor the css @e.25 @s5:45
+</code></pre>
+
+<h2>Milestone/Target Date</h2>
+
+<p>The date this todo item is targeted for completion</p>
+
+<h2>Done (Completed) Time</h2>
+
+<p><em>Default</em>: Current datetime, YYYY-MM-DDTHH:SS</p>
+
+<p>The following todo item will be marked complete on compile</p>
+
+<pre><code>- [ ] Refactor the css @e.25 @s5:45 @d
+</code></pre>
+
+<h2>Weight (or Priority/Rank)</h2>
+
+<p><em>Default</em>: 0</p>
+
+<p>These two todos, will be listed in reverse order when parsed:</p>
+
+<pre><code>- [ ] Finish the job
+- [ ] Start the job @w-1
+</code></pre>
+
+<h2>Person Assigned To</h2>
+
+<p>The following are examples of items assigned to two different people:</p>
+
+<pre><code>- [ ] Finish page.tpl @pcharlie
+- [ ] Finish page.tpl @p"Abe Lincoln"
+</code></pre>
+
+<h2>Basecamp Linked</h2>
+
+<p>The basecamp flag defines the Basecamp id of the linked todo list item</p>
+
+<p>This item is linked to a basecamp todo item of id <code>10690704</code></p>
+
+<pre><code>- [ ] A linked Basecamp todo item @bc10690704
+</code></pre>
+<footer>
+<div class="pager">
+  <a href="available_headers.html" class="prev available_headers" >&laquo;List of Header Keys</a>
+  <a href="index.html" class="index">Index</a>
+  <a href="priorities.html" class="next priorities">Priorities&raquo;</a>
+</div>
+
+
+  <div id="footer-legaleeze">
+    <p class="legaleeze center">Version: 0.5.2 &bull; Last Updated: Thu, 10 Apr 2014 10:45:43 -0700</p>
+  </div>
+</footer>
+</body>
+</html>
+
