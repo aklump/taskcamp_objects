@@ -14,6 +14,105 @@ require_once '../vendor/autoload.php';
 
 class FeatureTest extends PHPUnit_Framework_TestCase {
 
+  public function testPurgeCompleted() {
+    $subject = <<<EOD
+# Title
+
+- [ ] item @id0
+- [x] another item @id1
+- [ ] third item
+EOD;
+
+    $obj = new Feature($subject);
+    $return = $obj->purgeCompleted();
+    $this->assertInstanceOf('\AKlump\Taskcamp\ObjectInterface', $return);
+    $control = <<<EOD
+# Title
+
+- [ ] item @id0
+- [ ] third item @id2
+EOD;
+
+    $this->assertSame($control, (string) $obj);    
+  }
+
+  public function testNextId() {
+    $subject = <<<EOD
+# Demo of saving
+
+Use this to test the saving and completion process.
+
+- [ ] when marking done with id in master, make it replace original @id0
+- [ ] when marking done with no id, make it append to the original @id1
+- [ ] when done make it add the effective start date @id2
+- [ ] when done it should be removed from notes @id3
+- [ ] when creating a node, the original should be reprinted @id4
+- [x] goat @id5 @s18:23 @d2014-04-09T18:34 @w1000    
+EOD;
+    $obj = new Feature($subject);
+    $this->assertSame(6, $obj->getTodos()->getList()->getNextId());
+  }
+
+  public function testAutoIncrementConfig() {
+    $subject = <<<EOD
+# Title
+
+- [ ] item @id0
+- [x] another item @id1
+- [ ] third item
+EOD;
+
+    $obj = new Feature($subject, array('auto_increment' => 17));
+    $control = <<<EOD
+# Title
+
+- [ ] item @id0
+- [x] another item @id1
+- [ ] third item @id17
+EOD;
+    $this->assertSame($control, (string) $obj);
+
+    $subject = <<<EOD
+# Title
+
+- [ ] item
+- [x] another item
+- [ ] third item
+EOD;
+
+    $obj = new Feature($subject, array('auto_increment' => 17));
+    $control = <<<EOD
+# Title
+
+- [ ] item @id17
+- [x] another item @id18
+- [ ] third item @id19
+EOD;
+    $this->assertSame($control, (string) $obj);
+  }
+
+  public function testRemoveParsedLine() {
+    $subject = <<<EOD
+# Title
+
+- [ ] item @id0
+- [ ] another item @id1
+- [ ] third item
+EOD;
+
+    $obj = new Feature($subject);
+    $return = $obj->deleteLine(1);
+    $this->assertSame('- [ ] another item @id1', $return);
+    $control = <<<EOD
+# Title
+
+- [ ] item @id0
+- [ ] third item @id2
+EOD;
+
+    $this->assertSame($control, (string) $obj);
+  }
+
   public function testExtraTodo() {
     $subject = <<<EOD
 # Title

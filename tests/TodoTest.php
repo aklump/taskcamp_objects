@@ -11,6 +11,13 @@ use \AKlump\Taskcamp\Todo as Todo;
 
 class TodoTest extends PHPUnit_Framework_TestCase {
 
+  public function testSimplify() {
+    $obj = new Todo('- [x] some done todo @id5 @s2014-04-09T19:35 @d2014-04-09T13:16 @w1000');
+    $control = '- [x] some done todo @id5 @s19:35 @d2014-04-09T13:16 @w1000';
+    $this->assertSame($control, (string) $obj);
+  }
+
+
   public function testPrintingSAndDFlags() {
     $obj = new Todo('- [x] do this');
     $obj->setFlag('start', '2014-04-09T08:28');
@@ -251,7 +258,7 @@ class TodoTest extends PHPUnit_Framework_TestCase {
   function testConfig() {
     $todo = new todo();
     $control = (object) array(
-      'timezone' => 'America/Los_Angeles', 
+      'timezone' => 'UTC', 
       'flag_prefix' => '@', 
       'weight' => 1000,
       'milestone' => 1209600, 
@@ -260,11 +267,11 @@ class TodoTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($control, $todo->getConfig(), 'Default config is set correctly.');
 
     $todo = new todo('', array(
-      'timezone' => 'UTC', 
+      'timezone' => 'America/Los_Angeles', 
       'hair_color' => 'blonde', 
     ));
     $control = (object) array(
-      'timezone' => 'UTC', 
+      'timezone' => 'America/Los_Angeles', 
       'flag_prefix' => '@', 
       'weight' => 1000,
       'hair_color' => 'blonde',

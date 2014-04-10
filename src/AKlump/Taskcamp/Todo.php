@@ -52,7 +52,7 @@ class Todo extends Object implements TodoInterface {
       // These are strait values, so we use them, as opposed to $flags['start...']
       $start  = $temp->getFlag('start');
       $done   = $temp->getFlag('done');
-      if ($start && $done && substr($start, 2, 11) == substr($done, 2, 11)) {
+      if ($start && $done && substr($start, 0, 11) == substr($done, 0, 11)) {
         $temp->setFlag('start', substr($start, 11));
         $flags['start'] = $temp->getFlag('start');
       }

@@ -27,11 +27,21 @@ abstract class Object implements ObjectInterface {
     $this->setConfig($config);
     $this->setSource($source);
   }
+
+  public function setSource($source) {
+    $this->data['source'] = (string) $source;
+    $this->parse();
+    return $this;
+  }
+  
+  public function getSource() {
+    return $this->data['source'];
+  }  
   
   public function setConfig($config) {
     $this->data['config'] = new \stdClass;
     $config = (array) $config + array(
-      'timezone' => 'America/Los_Angeles', 
+      'timezone' => 'UTC', 
       'milestone' => 14 * 86400, 
       'flag_prefix' => '@', 
       'weight' => 1000, 
@@ -59,17 +69,6 @@ abstract class Object implements ObjectInterface {
 
   public static function dateRegex() {
     return '((\d{4})\-?(\d{1,2})\-?(\d{1,2}))T(\d{1,2}:\d{2})|(\d{4})\-?(\d{1,2})\-?(\d{1,2})|(\d{1,2}:\d{2})';
-  }
-
-  public function setSource($source) {
-    $this->data['source'] = (string) $source;
-    $this->parse();
-  
-    return $this;
-  }
-  
-  public function getSource() {
-    return $this->data['source'];
   }
 
   /**
@@ -410,7 +409,37 @@ abstract class Object implements ObjectInterface {
   /**
    * Transforms Object::source into Object::parsed
    */
-  abstract protected function parse();
+  protected function parse() {
+    // Trim front/back whitespace
+    $source     = trim($this->getSource());
+    if (empty($source)) {
+      return;
+    }
+
+    $this->parsed = new \stdClass;
+    $this->parsed->source = $source;
+    $this->parsed->lines = preg_split('/\n|\r\n?/', $source);
+
+    // Grab all paragraphs and trim each
+    $this->parsed->p   = array_values(array_filter(preg_split('/\n\n|\r\n\r\n?/', $source)));
+    foreach ($this->parsed->p as $key => $value) {
+      $this->parsed->p[$key] = trim(str_replace("\r\n", "\n", $value));
+    }
+  }
+
+  public function deleteLine($line_number) {
+    $return = $this->parsed->lines[$line_number];
+
+    // Remove todos if found
+    $id = $this->parsed->todos_by_line[$line_number];
+    $this->getTodos()->getList()->remove($id);
+    unset($this->parsed->todos_by_line[$line_number]);
+
+    // Remove the line
+    unset($this->parsed->lines[$line_number]);
+
+    return $return;
+  }
 
   /**
    * Given a string of text parse out and set flags

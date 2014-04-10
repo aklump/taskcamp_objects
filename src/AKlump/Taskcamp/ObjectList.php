@@ -1,13 +1,46 @@
 <?php
 namespace AKlump\Taskcamp;
 
-class ObjectList {
+class ObjectList implements ObjectListInterface {
 
   protected $items = array();
 
+  public function replace($id, ObjectInterface $item, $add_if_not_found = TRUE) {
+    $item->setFlag('id', $id);
+    
+    $replaced = FALSE;
+    if ($id = $item->getFlag('id')) {
+      foreach ($this->items as $key => $value) {
+        if ((string) $value->getFlag('id') === (string) $id) {
+          $this->items[$key] = $item;
+          $replaced = TRUE;
+        }
+      }
+    }
+
+    if ($replaced) {
+      return 1;
+    }
+    elseif ($add_if_not_found) {
+      $before = $this->count();
+      $this->add($item);
+      return $this->count() === $before + 1 ? 2 : 0;
+    }
+    
+    return 0;
+  }
+
   public function add(ObjectInterface $item) {
+    if ($id = $item->getFlag('id')) {
+      foreach ($this->items as $key => $value) {
+        if ((string) $value->getFlag('id') === (string) $id) {
+          return $this;
+        }
+      }
+    }
+
     // Do not try to add a key here.
-    $this->items[] = $item;
+    $this->items[] = $item;      
     
     return $this;
   }
@@ -33,11 +66,20 @@ class ObjectList {
    * Generate numeric ids for all items missing them starting with the the
    * next highest number of 0 if no numeric ids exist.
    *
-   * @return [type] [description]
+   * @param  int $auto_increment  Ids will be generated starting with this
+   * number UNLESS there are numberic ids higher, in which case the highest
+   * is used.
+   *
+   * @return int The highest numerical id. -1 means no numerical ids.
    */
-  public function generateIds() {
+  public function generateIds($auto_increment = 0) {
     $start = 0;
     $missing = array();
+
+    if (empty($this->items)) {
+      return -1;
+    }
+
     foreach ($this->items as $todo) {
       if (($id = $todo->getFlag('id')) === NULL) {
         $missing[] = $todo;
@@ -46,12 +88,35 @@ class ObjectList {
         $ids[] = $id * 1;
       }
     }
+
     $primary = empty($ids) ? 0 : max($ids) + 1;
+    $primary = max($auto_increment, $primary);
+
     foreach ($missing as $todo) {
       $todo->setFlag('id', (string) $primary++);
     }
 
-    return $this;
+    return (int) $primary - 1;
+  }
+
+  /**
+   * Return the next numerica id that is not yet used.
+   *
+   * @param  int $minimum_id  The minimum value to return.  This value is
+   * passed as the auto_increment value to self::generateIds().
+   *
+   * @return int
+   */
+  public function getNextId($minimum_id = 0) {
+    $temp = clone $this;
+    $highest = $temp->generateIds($minimum_id);
+    unset($temp);
+
+    if ($highest === -1) {
+      return (int) max(0, $minimum_id);
+    }
+
+    return (int) max($highest + 1, $minimum_id);
   }
 
   /**
@@ -84,7 +149,7 @@ class ObjectList {
     }
 
     return array_values($array);
-  }    
+  }   
 
   public function remove($id = NULL) {
     if ($id === NULL) {
@@ -139,12 +204,12 @@ class ObjectList {
   }
 
   public function __toString() {
-    $output  = '';
+    $output   = array();
     foreach ($this->getSorted() as $value) {
-      $output .= (string) $value . PHP_EOL;
+      $output[] = (string) $value;
     }
     
-    return $output;
+    return implode(PHP_EOL, $output);
   }
 
 }

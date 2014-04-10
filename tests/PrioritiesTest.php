@@ -50,10 +50,10 @@ EOD;
   function testToString() {
     $priorities = new Priorities("Title", "Description");
     $priorities->getList()
-      ->add(new Todo('- Mi @w10'), 'mi')
-      ->add(new Todo('- Do'), 'do')
-      ->add(new Todo('- Re'), 're')
-      ->add(new Todo ('Below here after vacation...'), 'br');
+      ->add(new Todo('- Mi @w10'))
+      ->add(new Todo('- Do'))
+      ->add(new Todo('- Re'))
+      ->add(new Todo ('Below here after vacation...'));
 
     $this->assertCount(4, $priorities->getList()->getSorted()); 
 
@@ -65,7 +65,6 @@ Description
 - [ ] Re
 - Below here after vacation...
 - [ ] Mi @w10
-
 EOD;
 
     $this->assertEquals($control, (string) $priorities);

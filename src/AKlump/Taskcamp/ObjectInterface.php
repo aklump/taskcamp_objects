@@ -157,4 +157,11 @@ interface ObjectInterface {
    * @return mixed
    */
   public function getParsed($key);
+
+  /**
+   * Deletes a single line of content by line number
+   *
+   * @return string  The string content of the deleted line.
+   */
+  public function deleteLine($line_number);
 }

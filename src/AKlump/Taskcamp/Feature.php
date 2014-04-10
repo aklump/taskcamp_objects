@@ -22,6 +22,9 @@ class Feature extends Object implements ObjectInterface {
 
       // Set this to true and todos will be rewritten on print
       'rewrite_todos' => TRUE,
+
+      // Define the first id to be auto assigned.
+      'auto_increment' => 0,
     );
 
     return parent::setConfig($config);
@@ -46,16 +49,17 @@ class Feature extends Object implements ObjectInterface {
     // based on any in parsed lines.
     $missing_todo_list = clone $this->getTodos()->getList();
     $lines = $this->getParsed('lines');
-    foreach ($this->getParsed('todos_by_line') as $line_number => $line_todo) {
-      
-      // Remove from the missing list
-      $id = $line_todo->getFlag('id');
-      $missing_todo_list->remove($id);
+    foreach ($this->getParsed('todos_by_line') as $line_number => $line_todo_id) {
+      foreach ($this->getTodos()->getList()->get($line_todo_id) as $line_todo) {
+        // Remove from the missing list
+        $id = $line_todo->getFlag('id');
+        $missing_todo_list->remove($id);
 
-      // Now rewrite line_todo if config calls for it
-      if ($this->getConfig('rewrite_todos')) {
-        $lines[$line_number] = (string) $line_todo;
-      }      
+        // Now rewrite line_todo if config calls for it
+        if ($this->getConfig('rewrite_todos')) {
+          $lines[$line_number] = (string) $line_todo;
+        }      
+      }    
     }
 
     $output = array_merge($output, $lines);
@@ -134,23 +138,12 @@ class Feature extends Object implements ObjectInterface {
   }
 
   public function parse() {
-    // Trim front/back whitespace
-    $source     = trim($this->getSource());
-    if (empty($source)) {
-      return;
-    }
+    parent::parse();
+    $source = $this->parsed->source;
 
-    $this->parsed = new \stdClass;
     $this->urls   = array();
     $this->files  = new ObjectList();
     $this->todos  = new Priorities();
-    $this->parsed->lines = preg_split('/\n|\r\n?/', $source);
-
-    // Grab all paragraphs and trim each
-    $this->parsed->p   = array_values(array_filter(preg_split('/\n\n|\r\n\r\n?/', $source)));
-    foreach ($this->parsed->p as $key => $value) {
-      $this->parsed->p[$key] = trim(str_replace("\r\n", "\n", $value));
-    }
 
     // find h1's and title
     $title = '';
@@ -216,10 +209,18 @@ class Feature extends Object implements ObjectInterface {
     foreach ($this->parsed->lines as $line_index => $line) {
 
       if (trim($line)) {
-        $candidate = new Todo($line, array('show_ids' => TRUE));
+        $candidate = new Todo($line);
         if ($candidate->getParsed('valid_syntax')) {
+
+          // Add the next available numeric id if we don't have one.
+          $id = $candidate->getFlag('id');
+          if (!$id && (string) $id !== '0') {
+            $auto_id = $this->todos->getList()->getNextId($this->getConfig('auto_increment'));
+            $candidate->setFlag('id', $auto_id);
+          }
+
           $this->todos->getList()->add($candidate);
-          $this->parsed->todos_by_line[$line_index] = $candidate;
+          $this->parsed->todos_by_line[$line_index] = $candidate->getFlag('id');
         }
       }
 
@@ -244,7 +245,7 @@ class Feature extends Object implements ObjectInterface {
       //   );
       // }
     }
-    $this->todos->getList()->generateIds();
+    $this->todos->getList()->generateIds($this->getConfig('auto_increment'));
 
 
     // // Set the title
@@ -289,5 +290,18 @@ class Feature extends Object implements ObjectInterface {
       return $a[1] < $b[1] ? -1 : 1;
     }
     return $a[0] < $b[0] ? -1 : 1;
+  }
+
+  public function purgeCompleted() {
+    foreach ($this->getParsed('todos_by_line') as $line_number => $id) {
+      foreach ($this->getTodos()->getList()->get($id) as $todo) {
+        if ($todo->isComplete()) {
+          $this->deleteLine($line_number);
+          unset($this->parsed_todos_by_line[$line_number]);
+        }
+      }
+    }
+
+    return $this;
   }  
 }
