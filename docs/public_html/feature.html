@@ -29,14 +29,15 @@
 <ul>
 <li>Title</li>
 <li>Description</li>
-<li>URLS</li>
 <li>Todos (as a Priority List)</li>
+<li>Questions</li>
+<li>URLS</li>
 <li>Files</li>
 </ul>
 
 <h3>Title</h3>
 
-<p>The highest markdown heading e.g. <code># My title</code>, or the first line of text if no headings exist.</p>
+<p>The first markdown h1 e.g. <code># My title</code> on the page.</p>
 
 <h3>Flags</h3>
 
@@ -51,24 +52,62 @@
 <li>blank line</li>
 <li>series of one or more lines = description</li>
 <li>blank line</li>
-<li><p>rest of document</p>
-
-
-<p>This
-is
-the
-description.</p>
-
-<p>but this is not.</p></li>
+<li>rest of document</li>
 </ol>
 
-<h3>URLS</h3>
+<p>Example 1:</p>
 
-<p>Any string of text that begins with <code>http://</code> through to the first whitespace.  All URLS are available as a <em>unique</em> array, in the order they appear in the text.</p>
+<pre><code># Title @w-10 @pAaron
+
+This
+is
+the
+description.
+
+but this is not.
+</code></pre>
+
+<p>Example 2:</p>
+
+<pre><code>Some line of text
+
+## Not the title
+
+Some
+paragraph
+of
+text not the description
+
+# This is the Title @w-10 @pAaron
+
+- [ ] this todo gets skipped over
+
+This
+is
+the
+description since it's first paragraph after title.
+
+# This H1 is not, it comes second
+
+and this is just a paragraph.
+</code></pre>
+
+<p><strong>Please note that paragraphs that are questions, or which start with http are not allowed as descriptions.</strong></p>
 
 <h3>Todos</h3>
 
 <p>All todo items will be copied into and are available as a Priority List whose title and description inherit those of the Feature. See also <a href="todo.html">Todos</a>, <a href="priorities.html">Priorities</a>.</p>
+
+<h3>Questions</h3>
+
+<p>Questions are paragraphs which start with a '?'</p>
+
+<pre><code>? This is a question.
+</code></pre>
+
+<h3>URLS</h3>
+
+<p>Any string of text that begins with <code>http://</code> through to the first whitespace.  All URLS are available as a <em>unique</em> array, in the order they appear in the text.</p>
 
 <h3>Files</h3>
 
@@ -87,7 +126,7 @@ description.</p>
 
 
   <div id="footer-legaleeze">
-    <p class="legaleeze center">Version: 0.5.2 &bull; Last Updated: Thu, 10 Apr 2014 10:45:43 -0700</p>
+    <p class="legaleeze center">Version: 0.5.2 &bull; Last Updated: Thu, 10 Apr 2014 16:37:52 -0700</p>
   </div>
 </footer>
 </body>

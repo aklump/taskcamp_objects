@@ -464,10 +464,37 @@ abstract class Object implements ObjectInterface {
 
     // Extract the questions
     foreach ($this->parsed->p as $p) {
-      if (preg_match('/^\?\s*(.*)/s', $p, $matches)) {
-        $this->addQuestion($matches[1]);
+      $matches = array();
+      if ($value = $this->isQuestion($p)) {
+        $this->addQuestion($value);
       }
     }    
+  }
+
+  /**
+   * Test a string to see if it's a question
+   *
+   * @param  string  $subject
+   *
+   * @return FALSE||string  The string is the value of the question.
+   */
+  protected function isQuestion($subject) {
+    $is = preg_match('/^\?\s*(.*)/s', $subject, $matches);
+
+    return $is ? $matches[1] : FALSE;
+  }
+  
+  /**
+   * Test a string to see if it begins with an url
+   *
+   * @param  string  $subject
+   *
+   * @return FALSE||string  The string is the extracted url.
+   */
+  protected function isUrl($subject) {
+    $is = preg_match('/^(https?:\/\/[^\s]+)/', $subject, $matches);
+
+    return $is ? $matches[1] : FALSE;
   }
 
   public function deleteLine($line_number) {

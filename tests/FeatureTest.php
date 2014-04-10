@@ -14,6 +14,50 @@ require_once '../vendor/autoload.php';
 
 class FeatureTest extends PHPUnit_Framework_TestCase {
 
+  public function testQuestionCannotBeDescription() {
+    $subject = <<<EOD
+# Title
+
+? This doesn't qualify.
+
+Here is the actual description.
+EOD;
+    $control = <<<EOD
+# Title
+
+Here is the actual description.
+
+? This doesn't qualify.
+EOD;
+    $obj = new Feature($subject);
+    $this->assertSame($control, (string) $obj);
+  }
+
+  public function testUrlCannotBeDescription() {
+    $subject = <<<EOD
+- [ ] make note in read me about this @id0
+
+- [ ] sharing doesn't use the node title or node description, why not? @id1
+- [ ] can we alter that the sharing link pops up in new window or not? not @id2
+
+https://developers.facebook.com/docs/plugins/share-button/
+EOD;
+    $control = <<<EOD
+# Feature Title
+
+Feature description goes here.
+
+- [ ] make note in read me about this @id0
+
+- [ ] sharing doesn't use the node title or node description, why not? @id1
+- [ ] can we alter that the sharing link pops up in new window or not? not @id2
+
+https://developers.facebook.com/docs/plugins/share-button/
+EOD;
+    $obj = new Feature($subject, array('default_description' => 'Feature description goes here.'));
+    $this->assertSame($control, (string) $obj);
+  }
+
   public function testQuestions() {
     $subject = <<<EOD
 # Question Test
