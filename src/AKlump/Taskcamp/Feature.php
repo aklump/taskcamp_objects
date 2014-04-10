@@ -25,6 +25,9 @@ class Feature extends Object implements ObjectInterface {
 
       // Define the first id to be auto assigned.
       'auto_increment' => 0,
+
+      // Define a default title, or set to blank for none
+      'default_title' => "Feature Title",
     );
 
     return parent::setConfig($config);
@@ -53,7 +56,7 @@ class Feature extends Object implements ObjectInterface {
     // based on any in parsed lines.
     $missing_todo_list = clone $this->getTodos()->getList();
     $lines = $this->getParsed('lines');
-    foreach ($this->getParsed('todos_by_line') as $line_number => $line_todo_id) {
+    foreach ((array) $this->getParsed('todos_by_line') as $line_number => $line_todo_id) {
       foreach ($this->getTodos()->getList()->get($line_todo_id) as $line_todo) {
         // Remove from the missing list
         $id = $line_todo->getFlag('id');
@@ -74,47 +77,6 @@ class Feature extends Object implements ObjectInterface {
     }
     
     return trim(implode(PHP_EOL, $output));
-
-
-
-
-
-
-
-
-    // $lines = $this->getParsed('lines');
-    
-    // // Look for todo items not in the parsed array
-    // $missing_todos = clone $this->getTodos()->getList();
-
-    // if (!empty($this->parsed->todos_by_line)) {
-    //   foreach ($this->parsed->todos_by_line as $line_number => $todo) {
-
-    //     // Remove this from our additional since it's already present in our parsed lines array.
-    //     $id = $todo->getFlag('id');
-    //     $missing_todos->remove($id);
-
-
-    //   }
-    // }
-
-    // // Append any missing todo items not in the parsed array
-    // foreach ($missing_todos->get() as $todo) {
-    //   $lines[] = (string) $todo;
-    // }
-
-    // $header = array();
-    // $header[] = '# ' . $this->getTitle();
-
-    // // The description
-    // if (($d = $this->getDescription())) {
-    //   $header[] = '';
-    //   $header[] = $d;
-    // }
-
-    // $header[] = '';    
-
-    // return implode(PHP_EOL, $header) . PHP_EOL . trim(implode(PHP_EOL, $lines));
   }    
 
   public function getAvailableFlags() {
@@ -145,47 +107,67 @@ class Feature extends Object implements ObjectInterface {
     parent::parse();
     $source = $this->parsed->source;
 
+    $this->setTitle('');
+    $this->setDescription(''); 
+
+    if (empty($source)) {
+      return;
+    }
+
     $this->urls   = array();
     $this->files  = new ObjectList();
     $this->todos  = new Priorities();
 
     // find h1's and title
     $title = '';
-    if (preg_match_all('/(#+)\s?([^#].*)/', $source, $matches)) {
+    if (preg_match_all('/^(#+)\s?([^#].*)/m', $source, $matches)) {
       $this->parsed->headings = array();
-      foreach ($matches[2] as $key => $title) {
+      foreach ($matches[2] as $key => $title_candidate) {
         $element = 'h' . strlen($matches[1][$key]);
         $find = $matches[0][$key];
-        $this->parsed->headings[$element][$find] = $title;
+        $this->parsed->headings[$element][$find] = $title_candidate;
       }
       ksort($this->parsed->headings);
       
-      $top_level = reset($this->parsed->headings);
-      $title = reset($top_level);
-      
-      // Remove the line that contains the title
-      $find = key($top_level);
-      $remove = array_search($find, $this->parsed->lines);
-      unset($this->parsed->lines[$remove]);
+      if (isset($this->parsed->headings['h1'])) {
+        $title = reset($this->parsed->headings['h1']);
 
+        // Remove the line that contains the title
+        $find = key($this->parsed->headings['h1']);
+        $remove = array_search($find, $this->parsed->lines);
+        unset($this->parsed->lines[$remove]);        
+      }
     }
-    elseif (preg_match('/^\w/', $this->parsed->lines[0])) {
-      $title = $this->parsed->lines[0];
-      unset($this->parsed->lines[0]);
+
+    $default_title = FALSE;
+    if (empty($title) && ($t = $this->getConfig('default_title'))) {
+      $title = $t;
+      $default_title = TRUE;
     }
 
     $title = $this->parseFlags($title);
     $this->setTitle($title);
 
     // Find description
-    if (isset($this->parsed->p[1]) && preg_match('/^\w/', $this->parsed->p[1], $matches)) {
-      $this->setDescription($this->parsed->p[1]);
+    if ($title && !$default_title) {
+      $passed_title = FALSE;
+      foreach ($this->parsed->p as $key => $value) {
+        if (preg_match('/^#[^#]/', $value)) {
+          $passed_title = TRUE;
+          continue;
+        }
 
-      // Strip it out of lines
-      $haystack = implode(PHP_EOL, $this->parsed->lines);
-      $needle = $this->getDescription();
-      $result = trim(str_replace($needle, '', $haystack));
-      $this->parsed->lines = explode(PHP_EOL, $result);
+        if ($passed_title && $value && preg_match('/^\w/', $value, $matches)) {
+          $this->setDescription($value);
+
+          // Strip it out of lines
+          $haystack = implode(PHP_EOL, $this->parsed->lines);
+          $needle = $this->getDescription();
+          $result = trim(str_replace($needle, '', $haystack));
+          $this->parsed->lines = explode(PHP_EOL, $result);
+          break;
+        }
+      }
     }
 
     // Trim empty front and back lines so we don't have title troubles of 
@@ -227,45 +209,8 @@ class Feature extends Object implements ObjectInterface {
           $this->parsed->todos_by_line[$line_index] = $candidate->getFlag('id');
         }
       }
-
-      // if (preg_match('/^(#+) (.*)/', $line, $matches)) {
-
-      //   // Find the next non_blank line
-      //   $description = '';
-      //   for ($i=$key + 1; $i < count($lines); $i++) { 
-      //     if (trim($lines[$i])) {
-      //       $description .= $lines[$i] . PHP_EOL;
-      //     }
-      //     elseif ($description) {
-      //       break;
-      //     }
-      //   }
-
-      //   $candidates[] = array(
-      //     strlen($matches[1]),
-      //     count($candidates),
-      //     $matches[2],
-      //     (string) $description,
-      //   );
-      // }
     }
     $this->todos->getList()->generateIds($this->getConfig('auto_increment'));
-
-
-    // // Set the title
-    // if (!count($candidates)) {
-    //   $temp = $lines;
-    //   $title = array_shift($temp);
-    //   $description = array_shift($temp);
-    // }
-    // else {
-    //   uasort($candidates, array($this, 'sort'));
-    //   $title = reset($candidates);      
-    //   $description = $title[3];
-    //   $title = $title[2];
-    // }
-
-
   }
 
   /**

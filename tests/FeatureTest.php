@@ -14,6 +14,309 @@ require_once '../vendor/autoload.php';
 
 class FeatureTest extends PHPUnit_Framework_TestCase {
 
+  public function testQuestions() {
+    $subject = <<<EOD
+# Question Test
+
+This will test if questions get extracted correctly.
+
+?A one line question.
+
+- a todo
+
+? This is a bit
+more complicated because it goes
+around multiple lines
+
+? Does this work?
+EOD;
+
+    $obj = new Feature($subject);
+    $questions = $obj->getQuestions();
+    $this->assertCount(3, $questions);
+    $this->assertSame("A one line question.", $questions[0]);
+    $this->assertSame("This is a bit\nmore complicated because it goes\naround multiple lines", $questions[1]);
+    $this->assertSame("Does this work?", $questions[2]);
+  }
+
+  public function testDescription() {
+    $subject = "My Not Nice Title\n\n# My Nice Title\n\nMy Nice Description";
+    $obj = new Feature($subject);
+    $this->assertEquals('My Nice Title', $obj->getTitle());    
+    $this->assertEquals('My Nice Description', $obj->getDescription()); 
+
+    $obj = new Feature($this->getSource());
+    $control = "This feature will add a new RSS feed to the website. See http://en.wikipedia.org/wiki/RSS\nIt is a solid feature.";
+    $this->assertEquals($control, $obj->getDescription());
+
+    // Make sure title and description are erased with new source
+    $obj->setSource('');
+    $this->assertSame('', $obj->getTitle());
+    $this->assertSame('', $obj->getDescription());
+
+    $subject = "My Not Nice Title\n\n# My Nice Title\n\nMy Nice Description";
+    $obj->setSource($subject);
+    $this->assertEquals('My Nice Title', $obj->getTitle());    
+    $this->assertEquals('My Nice Description', $obj->getDescription());  
+
+    $control = "# My Nice Title\n\nMy Nice Description\n\nMy Not Nice Title";
+    $this->assertSame($control, (string) $obj);
+  }
+
+  public function testDescriptionNoDescription() {
+    $subject2 = "# Title @w-10 @pAaron\n\n\n\n\n\n\n\nThis\nis\nthe\ndescription.\n\n\n\n\n\n\n\nbut this is not.\n";
+    $obj = new Feature($subject2);
+    $control = <<<EOD
+This
+is
+the
+description.
+EOD;
+    $this->assertSame('Title', $obj->getTitle());
+    $this->assertSame($control, $obj->getDescription());
+
+    $subject = <<<EOD
+# Title @w-10 @pAaron
+
+This
+is
+the
+description.
+
+but this is not.
+EOD;
+    $control = "This
+is
+the
+description.";
+
+    $obj = new Feature($subject);
+    $this->assertSame('Title', $obj->getTitle());
+    $this->assertSame($control, $obj->getDescription());
+
+    $subject = <<<EOD
+# Title @w-10 @pAaron
+This
+is
+not the description
+because
+this is not a paragraph
+
+EOD;
+    $obj = new Feature($subject);
+    $this->assertSame('Title', $obj->getTitle());
+    $this->assertSame('', $obj->getDescription());
+
+    $subject = <<<EOD
+# Title @w-10 @pAaron
+
+- [ ] This is a todo item; no description
+
+is the
+description because it's the first paragraph to
+follow title.
+
+but this isn't
+it's the
+second paragraph to follow title.
+EOD;
+
+    $obj = new Feature($subject);
+    $this->assertSame('Title', $obj->getTitle());
+    $this->assertSame("is the\ndescription because it's the first paragraph to\nfollow title.", $obj->getDescription());
+
+  }
+  
+  public function testTitle() {
+    $feature = new Feature($this->getSource());
+    $this->assertEquals("New RSS feed", $feature->getTitle());
+
+    $subject = <<<EOD
+Text without markdown headings. No title in document, default should be used.
+Lorem ipsum dolar...
+EOD;
+    $feature = new Feature($subject);
+    $this->assertEquals('Feature Title', $feature->getTitle());
+
+    $subject = <<<EOD
+Text before a heading.
+### This is out of order
+## Not Title
+# Title
+EOD;
+    $feature = new Feature($subject);
+    $this->assertEquals('Title', $feature->getTitle());
+  }
+
+  public function testNotTopH2() {
+    $subject = <<<EOD
+## This is not title
+
+This is not a description
+
+- [ ] some todo    
+EOD;
+    $obj = new Feature($subject);
+
+    $this->assertSame('Feature Title', $obj->getTitle());
+    $this->assertSame('', $obj->getDescription());
+  }
+
+
+  public function testFirstH1IsTitle() {
+    $subject = <<<EOD
+not the title
+
+not
+the
+description
+EOD;
+    $obj = new Feature($subject);
+    $this->assertSame('Feature Title', $obj->getTitle());
+    $this->assertSame('', $obj->getDescription());    
+    
+    $obj = new Feature($subject, array('default_title' => ''));
+    $this->assertSame('', $obj->getTitle());
+    $this->assertSame('', $obj->getDescription());   
+
+    $subject = <<<EOD
+# title
+
+description
+
+## subtitle
+
+# not the title
+
+not
+the
+description
+EOD;
+    $obj = new Feature($subject);
+    $this->assertSame('title', $obj->getTitle());
+    $this->assertSame('description', $obj->getDescription());
+
+    $subject = <<<EOD
+not the title
+
+not
+the
+description
+
+# title
+
+this
+is
+the
+description
+
+## subtitle
+
+# not the title
+
+not
+the
+description
+EOD;
+    $obj = new Feature($subject);
+    $this->assertSame('title', $obj->getTitle());
+    $this->assertSame("this\nis\nthe\ndescription", $obj->getDescription());
+
+
+  }
+
+  public function testMissingTitleGetsDefault() {
+    $subject = <<<EOD
+- here is a todo
+
+I marked a todo complete using an x, the todo was duplicated with the same id.  It was not removed from the top box, but it was appended to completed todos AND it was moved to the bottom and given a new id.  The id that it had was not present in the bottom box and it was not carried over to the bottom
+EOD;
+    $obj = new Feature($subject);
+    $this->assertSame('Feature Title', $obj->getTitle());
+
+    $control = <<<EOD
+I marked a todo complete using an x, the todo was duplicated with the same id.  It was not removed from the top box, but it was appended to completed todos AND it was moved to the bottom and given a new id.  The id that it had was not present in the bottom box and it was not carried over to the bottom
+EOD;
+    $this->assertSame('', $obj->getDescription());
+
+    $obj->setSource("# Title\n\n$control");
+    $this->assertSame($control, $obj->getDescription());
+  }
+
+  public function testAnchorNotHeadingOne() {
+    $subject = <<<EOD
+# photo essay
+
+http://dev.globalonenessproject.local/node/4045
+https://globalonenessproject.basecamphq.com/C274515128
+
+- [ ] fix this page: http://dev.globalonenessproject.local/library/articles/forty-days @id1
+
+Single Column View
+
+- [ ] Does it bother you that the "support the project" and footer blocks are aligned left while the newsletter signup block is center aligned? @id0
+- [ ] fix this page: http://dev.globalonenessproject.local/library/articles/forty-days @id1
+
+Widescreen / two column view
+
+- [ ] Can the two column promo (in this case the ELEMENTAL promo) stay as a two column promo in this view.  This way it won't be squeezed as much as it is and we won't have an empty block in the 2nd right promo block. @id2
+
+
+---
+
+- [ ] implement crazy egg js @id7 @e1
+
+- [ ] remove caching from loft dev. @id6
+
+- [ ] implement crazy egg js @id7 @e1
+
+Here is photo essay SOM
+http://dev.globalonenessproject.local/node/4043#photo=1
+
+
+- [ ] hide tiles xml, promo xml @id8
+---
+- [ ] look into why page is so slow to load @id9
+- [ ] refactor tokens for speed? @id10
+---
+## responsive
+in repsponsive make the lesson plan fall below the synopsis @e1
+
+---
+
+
+/Library/Projects/globalonenessproject/resources/architecture/Story of the Month Format/som-article.png
+http://dev.globalonenessproject.local/story-month-october-2014
+
+
+https://drupal.org/node/2086643
+
+? For a large display, please confirm the attached is how you want it, specifically, that the white are doesn't span 100% width, but stays in the middle like a box.?
+Yes, white background should be fixed width with the nav, hero image, promos and footer.
+
+https://globalonenessproject.basecamphq.com/projects/10673902-2014-website-update/posts/82035402/comments#263453719
+
+## som films
+- [ ] add correct icon in the theme after shawn sends, as a sprite to the film overlays @id11
+- [ ] enter in wiki how to remove ads by emptying the xml; or to show global use 
+ @id12
+- [ ] need a gear for editing the homepage som node @id13
+- [ ] check for margin below flash player and remove; @id14
+- [ ] callback to start playing flash @id15
+- [ ] resize the photo for correct output using an image style @id16
+- [ ] resize poster in html5 correct style? @id17
+- [ ] test click/replace for mobile ios, etc @id18
+
+http://dev.globalonenessproject.local/node/4044
+https://globalonenessproject.basecamphq.com/projects/10673902-2014-website-update/posts/81232973/comments#271321570
+[All page comps](https://globalonenessproject.basecamphq.com/projects/10673902-2014-website-update/posts/81232973/comments#261824681)
+http://dev.globalonenessproject.local/som/2013/12
+http://dev.globalonenessproject.local/som/2014/8
+EOD;
+    $obj = new Feature($subject);
+    $this->assertSame('photo essay', $obj->getTitle());
+  }
+
   public function testFlagsInTitleToString() {
     $subject = <<<EOD
 # Demo of saving @s2014-04-10 @m2014-04-10 @f2014-04-10
@@ -41,7 +344,7 @@ EOD;
 - [ ] when done make it add the effective start date @id2
 - [x] timezone woking correctly @id9 @s21:42 @d2014-04-09T22:05 @w1000    
 EOD;
-    $obj = new Feature($subject);
+    $obj = new Feature($subject, array('default_title' => ''));
     $obj->purgeCompleted();
     $control = <<<EOD
 - [ ] get things using the correct timezone @id10
@@ -352,127 +655,6 @@ EOD;
     $this->assertCount(3, $obj->getParsed('p'));
   }
 
-  public function testDescription() {
-    $feature = new Feature($this->getSource());
-    $control = <<<EOD
-This feature will add a new RSS feed to the website. See http://en.wikipedia.org/wiki/RSS
-It is a solid feature.
-EOD;
-    $this->assertEquals($control, $feature->getDescription());
-
-    $subject = <<<EOD
-    My Nice Title
-
-    My Nice Description           
-EOD;
-    $feature->setSource($subject);
-
-    $this->assertEquals('My Nice Title', $feature->getTitle());    
-    $this->assertEquals('My Nice Description', $feature->getDescription());    
-  }
-  public function testTitle() {
-    $feature = new Feature($this->getSource());
-    $this->assertEquals("New RSS feed", $feature->getTitle());
-
-    $subject = <<<EOD
-Text without markdown headings.
-Lorem ipsum dolar...
-EOD;
-    $feature = new Feature($subject);
-    $this->assertEquals('Text without markdown headings.', $feature->getTitle());
-
-    $subject = <<<EOD
-Text before a heading.
-### This is out of order
-## Title
-EOD;
-    $feature = new Feature($subject);
-    $this->assertEquals('Title', $feature->getTitle());
-  }
-
-  public function testDescriptionNoDescription() {
-    $subject = <<<EOD
-# Title @w-10 @pAaron
-
-
-
-
-
-
-
-
-This
-is
-the
-description.
-
-
-
-
-
-
-
-but this is not.
-EOD;
-    $control = "This
-is
-the
-description.";
-
-    $obj = new Feature($subject);
-    $this->assertSame('Title', $obj->getTitle());
-    $this->assertSame($control, $obj->getDescription());
-
-    $subject = <<<EOD
-# Title @w-10 @pAaron
-
-This
-is
-the
-description.
-
-but this is not.
-EOD;
-    $control = "This
-is
-the
-description.";
-
-    $obj = new Feature($subject);
-    $this->assertSame('Title', $obj->getTitle());
-    $this->assertSame($control, $obj->getDescription());
-
-    $subject = <<<EOD
-# Title @w-10 @pAaron
-This
-is
-not the description
-because
-this is not a paragraph
-
-EOD;
-    $obj = new Feature($subject);
-    $this->assertSame('Title', $obj->getTitle());
-    $this->assertSame('', $obj->getDescription());
-
-    $subject = <<<EOD
-# Title @w-10 @pAaron
-
-- [ ] This is a todo item; no description
-
-is
-not the
-description.
-
-and neither is this.
-EOD;
-
-    $obj = new Feature($subject);
-    $this->assertSame('Title', $obj->getTitle());
-    $this->assertSame('', $obj->getDescription());
-
-  }
-
   public function testGetCompletedTodoList() {
     $subject = <<<EOD
 # New feature
@@ -541,7 +723,7 @@ EOD;
   }
 
   public function testGroup() {
-    $feature = new Feature('Feature @g"After Launch" @p"Jim Barkley"');
+    $feature = new Feature('# Feature @g"After Launch" @p"Jim Barkley"');
     $this->assertEquals('After Launch', $feature->getFlag('group'));
     $this->assertEquals('Jim Barkley', $feature->getFlag('person'));
   }

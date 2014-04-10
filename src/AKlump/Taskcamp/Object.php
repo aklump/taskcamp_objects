@@ -7,13 +7,13 @@ namespace AKlump\Taskcamp;
 abstract class Object implements ObjectInterface {
   protected $parsed, $flags;
 
-  protected $source = '';
   protected $title = '';
   protected $description = '';
 
   protected $data = array(
     'source' => '',
     'config' => array(),
+    'questions' => array(),
   );
   
   /**
@@ -28,9 +28,29 @@ abstract class Object implements ObjectInterface {
     $this->setSource($source);
   }
 
+  public function setQuestions($questions) {
+    $this->data['questions'] = array();
+    foreach($questions as $question) {
+      $this->addQuestion($question);
+    }
+  
+    return $this;
+  }
+  
+  public function addQuestion($question) {
+    $this->data['questions'][] = $question;
+  
+    return $this;
+  }
+  
+  public function getQuestions() {
+    return $this->data['questions'];
+  }  
+
   public function setSource($source) {
-    $this->data['source'] = (string) $source;
+    $this->data['source'] = (string) $source;   
     $this->parse();
+
     return $this;
   }
   
@@ -69,10 +89,6 @@ abstract class Object implements ObjectInterface {
 
   public static function dateRegex() {
     return '(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}[+-]\d{4})|(\d{4}-\d{2}-\d{2})|(\d{2}:\d{2}[+-]\d{4})|(\d{2}:\d{2})';
-
-    // return '((\d{4})\-?(\d{1,2})\-?(\d{1,2}))(T(\d{1,2}:\d{2})|(\d{4})\-?(\d{1,2})\-?(\d{1,2})|(\d{1,2}:\d{2})?)?';
-
-    return '((\d{4})\-?(\d{1,2})\-?(\d{1,2}))T(?:(\d{1,2}:\d{2})|(\d{4})\-?(\d{1,2})\-?(\d{1,2})|(\d{1,2}:\d{2}))([-+]\d{4})?';
   }
 
   /**
@@ -209,9 +225,6 @@ abstract class Object implements ObjectInterface {
       if (!$value) {
         $value = $this->getFlag($data->id, TRUE);
       }
-      // if (!$value && is_numeric($value) && $data->hide_empty) {
-      //   continue;
-      // }
       if ($value === TRUE) {
         $value = '';
       }
@@ -431,12 +444,16 @@ abstract class Object implements ObjectInterface {
   protected function parse() {
     // Trim front/back whitespace
     $source     = trim($this->getSource());
-    if (empty($source)) {
-      return;
-    }
 
     $this->parsed = new \stdClass;
     $this->parsed->source = $source;
+
+    $this->setQuestions(array()); 
+
+    if (empty($source)) {
+      return;
+    }
+    
     $this->parsed->lines = preg_split('/\n|\r\n?/', $source);
 
     // Grab all paragraphs and trim each
@@ -444,6 +461,13 @@ abstract class Object implements ObjectInterface {
     foreach ($this->parsed->p as $key => $value) {
       $this->parsed->p[$key] = trim(str_replace("\r\n", "\n", $value));
     }
+
+    // Extract the questions
+    foreach ($this->parsed->p as $p) {
+      if (preg_match('/^\?\s*(.*)/s', $p, $matches)) {
+        $this->addQuestion($matches[1]);
+      }
+    }    
   }
 
   public function deleteLine($line_number) {
