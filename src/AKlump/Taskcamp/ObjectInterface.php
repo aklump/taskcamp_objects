@@ -119,6 +119,31 @@ interface ObjectInterface {
   public function getDescription();
 
   /**
+   * Set the questions array.
+   *
+   * @param array $questions
+   *
+   * @return $this
+   */
+  public function setQuestions($questions);
+  
+  /**
+   * Adds a single question.
+   *
+   * @param array $question
+   *
+   * @return $this
+   */
+  public function addQuestion($question);
+  
+  /**
+   * Return the questions array.
+   *
+   * @return array
+   */
+  public function getQuestions();
+  
+  /**
    * Set a flag.
    *
    * @param string $flag The machine name of the flag.
