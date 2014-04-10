@@ -35,12 +35,12 @@ class Todo extends Object implements TodoInterface {
   }  
 
   public function __toString() {
-    $output  = '- ';
-
+    $output = '';
     if (!$this->getParsed('valid_syntax')) {
       $output .= $this->getSource();
     }
     else {
+      $output .= '- ';
       $output .= '[' . ($this->getParsed('complete') ? 'x' : ' ') . '] ';
       $output .= $this->getTitle();
 
@@ -149,11 +149,11 @@ class Todo extends Object implements TodoInterface {
    *   FALSE means the todo couldn't be parsed
    */
   protected function parse() {
-    $parsed = $this->getSource();
+    $parsed = $source = $this->getSource();
 
     // Expand lazy prefixes
     if (preg_match('/^- (\[ \]) (.*)(?:x| )x$/i', $parsed, $matches)
-      || preg_match('/^- ?\[([ x])? ?\] ?(.*)/i', $parsed, $matches)
+      || preg_match('/^- ?\[ *(x)? *\] ?(.*)/i', $parsed, $matches)
       || preg_match('/^-(x) ?(.*)/i', $parsed, $matches)
       || preg_match('/^-\s*()(.*)/', $parsed, $matches)) {
       $parsed = '- [' . (trim($matches[1]) ? 'x' : ' ') . '] ' . $matches[2];
@@ -164,6 +164,11 @@ class Todo extends Object implements TodoInterface {
       'valid_syntax' => FALSE,
       'complete' => FALSE,
     );
+
+    // Do not allow '---' to be construed as a todo
+    if ($source === '---') {
+      return FALSE;
+    }
 
     foreach ($this->getFlagSchema() as $data) {
       $this->parsed[$data->id] = NULL;

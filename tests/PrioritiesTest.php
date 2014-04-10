@@ -63,7 +63,7 @@ Description
 
 - [ ] Do
 - [ ] Re
-- Below here after vacation...
+Below here after vacation...
 - [ ] Mi @w10
 EOD;
 

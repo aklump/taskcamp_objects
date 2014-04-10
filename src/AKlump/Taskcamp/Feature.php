@@ -206,10 +206,10 @@ class Feature extends Object implements ObjectInterface {
     // Grab all todos and assign ids if none.
     $todos = $urls = array();
     $candidates = array();
-    foreach ($this->parsed->lines as $line_index => $line) {
+    foreach ((array) $this->parsed->lines as $line_index => $line) {
 
       if (trim($line)) {
-        $candidate = new Todo($line);
+        $candidate = new Todo($line, $this->getConfig());
         if ($candidate->getParsed('valid_syntax')) {
 
           // Add the next available numeric id if we don't have one.

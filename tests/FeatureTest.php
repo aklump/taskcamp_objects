@@ -14,6 +14,36 @@ require_once '../vendor/autoload.php';
 
 class FeatureTest extends PHPUnit_Framework_TestCase {
 
+  public function testPurgeScenario() {
+    $subject = <<<EOD
+- [ ] get things using the correct timezone @id10
+
+- timezone woking correctly @d
+
+- [ ] when done make it add the effective start date @id2
+- [x] timezone woking correctly @id9 @s21:42 @d2014-04-09T22:05 @w1000    
+EOD;
+    $obj = new Feature($subject);
+    $obj->purgeCompleted();
+    $control = <<<EOD
+- [ ] get things using the correct timezone @id10
+
+
+- [ ] when done make it add the effective start date @id2
+EOD;
+    $this->assertSame($control, (string) $obj);
+  }
+
+  public function testTimeZoneInheritance() {
+    $tz = "Antarctica/Casey";
+    $obj = new Feature('- a todo with an inherited timezone', array('timezone' => $tz));
+    $this->assertSame($tz, $obj->getConfig('timezone'));
+
+    foreach ($obj->getTodos()->getList()->get() as $todo) {
+      $this->assertSame($tz, $todo->getConfig('timezone'));
+    }
+  }
+
   public function testPurgeCompleted() {
     $subject = <<<EOD
 # Title

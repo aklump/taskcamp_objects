@@ -11,6 +11,39 @@ use \AKlump\Taskcamp\Todo as Todo;
 
 class TodoTest extends PHPUnit_Framework_TestCase {
 
+  public function testSloppyCompleted() {
+    $control = '- [x] when creating a node, the original should be reprinted @id4';
+
+    $subject = '- [            x] when creating a node, the original should be reprinted @id4';
+    $obj = new Todo($subject);
+    $this->assertSame($control, (string) $obj);
+
+    $subject = '- [x            ] when creating a node, the original should be reprinted @id4';
+    $obj = new Todo($subject);
+    $this->assertSame($control, (string) $obj);
+
+    $subject = '- [          x     ] when creating a node, the original should be reprinted @id4';
+    $obj = new Todo($subject);
+    $this->assertSame($control, (string) $obj);
+
+    $subject = '- [x] when creating a node, the original should be reprinted @id4';
+    $obj = new Todo($subject);
+    $this->assertSame($control, (string) $obj);
+
+    $subject = '- [ x] when creating a node, the original should be reprinted @id4';
+    $obj = new Todo($subject);
+    $this->assertSame($control, (string) $obj);
+
+    $subject = '- [x ] when creating a node, the original should be reprinted @id4';
+    $obj = new Todo($subject);
+    $this->assertSame($control, (string) $obj);
+  }
+
+  public function testHR() {
+    $obj = new Todo('---');
+    $this->assertSame('---', (string) $obj);
+  }
+
   public function testSimplify() {
     $obj = new Todo('- [x] some done todo @id5 @s2014-04-09T19:35 @d2014-04-09T13:16 @w1000');
     $control = '- [x] some done todo @id5 @s19:35 @d2014-04-09T13:16 @w1000';
@@ -110,7 +143,7 @@ class TodoTest extends PHPUnit_Framework_TestCase {
   function testToStringInvalidTodo() {
     $control = '// Some comment';
     $todo = new Todo($control);
-    $this->assertEquals('- ' . $control, (string) $todo);
+    $this->assertEquals($control, (string) $todo);
   }
 
   function testWeight() {
