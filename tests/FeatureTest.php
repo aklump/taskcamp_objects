@@ -14,6 +14,39 @@ require_once '../vendor/autoload.php';
 
 class FeatureTest extends PHPUnit_Framework_TestCase {
 
+  public function testDontDeleteH1FromOriginalLine() {
+    $subject = <<<EOD
+here is a preamble
+
+- a single todo
+
+# The title which will get COPIED to top @m2014-04-11
+
+A description to be copied (not moved) to the top.
+
+- another todo
+- another todo
+EOD;
+    $obj = new Feature($subject);
+    $control = <<<EOD
+# The title which will get COPIED to top @m2014-04-11
+
+A description to be copied (not moved) to the top.
+
+here is a preamble
+
+- [ ] a single todo @id0
+
+# The title which will get COPIED to top @m2014-04-11
+
+A description to be copied (not moved) to the top.
+
+- [ ] another todo @id1
+- [ ] another todo @id2
+EOD;
+    $this->assertSame($control, (string) $obj); 
+  }
+
   public function testOneCaseOfDefaultTitle() {
     $subject = <<<EOD
 For the general search faceted search the order of the facets will be a bit different than what we have on the lesson plan page (basically adds category and switches story type and edu level).
@@ -59,6 +92,8 @@ EOD;
 Here is the actual description.
 
 ? This doesn't qualify.
+
+Here is the actual description.
 EOD;
     $obj = new Feature($subject);
     $this->assertSame($control, (string) $obj);
@@ -134,7 +169,7 @@ EOD;
     $this->assertEquals('My Nice Title', $obj->getTitle());    
     $this->assertEquals('My Nice Description', $obj->getDescription());  
 
-    $control = "# My Nice Title\n\nMy Nice Description\n\nMy Not Nice Title";
+    $control = "# My Nice Title\n\nMy Nice Description\n\nMy Not Nice Title\n\n# My Nice Title\n\nMy Nice Description";
     $this->assertSame($control, (string) $obj);
   }
 
