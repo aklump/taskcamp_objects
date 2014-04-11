@@ -135,7 +135,9 @@ class Feature extends Object implements ObjectInterface {
         // Remove the line that contains the title
         $find = key($this->parsed->headings['h1']);
         $remove = array_search($find, $this->parsed->lines);
-        unset($this->parsed->lines[$remove]);        
+        if ($remove == 0) {
+          unset($this->parsed->lines[$remove]);        
+        }
       }
     }
 
@@ -172,10 +174,12 @@ class Feature extends Object implements ObjectInterface {
           $this->setDescription($value);
 
           // Strip it out of lines
-          $haystack = implode(PHP_EOL, $this->parsed->lines);
-          $needle = $this->getDescription();
-          $result = trim(str_replace($needle, '', $haystack));
-          $this->parsed->lines = explode(PHP_EOL, $result);
+          if ($this->parsed->p[1] === $this->getDescription()) {
+            $haystack = implode(PHP_EOL, $this->parsed->lines);
+            $needle = $this->getDescription();
+            $result = trim(str_replace($needle, '', $haystack));
+            $this->parsed->lines = explode(PHP_EOL, $result);
+          }
           break;
         }
       }
