@@ -14,6 +14,37 @@ require_once '../vendor/autoload.php';
 
 class FeatureTest extends PHPUnit_Framework_TestCase {
 
+  public function testOneCaseOfDefaultTitle() {
+    $subject = <<<EOD
+For the general search faceted search the order of the facets will be a bit different than what we have on the lesson plan page (basically adds category and switches story type and edu level).
+
+General Search page facet order:
+
+1) Category
+2) Story Type
+3 Education Level
+4) Course
+5) Subject
+6) Theme    
+EOD;
+    $obj = new Feature($subject, array('default_title' => 'General Search', 'default_description' => ''));
+    $control = <<<EOD
+# General Search
+
+For the general search faceted search the order of the facets will be a bit different than what we have on the lesson plan page (basically adds category and switches story type and edu level).
+
+General Search page facet order:
+
+1) Category
+2) Story Type
+3 Education Level
+4) Course
+5) Subject
+6) Theme
+EOD;
+    $this->assertSame($control, (string) $obj);
+  }
+
   public function testQuestionCannotBeDescription() {
     $subject = <<<EOD
 # Title
