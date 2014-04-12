@@ -16,7 +16,6 @@ The inspiration for this markup comes from [Markdown][md] and [Github flavored m
 ### Sloppy Format
 All of the following are shorthand methods that expand on compile...
 
-    -a todo item
     - a todo item
     -[]a todo item
     -[ ]a todo item
@@ -28,10 +27,6 @@ All of the following are shorthand methods that expand on compile...
 
 All of these completed todos...   
 
-    -x a todo item
-    -X a todo item
-    -xa todo item
-    -Xa todo item
     -[x]a todo item
     -[x ]a todo item
     -[X]a todo item
@@ -40,8 +35,6 @@ All of these completed todos...
     - [x ]a todo item
     - [X]a todo item
     - [X ]a todo item
-    - [ ] a todo item x
-    - [ ] a todo itemxx
     
 ...become...
 

@@ -11,6 +11,12 @@ use \AKlump\Taskcamp\Todo as Todo;
 
 class TodoTest extends PHPUnit_Framework_TestCase {
 
+  public function testLongStringOfHyphens() {
+    $subject = '-----BEGIN CERTIFICATE-----';
+    $obj = new Todo($subject);
+    $this->assertSame($subject, (string) $obj);
+  }
+
   public function testDateIntervalPeriod() {
     $obj = new Todo('- this needs to be done in one week @mP7D', array('timezone' => 'America/Los_Angeles'));
     $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
@@ -225,10 +231,10 @@ class TodoTest extends PHPUnit_Framework_TestCase {
   }
 
   function testWeight() {
-    $todo = new Todo('-something @w-10');
+    $todo = new Todo('- something @w-10');
     $this->assertEquals(-10, $todo->getFlag('weight'));
 
-    $todo = new Todo('-something @w10');
+    $todo = new Todo('- something @w10');
     $this->assertEquals(10, $todo->getFlag('weight'));
   }
 
@@ -308,7 +314,6 @@ class TodoTest extends PHPUnit_Framework_TestCase {
 
   function testShorthand() {
     $variations = array(
-      '-a todo item',
       '- a todo item',
       '-[]a todo item',
       '-[ ]a todo item',

@@ -14,6 +14,56 @@ require_once '../vendor/autoload.php';
 
 class FeatureTest extends PHPUnit_Framework_TestCase {
 
+  public function testLongStringOfHyphens() {
+    $subject = <<<EOD
+total 24K
+drwxr-xr-x 2 root google 4.0K Apr 12 00:06 .
+drwxr-xr-x 4 254e apache      4.0K Apr 11 18:21 ..
+-rw-r--r-- 1 root google 2.6K Apr 12 00:06 intermediate.crt
+-rw-r--r-- 1 root google 1.9K Apr 12 00:04 www.google.com.crt
+-rw-r--r-- 1 root google 1.1K Apr 11 18:45 www.google.com.csr
+-rw-r--r-- 1 root google 1.7K Apr 11 18:45 www.google.com.key
+[g@google.com reissue]$ cat www.google.com.crt
+-----BEGIN CERTIFICATE-----
+MIIFNDCCBBygAwIBAgIDEgNkMA0GCSqGSIb3DQEBBQUAMDwxCzAJBgNVBAYTAlVT
+MRcwFQYDVQQKEw5HZW9UcnVzdCwgSW5jLjEUMBIGA1UEAxMLUmFwaWRTU0wgQ0Ew
+HhcNMTQwNDExMDE0MDQ4WhcNMTQxMjI0MDAyMzEwWjCBvzEpMCcGA1UEBRMgSmtt
+bFRiNHJZN3d4Q3V5QTFCTXpXT01RMGc2LTlwVTQxEzARBgNVBAsTCkdUOTU3NjMx
+snoCtNzUda4sSLu5P4aKrizyN/t5Fok0OMNtUD5kcPnWszTsHK22NMh9AIvOMwsC
+lI4kQkIFQ4XoKyAgn16+Joaw2PYsTi7h9VB+QP4imjJ0J4f3j6UK8ylZ1cF+ObPi
+Vh4gbS7hBpkDjVV0bJvoGQ5VepKUZW8DZIZdFXMm41pO/BJpiY0hDuTZnnjSYOgV
+O9vyTV0xdOWI64EObNx42i/huVrfwbAcv4aXgUMV6JU7frsh6vCdg3taIs7nElxc
+dkY2lMgqFT14GxDF3M3KCI5z9eoL78KOSwbudpXt3TvLuEH/RfkGDw==
+-----END CERTIFICATE-----
+[g@google.com reissue]$
+EOD;
+    
+    $control = <<<EOD
+total 24K
+drwxr-xr-x 2 root google 4.0K Apr 12 00:06 .
+drwxr-xr-x 4 254e apache      4.0K Apr 11 18:21 ..
+-rw-r--r-- 1 root google 2.6K Apr 12 00:06 intermediate.crt
+-rw-r--r-- 1 root google 1.9K Apr 12 00:04 www.google.com.crt
+-rw-r--r-- 1 root google 1.1K Apr 11 18:45 www.google.com.csr
+-rw-r--r-- 1 root google 1.7K Apr 11 18:45 www.google.com.key
+[g@google.com reissue]$ cat www.google.com.crt
+-----BEGIN CERTIFICATE-----
+MIIFNDCCBBygAwIBAgIDEgNkMA0GCSqGSIb3DQEBBQUAMDwxCzAJBgNVBAYTAlVT
+MRcwFQYDVQQKEw5HZW9UcnVzdCwgSW5jLjEUMBIGA1UEAxMLUmFwaWRTU0wgQ0Ew
+HhcNMTQwNDExMDE0MDQ4WhcNMTQxMjI0MDAyMzEwWjCBvzEpMCcGA1UEBRMgSmtt
+bFRiNHJZN3d4Q3V5QTFCTXpXT01RMGc2LTlwVTQxEzARBgNVBAsTCkdUOTU3NjMx
+snoCtNzUda4sSLu5P4aKrizyN/t5Fok0OMNtUD5kcPnWszTsHK22NMh9AIvOMwsC
+lI4kQkIFQ4XoKyAgn16+Joaw2PYsTi7h9VB+QP4imjJ0J4f3j6UK8ylZ1cF+ObPi
+Vh4gbS7hBpkDjVV0bJvoGQ5VepKUZW8DZIZdFXMm41pO/BJpiY0hDuTZnnjSYOgV
+O9vyTV0xdOWI64EObNx42i/huVrfwbAcv4aXgUMV6JU7frsh6vCdg3taIs7nElxc
+dkY2lMgqFT14GxDF3M3KCI5z9eoL78KOSwbudpXt3TvLuEH/RfkGDw==
+-----END CERTIFICATE-----
+[g@google.com reissue]$
+EOD;
+
+    $obj = new Feature($subject, array('default_title' => ''));
+    $this->assertSame($control, (string) $obj);
+  }
   public function testPurgeCompletedWithDuplicatedIds() {
     $subject = <<<EOD
 - [ ] add the comment anchor to link directly to the comment from user page @id2
@@ -887,17 +937,17 @@ This is not part of the description.
 
 ## Round One
 A description of Round One goes here.
--- research best format @e2
--- code the module @e6
--- QA testing @e2
+- research best format @e2
+- code the module @e6
+- QA testing @e2
 
 ## Round Two
 Don't forget to refer to http://en.wikipedia.org/wiki/RSS
 
 A description of R2.
 
--- refactor @e4
--- QA testing @e2
+- refactor @e4
+- QA testing @e2
 
 # References
 http://www.digitaltrends.com/how-to/how-to-use-rss/
@@ -934,8 +984,8 @@ EOD;
 A little preamble
 
 # Security Updates to Core @w-10 @pAaron @bc123456 @f2014-01-31 @e3 @s2014-01-05 @gWednesday @qb"In the Loft:Taskcamp"
--- download drupal
--- upgrade    
+- download drupal
+- upgrade    
 EOD;
     $feature = new Feature($subject);
     $this->assertEquals('Security Updates to Core', $feature->getTitle());
