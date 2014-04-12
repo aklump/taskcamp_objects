@@ -88,7 +88,7 @@ abstract class Object implements ObjectInterface {
   }
 
   public static function dateRegex() {
-    return '(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}[+-]\d{4})|(\d{4}-\d{2}-\d{2})|(\d{2}:\d{2}[+-]\d{4})|(\d{2}:\d{2})';
+    return '(P[A-Z0-9]{2,})|(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}[+-]\d{4})|(\d{4}-\d{2}-\d{2})|(\d{2}:\d{2}[+-]\d{4})|(\d{2}:\d{2})';
   }
 
   /**
@@ -101,25 +101,34 @@ abstract class Object implements ObjectInterface {
    * @return DateTime
    */
   public function createDate($string = 'now', $context = NULL) {
+    
+    // Convert a DateInterval beginning with P
+    if (substr($string, 0, 1) === 'P') {
+      $now = new \DateTime('now', new \DateTimeZone($this->getConfig('timezone')));
+      return date_add($now, new \DateInterval($string));
+    }
+
+    // Otherwise we're dealing with a string
     $date_parts = '(?:(\d{4}-\d{2}-\d{2}))?T?(?:(\d{2}:\d{2}))?(?:([+-]\d{4}))?';
-    preg_match("/$date_parts/", $string, $matches);
-    array_shift($matches);
+    if (preg_match("/$date_parts/", $string, $matches)) {
+      array_shift($matches);
 
-    if (preg_match("/$date_parts/", $context, $context)) {
-      array_shift($context);
+      if (preg_match("/$date_parts/", $context, $context)) {
+        array_shift($context);
+      }
+
+      if (empty($matches[0]) && !empty($context[0])) {
+        $matches[0] = $context[0];
+      }
+
+      if (empty($matches[2]) && !empty($context[2])) {
+        $matches[2] = $context[2];
+      }
+
+      $matches[0] .= 'T';
+      $string = implode('', $matches);    
     }
-
-    if (empty($matches[0]) && !empty($context[0])) {
-      $matches[0] = $context[0];
-    }
-
-    if (empty($matches[2]) && !empty($context[2])) {
-      $matches[2] = $context[2];
-    }
-
-    $matches[0] .= 'T';
-    $string = implode('', $matches);
-
+  
     $date = new \DateTime($string, new \DateTimeZone($this->getConfig('timezone')));
 
     return $date;
@@ -148,7 +157,7 @@ abstract class Object implements ObjectInterface {
    * @see  ObjectInterface::createDate()
    */
   public function getTime($string = 'now') {
-    return $this->createDate($string)->format('G:iO');
+    return $this->createDate($string)->format('H:iO');
   }
 
   /**
@@ -346,6 +355,8 @@ abstract class Object implements ObjectInterface {
         (object) array(
           'flag' => 's', 
           'type' => 'datetime',
+          'granularity' => 'time',
+          'dateInterval' => TRUE,
           'description' => 'The date to start work.',
           'id' => 'start',
           'name' => 'Start Time',
@@ -355,6 +366,8 @@ abstract class Object implements ObjectInterface {
         (object) array(
           'flag' => 'm', 
           'type' => 'datetime',
+          'granularity' => 'date',
+          'dateInterval' => TRUE,
           'description' => 'The next milestone date.',
           'id' => 'milestone',
           'name' => 'Milestone',
@@ -364,6 +377,8 @@ abstract class Object implements ObjectInterface {
         (object) array(
           'flag' => 'f', 
           'type' => 'datetime',
+          'granularity' => 'date',
+          'dateInterval' => TRUE,
           'description' => 'The date it needs to be finished.',
           'id' => 'finish',
           'name' => 'Finish',
@@ -373,6 +388,7 @@ abstract class Object implements ObjectInterface {
         (object) array(
           'flag' => 'd', 
           'type' => 'datetime',
+          'granularity' => 'datetime',
           'description' => 'The date it was done and complete.',
           'id' => 'done',
           'name' => 'Completed',
@@ -501,9 +517,13 @@ abstract class Object implements ObjectInterface {
     $return = $this->parsed->lines[$line_number];
 
     // Remove todos if found
-    $id = $this->parsed->todos_by_line[$line_number];
-    $this->getTodos()->getList()->remove($id);
-    unset($this->parsed->todos_by_line[$line_number]);
+    foreach ($this->parsed->todos_by_line as $id => $line_numbers) {
+      if (in_array($line_number, $line_numbers)) {
+        $this->getTodos()->getList()->remove($id);
+        unset($this->parsed->todos_by_line[$id]);        
+        break;
+      }
+    }
 
     // Remove the line
     unset($this->parsed->lines[$line_number]);
@@ -528,9 +548,44 @@ abstract class Object implements ObjectInterface {
         $value = array_key_exists(2, $matches) ? trim($matches[2], ' "') : TRUE;
         $this->flags[$flag->id] = $value;
       }
+
+      // Now for TRUE values we may need to insert time
+      if ($this->flags[$flag->id] === TRUE
+        && in_array($flag->granularity, array('date', 'datetime', 'time'))) {
+        switch ($flag->granularity) {
+          case 'datetime':
+            $this->flags[$flag->id] = $this->getDateTime();
+            break;
+          
+          case 'date':
+            $this->flags[$flag->id] = $this->getDate();
+            break;
+
+          case 'time':
+            $this->flags[$flag->id] = $this->getTime();
+            break;
+        }
+      }
+
+      // Convert DateIntervals
+      if ($flag->dateInterval && substr($this->flags[$flag->id], 0, 1) === 'P') {
+        switch ($flag->granularity) {
+          case 'datetime':
+            $this->flags[$flag->id] = $this->getDateTime($this->flags[$flag->id]);
+            break;
+          
+          case 'date':
+            $this->flags[$flag->id] = $this->getDate($this->flags[$flag->id]);
+            break;
+
+          case 'time':
+            $this->flags[$flag->id] = $this->getTime($this->flags[$flag->id]);
+            break;
+        }
+      }
     }
 
-    // Append start time
+    // // Append start time
     if ($this->flags['start'] === TRUE) {
       $this->flags['start'] = $this->getTime();
     }

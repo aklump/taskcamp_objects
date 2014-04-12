@@ -4,17 +4,36 @@
 | flag | type | header key | meaning |
 |------|---------|----------|----------|
 | @bc | string     | Basecamp  | Basecamp uuid of the item |
-| @d  | date       | Completed  | When it was done/finished/completed |
+| @d  | date       | Done  | When it was done/finished/completed |
 | @e  | float      | Estimate | Estimated Time To Complete  |
-| @f  | date       | Finish  | Targeted finish date |
+| @f  | date\|interval | Finish  | Targeted finish date |
 | @g  | string     | Group  | The group name |
 | @h  | float      | Hours | Actual hours from start to finish |
-| @m  | date       | Milestone  | Milestone other than finish date |
+| @m  | date\|interval       | Milestone  | Milestone other than finish date |
 | @mt  | string    | Mantis  | Mantis uuid |
 | @p  | string     | Person  | Person responsible |
 | @qb | string     | Quickbooks | Quickbooks uuid |
-| @s  | datetime   | Start  | Start Time |
+| @s  | date\|interval   | Start  | Start Time |
 | @w  | int\|float | Weight | Weight (or Priority Rank) |
+
+## Dates, times and intervals
+For dates you must use one of the following formats:
+
+    YYYY-MM-DD
+    YYYY-MM-DDTHH:MM+0000
+    HH:MM+0000
+
+**Times always require the [Time offset from UTC](http://en.wikipedia.org/wiki/ISO_8601#Time_offsets_from_UTC).**
+
+And you can also use [Time Intervals](http://en.wikipedia.org/wiki/ISO_8601#Time_intervals) for some flags.
+
+    P1M
+    P7D
+
+For example here are a couple of todo items that are both due in 1 week.
+
+    - [ ] This needs to be done in 1 week @fP1W
+    - [ ] This needs to be done in 1 week @fP7D
 
 ##Feature with Headers instead of Flags
     Client: In the Loft Studios, LLC

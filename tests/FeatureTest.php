@@ -18,7 +18,7 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
     $subject = <<<EOD
 here is a preamble
 
-- a single todo
+- a single todo item
 
 # The title which will get COPIED to top @m2014-04-11
 
@@ -35,7 +35,7 @@ A description to be copied (not moved) to the top.
 
 here is a preamble
 
-- [ ] a single todo @id0
+- [ ] a single todo item @id0
 
 # The title which will get COPIED to top @m2014-04-11
 
@@ -45,6 +45,180 @@ A description to be copied (not moved) to the top.
 - [ ] another todo @id2
 EOD;
     $this->assertSame($control, (string) $obj); 
+  }
+
+  public function testAutoIncrementGetsLargeEnoughNotToClobber() {
+    $subject = <<<EOD
+- test
+
+- [ ] posting should not contain ic and id @id3
+
+If the request contains Accept: application/json header then you’ll get more of what you’re talking about. But if it’s Accept: collection+json header then you get what I’ve speced out so far. How this could work is that on my end I’d build a parser to dumb down the collection into plain json by prescribed format. I would still only manage one thing on my end, but you would receive the data-only format, like you’ve been describing.
+
+
+## resource user
+https://intheloftstudios.basecamphq.com/C274377968
+- [ ] when creating a user and accept is json, needs to return: user id/auth key/secret or persistent oauth2 during creation of users in a standard json body. @id4
+EOD;
+    $control = <<<EOD
+- [ ] test @id5
+
+- [ ] posting should not contain ic and id @id3
+
+If the request contains Accept: application/json header then you’ll get more of what you’re talking about. But if it’s Accept: collection+json header then you get what I’ve speced out so far. How this could work is that on my end I’d build a parser to dumb down the collection into plain json by prescribed format. I would still only manage one thing on my end, but you would receive the data-only format, like you’ve been describing.
+
+
+## resource user
+https://intheloftstudios.basecamphq.com/C274377968
+- [ ] when creating a user and accept is json, needs to return: user id/auth key/secret or persistent oauth2 during creation of users in a standard json body. @id4
+EOD;
+    $obj = new Feature($subject, array(
+      'auto_increment' => 3,
+      'default_title' => '',
+      'default_description' => 'lorem',
+    ));
+    $this->assertSame($control, (string) $obj);
+  }
+
+  public function testLongStringOfHyphens() {
+    $subject = <<<EOD
+total 24K
+drwxr-xr-x 2 root google 4.0K Apr 12 00:06 .
+drwxr-xr-x 4 254e apache      4.0K Apr 11 18:21 ..
+-rw-r--r-- 1 root google 2.6K Apr 12 00:06 intermediate.crt
+-rw-r--r-- 1 root google 1.9K Apr 12 00:04 www.google.com.crt
+-rw-r--r-- 1 root google 1.1K Apr 11 18:45 www.google.com.csr
+-rw-r--r-- 1 root google 1.7K Apr 11 18:45 www.google.com.key
+[g@google.com reissue]$ cat www.google.com.crt
+-----BEGIN CERTIFICATE-----
+MIIFNDCCBBygAwIBAgIDEgNkMA0GCSqGSIb3DQEBBQUAMDwxCzAJBgNVBAYTAlVT
+MRcwFQYDVQQKEw5HZW9UcnVzdCwgSW5jLjEUMBIGA1UEAxMLUmFwaWRTU0wgQ0Ew
+HhcNMTQwNDExMDE0MDQ4WhcNMTQxMjI0MDAyMzEwWjCBvzEpMCcGA1UEBRMgSmtt
+bFRiNHJZN3d4Q3V5QTFCTXpXT01RMGc2LTlwVTQxEzARBgNVBAsTCkdUOTU3NjMx
+snoCtNzUda4sSLu5P4aKrizyN/t5Fok0OMNtUD5kcPnWszTsHK22NMh9AIvOMwsC
+lI4kQkIFQ4XoKyAgn16+Joaw2PYsTi7h9VB+QP4imjJ0J4f3j6UK8ylZ1cF+ObPi
+Vh4gbS7hBpkDjVV0bJvoGQ5VepKUZW8DZIZdFXMm41pO/BJpiY0hDuTZnnjSYOgV
+O9vyTV0xdOWI64EObNx42i/huVrfwbAcv4aXgUMV6JU7frsh6vCdg3taIs7nElxc
+dkY2lMgqFT14GxDF3M3KCI5z9eoL78KOSwbudpXt3TvLuEH/RfkGDw==
+-----END CERTIFICATE-----
+[g@google.com reissue]$
+EOD;
+    
+    $control = <<<EOD
+total 24K
+drwxr-xr-x 2 root google 4.0K Apr 12 00:06 .
+drwxr-xr-x 4 254e apache      4.0K Apr 11 18:21 ..
+-rw-r--r-- 1 root google 2.6K Apr 12 00:06 intermediate.crt
+-rw-r--r-- 1 root google 1.9K Apr 12 00:04 www.google.com.crt
+-rw-r--r-- 1 root google 1.1K Apr 11 18:45 www.google.com.csr
+-rw-r--r-- 1 root google 1.7K Apr 11 18:45 www.google.com.key
+[g@google.com reissue]$ cat www.google.com.crt
+-----BEGIN CERTIFICATE-----
+MIIFNDCCBBygAwIBAgIDEgNkMA0GCSqGSIb3DQEBBQUAMDwxCzAJBgNVBAYTAlVT
+MRcwFQYDVQQKEw5HZW9UcnVzdCwgSW5jLjEUMBIGA1UEAxMLUmFwaWRTU0wgQ0Ew
+HhcNMTQwNDExMDE0MDQ4WhcNMTQxMjI0MDAyMzEwWjCBvzEpMCcGA1UEBRMgSmtt
+bFRiNHJZN3d4Q3V5QTFCTXpXT01RMGc2LTlwVTQxEzARBgNVBAsTCkdUOTU3NjMx
+snoCtNzUda4sSLu5P4aKrizyN/t5Fok0OMNtUD5kcPnWszTsHK22NMh9AIvOMwsC
+lI4kQkIFQ4XoKyAgn16+Joaw2PYsTi7h9VB+QP4imjJ0J4f3j6UK8ylZ1cF+ObPi
+Vh4gbS7hBpkDjVV0bJvoGQ5VepKUZW8DZIZdFXMm41pO/BJpiY0hDuTZnnjSYOgV
+O9vyTV0xdOWI64EObNx42i/huVrfwbAcv4aXgUMV6JU7frsh6vCdg3taIs7nElxc
+dkY2lMgqFT14GxDF3M3KCI5z9eoL78KOSwbudpXt3TvLuEH/RfkGDw==
+-----END CERTIFICATE-----
+[g@google.com reissue]$
+EOD;
+
+    $obj = new Feature($subject, array('default_title' => ''));
+    $this->assertSame($control, (string) $obj);
+  }
+  public function testPurgeCompletedWithDuplicatedIds() {
+    $subject = <<<EOD
+- [ ] add the comment anchor to link directly to the comment from user page @id2
+
+- [x] problem is that tinymce doesn't work on ipad @id3 @d
+https://drupal.org/node/961522
+
+* currently normal user has slim, filtered, plain for new nodes and comments; it is tinymce
+
+bold, italic, underline, bullets, numbers, color, source and smileys
+
+on fix is to remove wysiwyg formats when on ipad
+
+
+
+- [ ] problem is that tinymce doesn't work on ipad @id3 @d
+
+* a long post with up to 6 or 7 different paragraphs to break it up but it then posts as a big long block of text with no breaks
+* I believe it was occurring in the original thread, and not in the comments below.
+* on my iPad and this is where I noticed the issue
+* Yesterday I did a couple of posts from my work computer and the paragraphs where showing again but not when I got home and did some on my iPad.
+* On my iPad. I added a paragraph break that showed in the edit screen but was still not there on posting.
+* It is deifnitely an iPad issue only
+* the font in that same post above \"Thanks for your suggestions\" is different in the second paragraph and I did not type it this way.
+
+
+http://www.ovagraph.com/discussion/paragraphs#comment-61023
+
+## Font's getting imposed
+Because, Whitney has been having it happen every now and then where her font is different than normal and can't change it back. I just noticed it happened to her today again: http://www.ovagraph.com/discussion/41-and-ttc-2#new
+- problem is that tinymce doesn't work on ipad @id1 @d
+EOD;
+    
+    $control = <<<EOD
+- [ ] add the comment anchor to link directly to the comment from user page @id2
+
+https://drupal.org/node/961522
+
+* currently normal user has slim, filtered, plain for new nodes and comments; it is tinymce
+
+bold, italic, underline, bullets, numbers, color, source and smileys
+
+on fix is to remove wysiwyg formats when on ipad
+
+
+
+
+* a long post with up to 6 or 7 different paragraphs to break it up but it then posts as a big long block of text with no breaks
+* I believe it was occurring in the original thread, and not in the comments below.
+* on my iPad and this is where I noticed the issue
+* Yesterday I did a couple of posts from my work computer and the paragraphs where showing again but not when I got home and did some on my iPad.
+* On my iPad. I added a paragraph break that showed in the edit screen but was still not there on posting.
+* It is deifnitely an iPad issue only
+* the font in that same post above \"Thanks for your suggestions\" is different in the second paragraph and I did not type it this way.
+
+
+http://www.ovagraph.com/discussion/paragraphs#comment-61023
+
+## Font's getting imposed
+Because, Whitney has been having it happen every now and then where her font is different than normal and can't change it back. I just noticed it happened to her today again: http://www.ovagraph.com/discussion/41-and-ttc-2#new
+EOD;
+
+    $obj = new Feature($subject, array('default_title' => ''));
+
+    $obj->purgeCompleted();
+    $this->assertSame($control, (string) $obj);
+
+    $subject = <<<EOD
+#title
+
+- this is a todo @id17 @d
+- different text, same id @id17 @d
+- notice text is irrelevant @id17 @d
+- it all comes down to the id @id17 @d
+
+A little footer paragraph will become the description as well.
+EOD;
+
+    $control = <<<EOD
+# title
+
+A little footer paragraph will become the description as well.
+
+
+A little footer paragraph will become the description as well.
+EOD;
+
+    $obj = new Feature($subject);
+    $this->assertSame($control, (string) $obj->purgeCompleted());
   }
 
   public function testOneCaseOfDefaultTitle() {
@@ -796,17 +970,17 @@ This is not part of the description.
 
 ## Round One
 A description of Round One goes here.
--- research best format @e2
--- code the module @e6
--- QA testing @e2
+- research best format @e2
+- code the module @e6
+- QA testing @e2
 
 ## Round Two
 Don't forget to refer to http://en.wikipedia.org/wiki/RSS
 
 A description of R2.
 
--- refactor @e4
--- QA testing @e2
+- refactor @e4
+- QA testing @e2
 
 # References
 http://www.digitaltrends.com/how-to/how-to-use-rss/
@@ -843,8 +1017,8 @@ EOD;
 A little preamble
 
 # Security Updates to Core @w-10 @pAaron @bc123456 @f2014-01-31 @e3 @s2014-01-05 @gWednesday @qb"In the Loft:Taskcamp"
--- download drupal
--- upgrade    
+- download drupal
+- upgrade    
 EOD;
     $feature = new Feature($subject);
     $this->assertEquals('Security Updates to Core', $feature->getTitle());

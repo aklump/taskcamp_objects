@@ -11,6 +11,58 @@ use \AKlump\Taskcamp\Todo as Todo;
 
 class TodoTest extends PHPUnit_Framework_TestCase {
 
+  public function testLongStringOfHyphens() {
+    $subject = '-----BEGIN CERTIFICATE-----';
+    $obj = new Todo($subject);
+    $this->assertSame($subject, (string) $obj);
+  }
+
+  public function testDateIntervalPeriod() {
+    $obj = new Todo('- this needs to be done in one week @mP7D', array('timezone' => 'America/Los_Angeles'));
+    $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+    $milestone = date_add($now, new DateInterval('P7D'));
+    $control = "- [ ] this needs to be done in one week @m" . $milestone->format('Y-m-d');
+    $this->assertSame($control, (string) $obj);
+
+    $obj = new Todo('- this needs to be done in one week @mP7D', array('timezone' => 'America/Los_Angeles'));
+    $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+    $milestone = date_add($now, new DateInterval('P7D'));
+    $control = "- [ ] this needs to be done in one week @m" . $milestone->format('Y-m-d');
+    $this->assertSame($control, (string) $obj);
+
+    $obj = new Todo('- this needs to be done in two months @mP2M', array('timezone' => 'America/Los_Angeles'));
+    $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+    $milestone = date_add($now, new DateInterval('P2M'));
+    $control = "- [ ] this needs to be done in two months @m" . $milestone->format('Y-m-d');
+    $this->assertSame($control, (string) $obj);
+
+
+  }
+
+  public function testGranularityOfDateTimesWithNoArguments() {
+    $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+    $time = $now->format('H:iO');
+    $date = $now->format('Y-m-d');
+    $datetime = $now->format('Y-m-d\TH:iO');
+
+    $obj = new Todo("- [ ] todo @f", array('timezone' => 'America/Los_Angeles'));
+    $this->assertSame("- [ ] todo @f$date", (string) $obj);
+
+    $obj = new Todo("- [ ] todo @s", array('timezone' => 'America/Los_Angeles'));
+    $this->assertSame("- [ ] todo @s$time", (string) $obj);
+
+    $obj = new Todo("- [ ] todo @m", array('timezone' => 'America/Los_Angeles'));
+    $this->assertSame("- [ ] todo @m$date", (string) $obj);
+
+    $obj = new Todo("- [ ] todo @d", array('timezone' => 'America/Los_Angeles'));
+    $this->assertSame("- [x] todo @d$datetime @w1000", (string) $obj);        
+  }
+
+  public function testAtDoneNotX() {
+    $obj = new Todo("- [ ] problem is that tinymce doesn't work on ipad @id3 @d");
+    $this->assertTrue($obj->isComplete());
+  }
+
   public function testCreateDate() {
     $obj = new Todo();
     $date = $obj->createDate('00:02', '2014-04-10T00:10+0200');
@@ -179,10 +231,10 @@ class TodoTest extends PHPUnit_Framework_TestCase {
   }
 
   function testWeight() {
-    $todo = new Todo('-something @w-10');
+    $todo = new Todo('- something @w-10');
     $this->assertEquals(-10, $todo->getFlag('weight'));
 
-    $todo = new Todo('-something @w10');
+    $todo = new Todo('- something @w10');
     $this->assertEquals(10, $todo->getFlag('weight'));
   }
 
@@ -211,13 +263,13 @@ class TodoTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('2014-03-15', $todo->getFlag('milestone'));
 
     $todo = new todo('- launch homepage @m', array('milestone' => 86400 * 7, 'timezone' => 'America/Los_Angeles'));
-    $then = $todo->getDateTime('+7 days');
+    $then = $todo->getDate('+7 days');
     $this->assertEquals("- [ ] launch homepage @m$then", (string) $todo, 'Milestone default date is correct based on config.');
   }  
 
   function testGetFlags() {
     $todo = new Todo('- my item to get done @pJoe @e3.5 @s2014-01-31T13:44+0000 @m2014-02-14 @bc123456 @w4 @d13:44');
-    $this->assertEquals('@pJoe @bc123456 @m2014-02-14 @e3.5 @s2014-01-31T13:44+0000 @d13:44 @w1004', $todo->getFlags(), 'getFlags() returns all values as expected');
+    $this->assertEquals('@pJoe @bc123456 @e3.5 @s2014-01-31T13:44+0000 @m2014-02-14 @d13:44 @w1004', $todo->getFlags(), 'getFlags() returns all values as expected');
   }
 
   function testDuration() {
@@ -262,7 +314,6 @@ class TodoTest extends PHPUnit_Framework_TestCase {
 
   function testShorthand() {
     $variations = array(
-      '-a todo item',
       '- a todo item',
       '-[]a todo item',
       '-[ ]a todo item',

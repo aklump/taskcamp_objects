@@ -149,7 +149,7 @@ class Todo extends Object implements TodoInterface {
   }
 
   public function getAvailableFlags() {
-    return array('id', 'p', 'bc', 'mt', 'm', 'e', 's', 'd', 'h', 'w');
+    return array('id', 'p', 'bc', 'mt', 'e', 's', 'm', 'f', 'd', 'h', 'w');
   }
 
   /**
@@ -167,7 +167,7 @@ class Todo extends Object implements TodoInterface {
     if (preg_match('/^- (\[ \]) (.*)(?:x| )x$/i', $parsed, $matches)
       || preg_match('/^- ?\[ *(x)? *\] ?(.*)/i', $parsed, $matches)
       || preg_match('/^-(x) ?(.*)/i', $parsed, $matches)
-      || preg_match('/^-\s*()(.*)/', $parsed, $matches)) {
+      || preg_match('/^-{1}\s+()([^\-].*)/', $parsed, $matches)) {
       $parsed = '- [' . (trim($matches[1]) ? 'x' : ' ') . '] ' . $matches[2];
     }
 
@@ -177,10 +177,10 @@ class Todo extends Object implements TodoInterface {
       'complete' => FALSE,
     );
 
-    // Do not allow '---' to be construed as a todo
-    if ($source === '---') {
-      return FALSE;
-    }
+    // // Do not allow '---' to be construed as a todo
+    // if ($source === '---') {
+    //   return FALSE;
+    // }
 
     foreach ($this->getFlagSchema() as $data) {
       $this->parsed[$data->id] = NULL;
