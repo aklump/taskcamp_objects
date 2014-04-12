@@ -14,6 +14,72 @@ require_once '../vendor/autoload.php';
 
 class FeatureTest extends PHPUnit_Framework_TestCase {
 
+  public function testDontDeleteH1FromOriginalLine() {
+    $subject = <<<EOD
+here is a preamble
+
+- a single todo item
+
+# The title which will get COPIED to top @m2014-04-11
+
+A description to be copied (not moved) to the top.
+
+- another todo
+- another todo
+EOD;
+    $obj = new Feature($subject);
+    $control = <<<EOD
+# The title which will get COPIED to top @m2014-04-11
+
+A description to be copied (not moved) to the top.
+
+here is a preamble
+
+- [ ] a single todo item @id0
+
+# The title which will get COPIED to top @m2014-04-11
+
+A description to be copied (not moved) to the top.
+
+- [ ] another todo @id1
+- [ ] another todo @id2
+EOD;
+    $this->assertSame($control, (string) $obj); 
+  }
+
+  public function testAutoIncrementGetsLargeEnoughNotToClobber() {
+    $subject = <<<EOD
+- test
+
+- [ ] posting should not contain ic and id @id3
+
+If the request contains Accept: application/json header then you’ll get more of what you’re talking about. But if it’s Accept: collection+json header then you get what I’ve speced out so far. How this could work is that on my end I’d build a parser to dumb down the collection into plain json by prescribed format. I would still only manage one thing on my end, but you would receive the data-only format, like you’ve been describing.
+
+
+## resource user
+https://intheloftstudios.basecamphq.com/C274377968
+- [ ] when creating a user and accept is json, needs to return: user id/auth key/secret or persistent oauth2 during creation of users in a standard json body. @id4
+EOD;
+    $control = <<<EOD
+- [ ] test @id5
+
+- [ ] posting should not contain ic and id @id3
+
+If the request contains Accept: application/json header then you’ll get more of what you’re talking about. But if it’s Accept: collection+json header then you get what I’ve speced out so far. How this could work is that on my end I’d build a parser to dumb down the collection into plain json by prescribed format. I would still only manage one thing on my end, but you would receive the data-only format, like you’ve been describing.
+
+
+## resource user
+https://intheloftstudios.basecamphq.com/C274377968
+- [ ] when creating a user and accept is json, needs to return: user id/auth key/secret or persistent oauth2 during creation of users in a standard json body. @id4
+EOD;
+    $obj = new Feature($subject, array(
+      'auto_increment' => 3,
+      'default_title' => '',
+      'default_description' => 'lorem',
+    ));
+    $this->assertSame($control, (string) $obj);
+  }
+
   public function testLongStringOfHyphens() {
     $subject = <<<EOD
 total 24K
@@ -153,39 +219,6 @@ EOD;
 
     $obj = new Feature($subject);
     $this->assertSame($control, (string) $obj->purgeCompleted());
-  }
-
-  public function testDontDeleteH1FromOriginalLine() {
-    $subject = <<<EOD
-here is a preamble
-
-- a single todo
-
-# The title which will get COPIED to top @m2014-04-11
-
-A description to be copied (not moved) to the top.
-
-- another todo
-- another todo
-EOD;
-    $obj = new Feature($subject);
-    $control = <<<EOD
-# The title which will get COPIED to top @m2014-04-11
-
-A description to be copied (not moved) to the top.
-
-here is a preamble
-
-- [ ] a single todo @id0
-
-# The title which will get COPIED to top @m2014-04-11
-
-A description to be copied (not moved) to the top.
-
-- [ ] another todo @id1
-- [ ] another todo @id2
-EOD;
-    $this->assertSame($control, (string) $obj); 
   }
 
   public function testOneCaseOfDefaultTitle() {

@@ -67,7 +67,7 @@ class ObjectList implements ObjectListInterface {
    * next highest number of 0 if no numeric ids exist.
    *
    * @param  int $auto_increment  Ids will be generated starting with this
-   * number UNLESS there are numberic ids higher, in which case the highest
+   * number UNLESS there are numeric ids higher, in which case the highest
    * is used.
    *
    * @return int The highest numerical id. -1 means no numerical ids.

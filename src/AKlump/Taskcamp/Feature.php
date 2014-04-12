@@ -213,10 +213,27 @@ class Feature extends Object implements ObjectInterface {
     }
 
     // Grab all todos and assign ids if none.
+    
+    // We need to determine the highest id before we start assigning
+    $schema = $this->getFlagSchema();
+    $regex = '/@' . $schema['id']->regex . '/';
+    $highest_id = 0;
+    if (preg_match_all($regex, $source, $matches)) {
+      $highest_id = (int) max($matches[2]);
+    }
+    $highest_id = max($highest_id, ($this->getConfig('auto_increment') - 1));
+
+    $auto_id = 0;
+    if ($highest_id < $this->getConfig('auto_increment')) {
+      $auto_id = $this->getConfig('auto_increment');
+    }
+    elseif ($highest_id > 0) {
+      $auto_id = ++$highest_id;
+    }
+
     $todos = $urls = array();
     $candidates = array();
     foreach ((array) $this->parsed->lines as $line_number => $line) {
-
       if (trim($line)) {
         $candidate = new Todo($line, $this->getConfig());
         if ($candidate->getParsed('valid_syntax')) {
@@ -224,8 +241,8 @@ class Feature extends Object implements ObjectInterface {
           // Add the next available numeric id if we don't have one.
           $id = $candidate->getFlag('id');
           if (!$id && (string) $id !== '0') {
-            $auto_id = $this->todos->getList()->getNextId($this->getConfig('auto_increment'));
-            $candidate->setFlag('id', $auto_id);
+            // $auto_id = $this->todos->getList()->getNextId($auto_id);
+            $candidate->setFlag('id', $auto_id++);
           }
 
           $this->todos->getList()->add($candidate);
@@ -233,7 +250,7 @@ class Feature extends Object implements ObjectInterface {
         }
       }
     }
-    $this->todos->getList()->generateIds($this->getConfig('auto_increment'));
+    $this->todos->getList()->generateIds($auto_id);
   }
 
   /**
