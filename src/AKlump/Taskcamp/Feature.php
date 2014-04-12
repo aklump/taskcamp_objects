@@ -56,17 +56,19 @@ class Feature extends Object implements ObjectInterface {
     // based on any in parsed lines.
     $missing_todo_list = clone $this->getTodos()->getList();
     $lines = $this->getParsed('lines');
-    foreach ((array) $this->getParsed('todos_by_line') as $line_number => $line_todo_id) {
-      foreach ($this->getTodos()->getList()->get($line_todo_id) as $line_todo) {
-        // Remove from the missing list
-        $id = $line_todo->getFlag('id');
-        $missing_todo_list->remove($id);
+    foreach ((array) $this->getParsed('todos_by_line') as $line_todo_id => $line_numbers) {
+      foreach ($line_numbers as $line_number) {
+        foreach ($this->getTodos()->getList()->get($line_todo_id) as $line_todo) {
+          // Remove from the missing list
+          $id = $line_todo->getFlag('id');
+          $missing_todo_list->remove($id);
 
-        // Now rewrite line_todo if config calls for it
-        if ($this->getConfig('rewrite_todos')) {
-          $lines[$line_number] = (string) $line_todo;
-        }      
-      }    
+          // Now rewrite line_todo if config calls for it
+          if ($this->getConfig('rewrite_todos')) {
+            $lines[$line_number] = (string) $line_todo;
+          }      
+        }    
+      }
     }
 
     $output = array_merge($output, $lines);
@@ -213,7 +215,7 @@ class Feature extends Object implements ObjectInterface {
     // Grab all todos and assign ids if none.
     $todos = $urls = array();
     $candidates = array();
-    foreach ((array) $this->parsed->lines as $line_index => $line) {
+    foreach ((array) $this->parsed->lines as $line_number => $line) {
 
       if (trim($line)) {
         $candidate = new Todo($line, $this->getConfig());
@@ -227,7 +229,7 @@ class Feature extends Object implements ObjectInterface {
           }
 
           $this->todos->getList()->add($candidate);
-          $this->parsed->todos_by_line[$line_index] = $candidate->getFlag('id');
+          $this->parsed->todos_by_line[$candidate->getFlag('id')][] = $line_number;
         }
       }
     }
@@ -263,11 +265,12 @@ class Feature extends Object implements ObjectInterface {
   }
 
   public function purgeCompleted() {
-    foreach ($this->getParsed('todos_by_line') as $line_number => $id) {
+    foreach ($this->getParsed('todos_by_line') as $id => $line_numbers) {
       foreach ($this->getTodos()->getList()->get($id) as $todo) {
         if ($todo->isComplete()) {
-          $this->deleteLine($line_number);
-          unset($this->parsed_todos_by_line[$line_number]);
+          foreach ($line_numbers as $line_number) {
+            $this->deleteLine($line_number);
+          }
         }
       }
     }

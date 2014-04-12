@@ -45,7 +45,7 @@
 <tr>
   <td>@d</td>
   <td>date</td>
-  <td>Completed</td>
+  <td>Done</td>
   <td>When it was done/finished/completed</td>
 </tr>
 <tr>
@@ -56,7 +56,7 @@
 </tr>
 <tr>
   <td>@f</td>
-  <td>date</td>
+  <td>date&#124;interval</td>
   <td>Finish</td>
   <td>Targeted finish date</td>
 </tr>
@@ -74,7 +74,7 @@
 </tr>
 <tr>
   <td>@m</td>
-  <td>date</td>
+  <td>date&#124;interval</td>
   <td>Milestone</td>
   <td>Milestone other than finish date</td>
 </tr>
@@ -98,7 +98,7 @@
 </tr>
 <tr>
   <td>@s</td>
-  <td>datetime</td>
+  <td>date&#124;interval</td>
   <td>Start</td>
   <td>Start Time</td>
 </tr>
@@ -110,6 +110,29 @@
 </tr>
 </tbody>
 </table>
+
+<h2>Dates, times and intervals</h2>
+
+<p>For dates you must use one of the following formats:</p>
+
+<pre><code>YYYY-MM-DD
+YYYY-MM-DDTHH:MM+0000
+HH:MM+0000
+</code></pre>
+
+<p><strong>Times always require the <a href="http://en.wikipedia.org/wiki/ISO_8601#Time_offsets_from_UTC">Time offset from UTC</a>.</strong></p>
+
+<p>And you can also use <a href="http://en.wikipedia.org/wiki/ISO_8601#Time_intervals">Time Intervals</a> for some flags.</p>
+
+<pre><code>P1M
+P7D
+</code></pre>
+
+<p>For example here are a couple of todo items that are both due in 1 week.</p>
+
+<pre><code>- [ ] This needs to be done in 1 week @fP1W
+- [ ] This needs to be done in 1 week @fP7D
+</code></pre>
 
 <h2>Feature with Headers instead of Flags</h2>
 
@@ -155,7 +178,7 @@ Basecamp: https://intheloftstudios.basecamphq.com/projects/1234-intheloftstudios
 
 
   <div id="footer-legaleeze">
-    <p class="legaleeze center">Version: 0.5.2 &bull; Last Updated: Thu, 10 Apr 2014 17:13:55 -0700</p>
+    <p class="legaleeze center">Version: 0.5.2 &bull; Last Updated: Fri, 11 Apr 2014 20:13:08 -0700</p>
   </div>
 </footer>
 </body>

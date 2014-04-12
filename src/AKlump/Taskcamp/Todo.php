@@ -149,7 +149,7 @@ class Todo extends Object implements TodoInterface {
   }
 
   public function getAvailableFlags() {
-    return array('id', 'p', 'bc', 'mt', 'm', 'e', 's', 'd', 'h', 'w');
+    return array('id', 'p', 'bc', 'mt', 'e', 's', 'm', 'f', 'd', 'h', 'w');
   }
 
   /**

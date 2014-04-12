@@ -14,6 +14,97 @@ require_once '../vendor/autoload.php';
 
 class FeatureTest extends PHPUnit_Framework_TestCase {
 
+  public function testPurgeCompletedWithDuplicatedIds() {
+    $subject = <<<EOD
+- [ ] add the comment anchor to link directly to the comment from user page @id2
+
+- [x] problem is that tinymce doesn't work on ipad @id3 @d
+https://drupal.org/node/961522
+
+* currently normal user has slim, filtered, plain for new nodes and comments; it is tinymce
+
+bold, italic, underline, bullets, numbers, color, source and smileys
+
+on fix is to remove wysiwyg formats when on ipad
+
+
+
+- [ ] problem is that tinymce doesn't work on ipad @id3 @d
+
+* a long post with up to 6 or 7 different paragraphs to break it up but it then posts as a big long block of text with no breaks
+* I believe it was occurring in the original thread, and not in the comments below.
+* on my iPad and this is where I noticed the issue
+* Yesterday I did a couple of posts from my work computer and the paragraphs where showing again but not when I got home and did some on my iPad.
+* On my iPad. I added a paragraph break that showed in the edit screen but was still not there on posting.
+* It is deifnitely an iPad issue only
+* the font in that same post above \"Thanks for your suggestions\" is different in the second paragraph and I did not type it this way.
+
+
+http://www.ovagraph.com/discussion/paragraphs#comment-61023
+
+## Font's getting imposed
+Because, Whitney has been having it happen every now and then where her font is different than normal and can't change it back. I just noticed it happened to her today again: http://www.ovagraph.com/discussion/41-and-ttc-2#new
+- problem is that tinymce doesn't work on ipad @id1 @d
+EOD;
+    
+    $control = <<<EOD
+- [ ] add the comment anchor to link directly to the comment from user page @id2
+
+https://drupal.org/node/961522
+
+* currently normal user has slim, filtered, plain for new nodes and comments; it is tinymce
+
+bold, italic, underline, bullets, numbers, color, source and smileys
+
+on fix is to remove wysiwyg formats when on ipad
+
+
+
+
+* a long post with up to 6 or 7 different paragraphs to break it up but it then posts as a big long block of text with no breaks
+* I believe it was occurring in the original thread, and not in the comments below.
+* on my iPad and this is where I noticed the issue
+* Yesterday I did a couple of posts from my work computer and the paragraphs where showing again but not when I got home and did some on my iPad.
+* On my iPad. I added a paragraph break that showed in the edit screen but was still not there on posting.
+* It is deifnitely an iPad issue only
+* the font in that same post above \"Thanks for your suggestions\" is different in the second paragraph and I did not type it this way.
+
+
+http://www.ovagraph.com/discussion/paragraphs#comment-61023
+
+## Font's getting imposed
+Because, Whitney has been having it happen every now and then where her font is different than normal and can't change it back. I just noticed it happened to her today again: http://www.ovagraph.com/discussion/41-and-ttc-2#new
+EOD;
+
+    $obj = new Feature($subject, array('default_title' => ''));
+
+    $obj->purgeCompleted();
+    $this->assertSame($control, (string) $obj);
+
+    $subject = <<<EOD
+#title
+
+- this is a todo @id17 @d
+- different text, same id @id17 @d
+- notice text is irrelevant @id17 @d
+- it all comes down to the id @id17 @d
+
+A little footer paragraph will become the description as well.
+EOD;
+
+    $control = <<<EOD
+# title
+
+A little footer paragraph will become the description as well.
+
+
+A little footer paragraph will become the description as well.
+EOD;
+
+    $obj = new Feature($subject);
+    $this->assertSame($control, (string) $obj->purgeCompleted());
+  }
+
   public function testDontDeleteH1FromOriginalLine() {
     $subject = <<<EOD
 here is a preamble
