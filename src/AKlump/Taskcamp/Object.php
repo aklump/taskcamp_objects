@@ -542,7 +542,7 @@ abstract class Object implements ObjectInterface {
     $flags = $this->getFlagSchema();
     foreach ($flags as $flag) {
       $this->flags[$flag->id] = NULL;
-      $regex = '/(?<!\\\)\\' . $this->getConfig('flag_prefix') . $flag->regex . '/';
+      $regex = '/(?<!\\\)\s+\\' . $this->getConfig('flag_prefix') . $flag->regex . '/';
       if (preg_match($regex, $text, $matches)) {
         $text = str_replace($matches[0], '', $text);
         $value = array_key_exists(2, $matches) ? trim($matches[2], ' "') : TRUE;

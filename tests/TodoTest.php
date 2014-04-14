@@ -11,6 +11,11 @@ use \AKlump\Taskcamp\Todo as Todo;
 
 class TodoTest extends PHPUnit_Framework_TestCase {
 
+  public function testRequireSpaceForFlags() {
+    $obj = new Todo('- make sure this is not aaron@s12:34 time');
+    $this->assertSame('- [ ] make sure this is not aaron@s12:34 time', (string) $obj);
+  }
+
   public function testLongStringOfHyphens() {
     $subject = '-----BEGIN CERTIFICATE-----';
     $obj = new Todo($subject);
