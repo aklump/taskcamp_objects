@@ -142,8 +142,8 @@ class Todo extends Object implements TodoInterface {
       return FALSE;
     }
 
-    // Convert hours to seconds
-    $estimate *= 3600;
+    // Convert minutes (@e) to seconds (duration)
+    $estimate *= 60;
 
     return $estimate - $duration;
   }

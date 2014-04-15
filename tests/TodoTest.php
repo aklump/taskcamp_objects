@@ -301,13 +301,13 @@ class TodoTest extends PHPUnit_Framework_TestCase {
     $todo = new todo('- design the logo @s15:12 @d16:12');
     $this->assertSame(FALSE, $todo->getCarryover());
 
-    $todo = new todo('- design the logo @e1 @s15:12 @d16:12');
+    $todo = new todo('- design the logo @e60 @s15:12 @d16:12');
     $this->assertSame(0, $todo->getCarryover());
 
-    $todo = new todo('- design the logo @e.5 @s15:12 @d16:12');
+    $todo = new todo('- design the logo @e30 @s15:12 @d16:12');
     $this->assertEquals(-1800, $todo->getCarryover());
 
-    $todo = new todo('- design the logo @e1.5 @s15:12 @d16:12');
+    $todo = new todo('- design the logo @e90 @s15:12 @d16:12');
     $this->assertEquals(1800, $todo->getCarryover());
   }
 
@@ -437,13 +437,13 @@ class TodoTest extends PHPUnit_Framework_TestCase {
   }
 
   function testTitle() {
-    $todo = new todo('- This is the title @e14 @w10 @pAaron');
+    $todo = new todo('- This is the title @e840 @w10 @pAaron');
     $this->assertEquals('This is the title', $todo->getTitle());
   }
 
   function testDescription() {
-    $todo = new todo('- This is the description @e14 @w10 @pAaron');
-    $this->assertEquals('This is the description @pAaron @e14 @w10', $todo->getDescription());
+    $todo = new todo('- This is the description @e840 @w10 @pAaron');
+    $this->assertEquals('This is the description @pAaron @e840 @w10', $todo->getDescription());
   }
 
   function testIsDone() {

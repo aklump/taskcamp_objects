@@ -5,7 +5,7 @@
 |------|---------|----------|----------|
 | @bc | string     | Basecamp  | Basecamp uuid of the item |
 | @d  | date       | Done  | When it was done/finished/completed |
-| @e  | float      | Estimate | Estimated Time To Complete  |
+| @e  | float      | Estimate (mins) | Estimated time to complete in minutes  |
 | @f  | date\|interval | Finish  | Targeted finish date |
 | @g  | string     | Group  | The group name |
 | @h  | float      | Hours | Actual hours from start to finish |

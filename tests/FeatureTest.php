@@ -548,11 +548,11 @@ Widescreen / two column view
 
 ---
 
-- [ ] implement crazy egg js @id7 @e1
+- [ ] implement crazy egg js @id7 @e60
 
 - [ ] remove caching from loft dev. @id6
 
-- [ ] implement crazy egg js @id7 @e1
+- [ ] implement crazy egg js @id7 @e60
 
 Here is photo essay SOM
 http://dev.globalonenessproject.local/node/4043#photo=1
@@ -564,7 +564,7 @@ http://dev.globalonenessproject.local/node/4043#photo=1
 - [ ] refactor tokens for speed? @id10
 ---
 ## responsive
-in repsponsive make the lesson plan fall below the synopsis @e1
+in repsponsive make the lesson plan fall below the synopsis @e60
 
 ---
 
@@ -837,7 +837,7 @@ Here is the
 description
 to see if it works.
 
-- mill the flour @e1 @d
+- mill the flour @e60 @d
 - melt the chocolate @e2
 
 # when something is marked @d
@@ -852,7 +852,7 @@ EOD;
 
     $subject = <<<EOD
 # Make cookies
-- mill the flour @e1 @d
+- mill the flour @e60 @d
 - melt the chocolate @e2
 
 # when something is marked @d
@@ -864,7 +864,7 @@ EOD;
     $control = <<<EOD
 # Make cookies
 
-- mill the flour @e1 @d
+- mill the flour @e60 @d
 - melt the chocolate @e2
 
 # when something is marked @d
@@ -881,7 +881,7 @@ EOD;
     $subject = <<<EOD
 # Make cookies
 
-- mill the flour @e1 @d
+- mill the flour @e60 @d
 - melt the chocolate @e2
 
 # when something is marked @d
@@ -898,7 +898,7 @@ EOD;
     $subject = <<<EOD
 # Make cookies
 
-- [x] mill the flour @e1 @d2014-04-08T15:13 @w1000 @id2
+- [x] mill the flour @e60 @d2014-04-08T15:13 @w1000 @id2
 - [x] melt the chocolate @id3 @e2
 
 - [x] eat breakfast
@@ -913,11 +913,11 @@ EOD;
 
  
   public function testLineBreakChars() {
-    $subject = "# Make cookies\r\n\r\n- mill the flour @e1 @d\r\n- melt the chocolate @e2\r\n\r\n# when something is marked @d\r\n- reset the running timer\r\n- stamp the done item with @s based on timer @d and @h\r\n- remove it from field_body\r\n- add it to object_active\r\n";
+    $subject = "# Make cookies\r\n\r\n- mill the flour @e60 @d\r\n- melt the chocolate @e2\r\n\r\n# when something is marked @d\r\n- reset the running timer\r\n- stamp the done item with @s based on timer @d and @h\r\n- remove it from field_body\r\n- add it to object_active\r\n";
     $obj = new Feature($subject);
     $this->assertCount(3, $obj->getParsed('p'));
   
-    $subject = "# Make cookies\n\n- mill the flour @e1 @d\n- melt the chocolate @e2\n\n# when something is marked @d\n- reset the running timer\n- stamp the done item with @s based on timer @d and @h\n- remove it from field_body\n- add it to object_active\n";
+    $subject = "# Make cookies\n\n- mill the flour @e60 @d\n- melt the chocolate @e2\n\n# when something is marked @d\n- reset the running timer\n- stamp the done item with @s based on timer @d and @h\n- remove it from field_body\n- add it to object_active\n";
     $obj = new Feature($subject);
     $this->assertCount(3, $obj->getParsed('p'));
   }
@@ -926,7 +926,7 @@ EOD;
     $subject = <<<EOD
 # Make cookies
 
-- mill the flour @e1 @d
+- mill the flour @e60 @d
 - melt the chocolate @e2
 
 # when something is marked @d
