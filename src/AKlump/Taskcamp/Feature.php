@@ -55,7 +55,7 @@ class Feature extends Object implements ObjectInterface {
     // These are all todos in the object, we're going to remove from this array
     // based on any in parsed lines.
     $missing_todo_list = clone $this->getTodos()->getList();
-    $lines = $this->getParsed('lines');
+    $lines = (array) $this->getParsed('lines');
     foreach ((array) $this->getParsed('todos_by_line') as $line_todo_id => $line_numbers) {
       foreach ($line_numbers as $line_number) {
         foreach ($this->getTodos()->getList()->get($line_todo_id) as $line_todo) {
