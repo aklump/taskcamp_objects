@@ -2,19 +2,19 @@ Table of Flags/Headers
 
    @see Object::getFlagSchema()
 
-   flag     type      header key               meaning
-   @bc  string        Basecamp   Basecamp uuid of the item
-   @d   date          Done       When it was done/finished/completed
-   @e   float         Estimate   Estimated Time To Complete
-   @f   date|interval Finish     Targeted finish date
-   @g   string        Group      The group name
-   @h   float         Hours      Actual hours from start to finish
-   @m   date|interval Milestone  Milestone other than finish date
-   @mt  string        Mantis     Mantis uuid
-   @p   string        Person     Person responsible
-   @qb  string        Quickbooks Quickbooks uuid
-   @s   date|interval Start      Start Time
-   @w   int|float     Weight     Weight (or Priority Rank)
+   flag     type        header key                   meaning
+   @bc  string        Basecamp        Basecamp uuid of the item
+   @d   date          Done            When it was done/finished/completed
+   @e   float         Estimate (mins) Estimated time to complete in minutes
+   @f   date|interval Finish          Targeted finish date
+   @g   string        Group           The group name
+   @h   float         Hours           Actual hours from start to finish
+   @m   date|interval Milestone       Milestone other than finish date
+   @mt  string        Mantis          Mantis uuid
+   @p   string        Person          Person responsible
+   @qb  string        Quickbooks      Quickbooks uuid
+   @s   date|interval Start           Start Time
+   @w   int|float     Weight          Weight (or Priority Rank)
 
 Dates, times and intervals
 

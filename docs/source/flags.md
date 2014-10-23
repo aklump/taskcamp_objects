@@ -27,7 +27,7 @@ This is correct:
 
 The following todo item is estimated to take 15 minutes:
 
-    - [ ] Refactor the css @e.25
+    - [ ] Refactor the css @e15
 
 ##Start Time
 
@@ -35,7 +35,7 @@ _Default_: Current time, HH:SS (Current time will be appended if only `@s` is pr
 
 The following todo item was begun at 5:45 am
 
-    - [ ] Refactor the css @e.25 @s5:45
+    - [ ] Refactor the css @e15 @s5:45
     
 ## Milestone/Target Date
 
@@ -47,7 +47,7 @@ _Default_: Current datetime, YYYY-MM-DDTHH:SS
 
 The following todo item will be marked complete on compile
 
-    - [ ] Refactor the css @e.25 @s5:45 @d
+    - [ ] Refactor the css @e15 @s5:45 @d
     
 ##Weight (or Priority/Rank)
 
