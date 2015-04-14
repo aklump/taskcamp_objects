@@ -22,8 +22,7 @@ This is correct:
 
 ##Estimated Time To Complete
 
-* Estimates are written in hours.
-* For minutes enter the decimal fraction, where 30 minutes is written as `.5`.
+* Estimates are written in _minutes_.
 
 The following todo item is estimated to take 15 minutes:
 
