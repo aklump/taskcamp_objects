@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="" tests="88" assertions="287" failures="0" errors="0" time="3.092678">
+    <testsuite name="My Test Suite" tests="88" assertions="287" failures="0" errors="0" time="3.092678">
+      <testsuite name="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" tests="36" assertions="97" failures="0" errors="0" time="1.778604">
+        <testcase name="testDescription" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="16" assertions="8" time="0.082555"/>
+        <testcase name="testDontDeleteH1FromOriginalLine" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="79" assertions="1" time="0.045453"/>
+        <testcase name="testAutoIncrementGetsLargeEnoughNotToClobber" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="113" assertions="1" time="0.045327"/>
+        <testcase name="testLongStringOfHyphens" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="147" assertions="1" time="0.038811"/>
+        <testcase name="testPurgeCompletedWithDuplicatedIds" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="199" assertions="2" time="0.083984"/>
+        <testcase name="testOneCaseOfDefaultTitle" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="291" assertions="1" time="0.028708"/>
+        <testcase name="testQuestionCannotBeDescription" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="325" assertions="1" time="0.019399"/>
+        <testcase name="testUrlCannotBeDescription" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="347" assertions="1" time="0.044563"/>
+        <testcase name="testQuestions" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="373" assertions="4" time="0.026540"/>
+        <testcase name="testDescriptionNoDescription" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="399" assertions="8" time="0.050299"/>
+        <testcase name="testTitle" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="464" assertions="3" time="0.069524"/>
+        <testcase name="testNotTopH2" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="486" assertions="2" time="0.021056"/>
+        <testcase name="testFirstH1IsTitle" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="501" assertions="8" time="0.058806"/>
+        <testcase name="testMissingTitleGetsDefault" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="564" assertions="3" time="0.028982"/>
+        <testcase name="testAnchorNotHeadingOne" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="583" assertions="1" time="0.129391"/>
+        <testcase name="testFlagsInTitleToString" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="658" assertions="1" time="0.076954"/>
+        <testcase name="testPurgeScenario" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="677" assertions="1" time="0.045297"/>
+        <testcase name="testTimeZoneInheritance" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="698" assertions="2" time="0.019578"/>
+        <testcase name="testPurgeCompleted" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="709" assertions="2" time="0.043034"/>
+        <testcase name="testNextId" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="732" assertions="1" time="0.041200"/>
+        <testcase name="testAutoIncrementConfig" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="750" assertions="2" time="0.065342"/>
+        <testcase name="testRemoveParsedLine" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="789" assertions="2" time="0.036541"/>
+        <testcase name="testExtraTodo" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="812" assertions="2" time="0.047629"/>
+        <testcase name="testDoNotEraseTitleWhenParsing" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="844" assertions="1" time="0.031460"/>
+        <testcase name="testSetTitleAndDescription" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="865" assertions="3" time="0.034932"/>
+        <testcase name="testToString" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="898" assertions="3" time="0.127613"/>
+        <testcase name="testAddingWithoutId" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="964" assertions="4" time="0.030877"/>
+        <testcase name="testLineBreakChars" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="982" assertions="2" time="0.068059"/>
+        <testcase name="testParagraphs" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="993" assertions="1" time="0.043087"/>
+        <testcase name="testGetCompletedTodoList" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="1011" assertions="4" time="0.026185"/>
+        <testcase name="testGetSource" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="1032" assertions="1" time="0.053509"/>
+        <testcase name="testFiles" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="1039" assertions="1" time="0.054140"/>
+        <testcase name="testGroup" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="1045" assertions="2" time="0.014459"/>
+        <testcase name="testFlags" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="1052" assertions="10" time="0.033306"/>
+        <testcase name="testGetTodos" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="1074" assertions="5" time="0.059061"/>
+        <testcase name="testGetURLS" class="FeatureTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FeatureTest.php" line="1086" assertions="2" time="0.052943"/>
+      </testsuite>
+      <testsuite name="FileTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FileTest.php" tests="3" assertions="11" failures="0" errors="0" time="0.046508">
+        <testcase name="testExists" class="FileTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FileTest.php" line="25" assertions="2" time="0.016035"/>
+        <testcase name="testGetHTML" class="FileTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FileTest.php" line="34" assertions="2" time="0.013659"/>
+        <testcase name="testTitleDescription" class="FileTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/FileTest.php" line="58" assertions="7" time="0.016814"/>
+      </testsuite>
+      <testsuite name="ObjectListTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/ObjectListTest.php" tests="10" assertions="42" failures="0" errors="0" time="0.342990">
+        <testcase name="testAdd" class="ObjectListTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/ObjectListTest.php" line="15" assertions="1" time="0.044582"/>
+        <testcase name="testReplace" class="ObjectListTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/ObjectListTest.php" line="37" assertions="4" time="0.041929"/>
+        <testcase name="testAutoIncrement" class="ObjectListTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/ObjectListTest.php" line="63" assertions="7" time="0.025803"/>
+        <testcase name="testGetNextId" class="ObjectListTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/ObjectListTest.php" line="86" assertions="6" time="0.024881"/>
+        <testcase name="testGenerateIds" class="ObjectListTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/ObjectListTest.php" line="106" assertions="10" time="0.045463"/>
+        <testcase name="testAutoIds" class="ObjectListTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/ObjectListTest.php" line="174" assertions="2" time="0.026323"/>
+        <testcase name="testToString" class="ObjectListTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/ObjectListTest.php" line="187" assertions="1" time="0.038156"/>
+        <testcase name="testGetSorted" class="ObjectListTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/ObjectListTest.php" line="198" assertions="2" time="0.025022"/>
+        <testcase name="testAddGet" class="ObjectListTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/ObjectListTest.php" line="216" assertions="3" time="0.031688"/>
+        <testcase name="testRemove" class="ObjectListTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/ObjectListTest.php" line="233" assertions="6" time="0.039143"/>
+      </testsuite>
+      <testsuite name="PrioritiesTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/PrioritiesTest.php" tests="4" assertions="7" failures="0" errors="0" time="0.070896">
+        <testcase name="testConstruct" class="PrioritiesTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/PrioritiesTest.php" line="17" assertions="2" time="0.011349"/>
+        <testcase name="testGetHTML" class="PrioritiesTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/PrioritiesTest.php" line="23" assertions="2" time="0.012382"/>
+        <testcase name="testSetTitleDescription" class="PrioritiesTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/PrioritiesTest.php" line="40" assertions="1" time="0.011356"/>
+        <testcase name="testToString" class="PrioritiesTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/PrioritiesTest.php" line="50" assertions="2" time="0.035809"/>
+      </testsuite>
+      <testsuite name="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" tests="35" assertions="130" failures="0" errors="0" time="0.853680">
+        <testcase name="testMilestoneWithAltConfig" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="15" assertions="1" time="0.018023"/>
+        <testcase name="testMilestone" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="28" assertions="1" time="0.016483"/>
+        <testcase name="testGranularityOfDateTimesWithNoArguments" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="35" assertions="4" time="0.035089"/>
+        <testcase name="testRequireSpaceForFlags" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="58" assertions="1" time="0.015171"/>
+        <testcase name="testLongStringOfHyphens" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="64" assertions="1" time="0.011270"/>
+        <testcase name="testDateIntervalPeriod" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="71" assertions="3" time="0.037962"/>
+        <testcase name="testAtDoneNotX" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="94" assertions="1" time="0.013623"/>
+        <testcase name="testCreateDate" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="100" assertions="6" time="0.013379"/>
+        <testcase name="testDateRegex" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="112" assertions="4" time="0.011059"/>
+        <testcase name="testSimplifyStartWithTimezone" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="129" assertions="1" time="0.016885"/>
+        <testcase name="testSloppyCompleted" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="135" assertions="6" time="0.043609"/>
+        <testcase name="testHR" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="164" assertions="1" time="0.010595"/>
+        <testcase name="testSimplify" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="170" assertions="1" time="0.016496"/>
+        <testcase name="testPrintingSAndDFlags" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="178" assertions="2" time="0.020086"/>
+        <testcase name="testGetFlagIdZero" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="190" assertions="8" time="0.036895"/>
+        <testcase name="testEscapingAFlag" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="211" assertions="1" time="0.013451"/>
+        <testcase name="testId" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="217" assertions="14" time="0.047834"/>
+        <testcase name="testGetFlagDate" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="250" assertions="3" time="0.020942"/>
+        <testcase name="testStaticMethods" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="268" assertions="1" time="0.010103"/>
+        <testcase name="testToStringInvalidTodo" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="273" assertions="1" time="0.012029"/>
+        <testcase name="testWeight" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="280" assertions="2" time="0.020419"/>
+        <testcase name="testDateStrings" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="289" assertions="10" time="0.017762"/>
+        <testcase name="testGetFlags" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="310" assertions="1" time="0.015952"/>
+        <testcase name="testDuration" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="316" assertions="5" time="0.030959"/>
+        <testcase name="testCarryover" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="337" assertions="4" time="0.030806"/>
+        <testcase name="testStart" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="352" assertions="1" time="0.017972"/>
+        <testcase name="testShorthand" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="359" assertions="18" time="0.117900"/>
+        <testcase name="testComplete" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="394" assertions="7" time="0.040129"/>
+        <testcase name="testUncomplete" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="422" assertions="3" time="0.020705"/>
+        <testcase name="testConfig" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="433" assertions="2" time="0.029774"/>
+        <testcase name="testToString" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="460" assertions="2" time="0.022500"/>
+        <testcase name="testGetFlag" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="470" assertions="8" time="0.017328"/>
+        <testcase name="testTitle" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="484" assertions="1" time="0.013337"/>
+        <testcase name="testDescription" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="490" assertions="1" time="0.013211"/>
+        <testcase name="testIsDone" class="TodoTest" file="/Volumes/Data/Users/aklump/Code/Packages/php/taskcamp_objects/tests/phpunit/TodoTest.php" line="496" assertions="4" time="0.023941"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

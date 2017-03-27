@@ -1,0 +1,98 @@
+Feature
+ [x] Description
+ [x] Dont delete h 1 from original line
+ [x] Auto increment gets large enough not to clobber
+ [x] Long string of hyphens
+ [x] Purge completed with duplicated ids
+ [x] One case of default title
+ [x] Question cannot be description
+ [x] Url cannot be description
+ [x] Questions
+ [x] Description no description
+ [x] Title
+ [x] Not top h 2
+ [x] First h 1 is title
+ [x] Missing title gets default
+ [x] Anchor not heading one
+ [x] Flags in title to string
+ [x] Purge scenario
+ [x] Time zone inheritance
+ [x] Purge completed
+ [x] Next id
+ [x] Auto increment config
+ [x] Remove parsed line
+ [x] Extra todo
+ [x] Do not erase title when parsing
+ [x] Set title and description
+ [x] To string
+ [x] Adding without id
+ [x] Line break chars
+ [x] Paragraphs
+ [x] Get completed todo list
+ [x] Get source
+ [x] Files
+ [x] Group
+ [x] Flags
+ [x] Get todos
+ [x] Get u r l s
+
+File
+ [x] Exists
+ [x] Get h t m l
+ [x] Title description
+
+ObjectList
+ [x] Add
+ [x] Replace
+ [x] Auto increment
+ [x] Get next id
+ [x] Generate ids
+ [x] Auto ids
+ [x] To string
+ [x] Get sorted
+ [x] Add get
+ [x] Remove
+
+Priorities
+ [x] Construct
+ [x] Get h t m l
+ [x] Set title description
+ [x] To string
+
+Todo
+ [x] Milestone with alt config
+ [x] Milestone
+ [x] Granularity of date times with no arguments
+ [x] Require space for flags
+ [x] Long string of hyphens
+ [x] Date interval period
+ [x] At done not x
+ [x] Create date
+ [x] Date regex
+ [x] Simplify start with timezone
+ [x] Sloppy completed
+ [x] H r
+ [x] Simplify
+ [x] Printing s and d flags
+ [x] Get flag id zero
+ [x] Escaping a flag
+ [x] Id
+ [x] Get flag date
+ [x] Static methods
+ [x] To string invalid todo
+ [x] Weight
+ [x] Date strings
+ [x] Get flags
+ [x] Duration
+ [x] Carryover
+ [x] Start
+ [x] Shorthand
+ [x] Complete
+ [x] Uncomplete
+ [x] Config
+ [x] To string
+ [x] Get flag
+ [x] Title
+ [x] Description
+ [x] Is done
+

@@ -11,17 +11,12 @@ disabled = "drupal html mediawiki doxygene"
 ##
  # File path to the php you want to use for compiling
  #
-php = '/Applications/MAMP/bin/php/php5.3.14/bin/php'
+php = $(which php)
 
 ##
  # Lynx is required for output of .txt files
  #
 lynx = $(which lynx)
-
-##
- # File path to Markdown.pl e.g., core/Markdown.pl
- #
-markdown = '/Users/aklump/bin/Markdown_1.0.1/Markdown.pl'
 
 ##
  # The drupal credentials for a user who can access your iframe content

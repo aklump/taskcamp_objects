@@ -1,28 +1,31 @@
-
 <!DOCTYPE html>
 
 <html>
 <head>
-    <title>List of Header Keys</title>
-    <style type="text/css" media="all">
-      @import url("default.css");
-      @import url("style.css");
-    </style>
+  <title>Available Headers</title>
+  <link href="search/tipuesearch.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
 </head>
 
-<body class="page-available_headers">
+<body class="page--available_headers">
 <header>
-<div class="pager">
-  <a href="headers.html" class="prev headers" >&laquo;Headers</a>
+  <div class="pager">
+  <a href="index.html" class="prev index">&laquo;Index</a>
   <a href="index.html" class="index">Index</a>
-  <a href="flags.html" class="next flags">Flags&raquo;</a>
+  <a href="basecamp.html" class="next basecamp">Basecamp&raquo;</a>
+</div>
+</header>
+
+  <div class="search__wrapper">
+  <form action="search--results.html">
+    <input type="text" class="search-input" name="q" id="tipue_search_input" autocomplete="off" required>
+  </form>
 </div>
 
-</header>
-<h1>List of Header Keys</h1>
-<div class="breadcrumb"><a href="index.html">Index</a></div>
+  <h1>Available Headers</h1>
+  <div class="breadcrumb"><a href="index.html">Index</a></div>
 
-<h2>Table of Flags/Headers</h2>
+<section><h2>Table of Flags/Headers</h2>
 
 <p><code>@see Object::getFlagSchema()</code></p>
 
@@ -169,18 +172,34 @@ Basecamp: https://intheloftstudios.basecamphq.com/projects/1234-intheloftstudios
 
 - [ ] meet with the designer
 </code></pre>
-<footer>
-<div class="pager">
-  <a href="headers.html" class="prev headers" >&laquo;Headers</a>
-  <a href="index.html" class="index">Index</a>
-  <a href="flags.html" class="next flags">Flags&raquo;</a>
+</section>
+
+<div class="search__results">
+  <div id="tipue_search_content"></div>
 </div>
 
-
+<footer>
+  <div class="pager">
+  <a href="index.html" class="prev index">&laquo;Index</a>
+  <a href="index.html" class="index">Index</a>
+  <a href="basecamp.html" class="next basecamp">Basecamp&raquo;</a>
+</div>
+  
   <div id="footer-legaleeze">
-    <p class="legaleeze center">Version: 0.5.3 &bull; Last Updated: Tue, 14 Apr 2015 13:56:21 -0700</p>
+    <p class="legaleeze center">Version: 1.0 &bull; Last Updated: Fri, 17 Mar 2017 11:30:56 -0700</p>
   </div>
 </footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="search/tipuesearch_content.js"></script>
+  <script src="search/tipuesearch_set.js"></script>
+  <script src="search/tipuesearch.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#tipue_search_input').tipuesearch();
+    });
+  </script>
+<script src="js/core.js"></script>
 </body>
 </html>
 
