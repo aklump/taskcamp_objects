@@ -12,11 +12,11 @@
   TaskcampObjects.Todo = {};
 
   TaskcampObjects.Todo.Toggle = function () {
-      
-  }
+
+  };
 
   /**
-  * @} End of "defgroup taskcamp_objects".
-  */
+   * @} End of "defgroup taskcamp_objects".
+   */
 
 })(jQuery);

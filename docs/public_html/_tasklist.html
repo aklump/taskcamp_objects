@@ -1,61 +1,68 @@
-
 <!DOCTYPE html>
 
 <html>
 <head>
-    <title><!--$title--></title>
-    <style type="text/css" media="all">
-      @import url("default.css");
-      @import url("style.css");
-    </style>
+  <title>Tasklist</title>
+  <link href="search/tipuesearch.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
 </head>
 
-<body class="">
+<body class="page--_tasklist">
 <header>
-<div class="pager">
-  <a href="</a>
+  <div class="pager">
+  <a href="todo.html" class="prev todo">&laquo;Todo</a>
   <a href="index.html" class="index">Index</a>
-  <a href="&raquo;</a>
+  <a href="index.html" class="next index">Index&raquo;</a>
 </div>
-
 </header>
-<h1><!--$title--></h1>
-<div class="breadcrumb"><a href="index.html">Index</a></div>
 
 
-<pre>- [ ] available_headers: meet with the designer
-- [ ] flags: @s6:33 This todo was @d today.
-- [ ] flags: Refactor the css @e15
-- [ ] flags: Refactor the css @e15 @s5:45
-- [ ] available_headers: This needs to be done in 1 week @fP1W
-- [ ] available_headers: This needs to be done in 1 week @fP7D
-- [ ] todo: A pending item
+  <h1>Tasklist</h1>
+  <div class="breadcrumb"><a href="index.html">Index</a></div>
+
+<section>
+
+<pre>- [ ] available_headers: This needs to be done in 1 week @fP1W
+- [ ] flags: This todo was today. @s6:33 @d
 - [ ] todo: a todo item
+- [ ] flags: Finish page.tpl @p"Abe Lincoln"
+- [ ] flags: Finish page.tpl @pcharlie
+- [ ] flags: Start the job @w-1
 - [ ] flags: Finish the job
 - [ ] flags: Refactor the css @e15 @s5:45 @d
-- [ ] flags: Start the job @w-1
+- [ ] flags: Refactor the css @e15 @s5:45
+- [ ] flags: Refactor the css @e15
+- [ ] flags: @s6:33 This todo was @d today.
+- [ ] feature: this todo gets skipped over
+- [ ] available_headers: meet with the designer
+- [ ] flags: A linked Basecamp todo item @bc10690704
+- [ ] todo: A pending item
+- [ ] available_headers: This needs to be done in 1 week @fP7D
+- [ ] headers: implement design @pAaron
+- [ ] headers: meet with designer @pAaron
 - [ ] headers: design the site @pSturla
 - [ ] headers: approve design @pAaron
-- [ ] headers: meet with designer @pAaron
-- [ ] feature: this todo gets skipped over
-- [ ] flags: This todo was today. @s6:33 @d
-- [ ] flags: Finish page.tpl @pcharlie
-- [ ] flags: Finish page.tpl @p"Abe Lincoln"
-- [ ] flags: A linked Basecamp todo item @bc10690704
-- [ ] headers: implement design @pAaron
 </pre>
-<footer>
-<div class="pager">
-  <a href="</a>
-  <a href="index.html" class="index">Index</a>
-  <a href="&raquo;</a>
+</section>
+
+<div class="search__results">
+  <div id="tipue_search_content"></div>
 </div>
 
-
+<footer>
+  <div class="pager">
+  <a href="todo.html" class="prev todo">&laquo;Todo</a>
+  <a href="index.html" class="index">Index</a>
+  <a href="index.html" class="next index">Index&raquo;</a>
+</div>
+  
   <div id="footer-legaleeze">
-    <p class="legaleeze center">Version: 0.5.3 &bull; Last Updated: Tue, 14 Apr 2015 13:56:21 -0700</p>
+    <p class="legaleeze center">Version: 0.2 &bull; Last Updated: Mon, 27 Mar 2017 16:37:26 -0700</p>
   </div>
 </footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="js/core.js"></script>
 </body>
 </html>
 

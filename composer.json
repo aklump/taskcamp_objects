@@ -1,5 +1,8 @@
 {
   "autoload": {
     "psr-0": {"AKlump\\": "src/"}  
-  } 
+  },
+  "require": {
+    "aklump/loft_data_grids": "^0.4.29"
+  }
 }

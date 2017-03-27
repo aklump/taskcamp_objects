@@ -1,27 +1,26 @@
-
 <!DOCTYPE html>
 
 <html>
 <head>
-    <title>Headers</title>
-    <style type="text/css" media="all">
-      @import url("default.css");
-      @import url("style.css");
-    </style>
+  <title>Definition</title>
+  <link href="search/tipuesearch.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
 </head>
 
-<body class="page-headers">
+<body class="page--headers">
 <header>
-<div class="pager">
-  <a href="todo.html" class="prev todo" >&laquo;Todos</a>
+  <div class="pager">
+  <a href="flags.html" class="prev flags">&laquo;Flags</a>
   <a href="index.html" class="index">Index</a>
-  <a href="available_headers.html" class="next available_headers">List of Header Keys&raquo;</a>
+  <a href="mantis.html" class="next mantis">Mantis&raquo;</a>
 </div>
-
 </header>
-<h1>Headers</h1>
-<div class="breadcrumb"><a href="index.html">Index</a></div>
 
+
+  <h1>Definition</h1>
+  <div class="breadcrumb"><a href="index.html">Index</a></div>
+
+<section>
 
 <p>Taskcamp headers can be thought of and are represented in the same way as email headers or HTTP headers.  Basically the first lines of text can provide meta information (sometimes equivalent to (flags)[flags.html]).  Headers are key/value pairs, separated by a colon.  The keys are NOT case-sensitive. The header is separated from the body by the a blank line.  Here is an example document (a Feature) showing headers.  Headers can be applied to anything but they make the most sense in Projects or Features.  As you can see too, they serve to tie Clients, Projects and Features together.  Notice that header values do not need to be wrapped in double quotes (as do flags).</p>
 
@@ -82,18 +81,26 @@ This will be a revamp of the current website to allow for responsive design.
 - [ ] approve design @pAaron
 - [ ] implement design @pAaron
 </code></pre>
-<footer>
-<div class="pager">
-  <a href="todo.html" class="prev todo" >&laquo;Todos</a>
-  <a href="index.html" class="index">Index</a>
-  <a href="available_headers.html" class="next available_headers">List of Header Keys&raquo;</a>
+</section>
+
+<div class="search__results">
+  <div id="tipue_search_content"></div>
 </div>
 
-
+<footer>
+  <div class="pager">
+  <a href="flags.html" class="prev flags">&laquo;Flags</a>
+  <a href="index.html" class="index">Index</a>
+  <a href="mantis.html" class="next mantis">Mantis&raquo;</a>
+</div>
+  
   <div id="footer-legaleeze">
-    <p class="legaleeze center">Version: 0.5.3 &bull; Last Updated: Tue, 14 Apr 2015 13:56:23 -0700</p>
+    <p class="legaleeze center">Version: 0.2 &bull; Last Updated: Mon, 27 Mar 2017 16:37:27 -0700</p>
   </div>
 </footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="js/core.js"></script>
 </body>
 </html>
 

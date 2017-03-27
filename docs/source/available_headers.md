@@ -3,18 +3,24 @@
 
 | flag | type | header key | meaning |
 |------|---------|----------|----------|
-| @bc | string     | Basecamp  | Basecamp uuid of the item |
-| @d  | date       | Done  | When it was done/finished/completed |
-| @e  | float      | Estimate (mins) | Estimated time to complete in minutes  |
-| @f  | date\|interval | Finish  | Targeted finish date |
+| @a  | int      | Actual | Actual time to complete in minutes  |
+| @d  | time or date       | Done  | When it was done/finished/completed |
+| @e  | int      | Estimate | Estimated time to complete in minutes  |
+| @f  | date \| interval | Finish  | Targeted finish date |
 | @g  | string     | Group  | The group name |
-| @h  | float      | Hours | Actual hours from start to finish |
-| @m  | date\|interval       | Milestone  | Milestone other than finish date |
-| @mt  | string    | Mantis  | Mantis uuid |
+| @m  | date \| interval       | Milestone  | Milestone other than finish date |
 | @p  | string     | Person  | Person responsible |
+| @s  | time or date \| interval   | Start  | Start Time |
+| @w  | int \| float | Weight | Weight (or Priority Rank) |
+
+### Deprecated?
+
+| flag | type | header key | meaning |
+|------|---------|----------|----------|
+| @h  | float      | Hours | Actual hours from start to finish |
+| @bc | string     | Basecamp  | Basecamp uuid of the item |
+| @mt  | string    | Mantis  | Mantis uuid |
 | @qb | string     | Quickbooks | Quickbooks uuid |
-| @s  | date\|interval   | Start  | Start Time |
-| @w  | int\|float | Weight | Weight (or Priority Rank) |
 
 ## Dates, times and intervals
 For dates you must use one of the following formats:
@@ -23,7 +29,15 @@ For dates you must use one of the following formats:
     YYYY-MM-DDTHH:MM+0000
     HH:MM+0000
 
-**Times always require the [Time offset from UTC](http://en.wikipedia.org/wiki/ISO_8601#Time_offsets_from_UTC).**
+### Date Context
+
+When you use time without a date, the date context will be used to interpret the time value.  Here is the list of contexts
+
+| flag | context |
+|----------|----------|
+| @s | config.date_default OR now |
+| @d | @s OR config.date_default OR now |
+
 
 And you can also use [Time Intervals](http://en.wikipedia.org/wiki/ISO_8601#Time_intervals) for some flags.
 
@@ -35,7 +49,7 @@ For example here are a couple of todo items that are both due in 1 week.
     - [ ] This needs to be done in 1 week @fP1W
     - [ ] This needs to be done in 1 week @fP7D
 
-##Feature with Headers instead of Flags
+## Feature with Headers instead of Flags
     Client: In the Loft Studios, LLC
     Project: intheloftstudios.com
     Weight: 190
