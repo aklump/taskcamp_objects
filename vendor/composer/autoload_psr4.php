@@ -6,4 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
+    'AKlump\\LoftDataGrids\\' => array($vendorDir . '/aklump/loft_data_grids/src/AKlump/LoftDataGrids'),
 );

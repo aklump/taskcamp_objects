@@ -16,37 +16,32 @@
 </div>
 </header>
 
-  <div class="search__wrapper">
-  <form action="search--results.html">
-    <input type="text" class="search-input" name="q" id="tipue_search_input" autocomplete="off" required>
-  </form>
-</div>
 
   <h1>Tasklist</h1>
   <div class="breadcrumb"><a href="index.html">Index</a></div>
 
 <section>
 
-<pre>- [ ] available_headers: meet with the designer
-- [ ] flags: @s6:33 This todo was @d today.
-- [ ] flags: Refactor the css @e15
-- [ ] flags: Refactor the css @e15 @s5:45
-- [ ] available_headers: This needs to be done in 1 week @fP1W
-- [ ] available_headers: This needs to be done in 1 week @fP7D
-- [ ] todo: A pending item
+<pre>- [ ] available_headers: This needs to be done in 1 week @fP1W
+- [ ] flags: This todo was today. @s6:33 @d
 - [ ] todo: a todo item
+- [ ] flags: Finish page.tpl @p"Abe Lincoln"
+- [ ] flags: Finish page.tpl @pcharlie
+- [ ] flags: Start the job @w-1
 - [ ] flags: Finish the job
 - [ ] flags: Refactor the css @e15 @s5:45 @d
-- [ ] flags: Start the job @w-1
+- [ ] flags: Refactor the css @e15 @s5:45
+- [ ] flags: Refactor the css @e15
+- [ ] flags: @s6:33 This todo was @d today.
+- [ ] feature: this todo gets skipped over
+- [ ] available_headers: This needs to be done in 1 week @fP7D
+- [ ] todo: A pending item
+- [ ] flags: A linked Basecamp todo item @bc10690704
+- [ ] available_headers: meet with the designer
+- [ ] headers: implement design @pAaron
+- [ ] headers: meet with designer @pAaron
 - [ ] headers: design the site @pSturla
 - [ ] headers: approve design @pAaron
-- [ ] headers: meet with designer @pAaron
-- [ ] feature: this todo gets skipped over
-- [ ] flags: This todo was today. @s6:33 @d
-- [ ] flags: Finish page.tpl @pcharlie
-- [ ] flags: Finish page.tpl @p"Abe Lincoln"
-- [ ] flags: A linked Basecamp todo item @bc10690704
-- [ ] headers: implement design @pAaron
 </pre>
 </section>
 
@@ -62,19 +57,11 @@
 </div>
   
   <div id="footer-legaleeze">
-    <p class="legaleeze center">Version: 1.0 &bull; Last Updated: Fri, 17 Mar 2017 11:30:55 -0700</p>
+    <p class="legaleeze center">Version: 0.1.11 &bull; Last Updated: Mon, 27 Mar 2017 14:41:19 -0700</p>
   </div>
 </footer>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-  <script src="search/tipuesearch_content.js"></script>
-  <script src="search/tipuesearch_set.js"></script>
-  <script src="search/tipuesearch.min.js"></script>
-  <script>
-    $(document).ready(function () {
-      $('#tipue_search_input').tipuesearch();
-    });
-  </script>
 <script src="js/core.js"></script>
 </body>
 </html>

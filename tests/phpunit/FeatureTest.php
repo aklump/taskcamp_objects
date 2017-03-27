@@ -11,7 +11,16 @@ use AKlump\Taskcamp\Feature;
 use AKlump\Taskcamp\Todo;
 
 
-class FeatureTest extends PHPUnit_Framework_TestCase {
+class FeatureTest extends TestBase {
+
+
+    public function testGroup()
+    {
+        $feature = new Feature('# Feature @g"After Launch" @p"Jim Barkley"');
+        $this->assertTodoValue('After Launch', $feature, 'group');
+        $this->assertEquals('After Launch', $feature->getFlag('group'));
+        $this->assertEquals('Jim Barkley', $feature->getFlag('person'));
+    }
 
     public function testDescription()
     {
@@ -667,8 +676,8 @@ Use this to test the saving and completion process.
 - [ ] when done make it add the effective start date @id2
 - [ ] when done it should be removed from notes @id3
 - [ ] when creating a node, the original should be reprinted @id4
-- [ ] print the feature flags in the title @id7 @e.5
-- [ ] add to field_todos_completed with UTC timestamp when marking complete @id8 @e.25
+- [ ] print the feature flags in the title @id7 @e30
+- [ ] add to field_todos_completed with UTC timestamp when marking complete @id8 @e15
 EOD;
         $obj = new Feature($subject);
         $this->assertSame($subject, (string) $obj);
@@ -1042,12 +1051,6 @@ EOD;
         $this->assertEquals(5, $feature->getFiles()->count());
     }
 
-    public function testGroup()
-    {
-        $feature = new Feature('# Feature @g"After Launch" @p"Jim Barkley"');
-        $this->assertEquals('After Launch', $feature->getFlag('group'));
-        $this->assertEquals('Jim Barkley', $feature->getFlag('person'));
-    }
 
     public function testFlags()
     {

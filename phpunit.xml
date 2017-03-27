@@ -27,7 +27,10 @@
         <testsuite name="My Test Suite">
             <directory>./tests/phpunit</directory>
         </testsuite>
-        <testsuite name="focus">
+        <testsuite name="Feature">
+            <file>./tests/phpunit/FeatureTest.php</file>
+        </testsuite>
+        <testsuite name="Todo">
             <file>./tests/phpunit/TodoTest.php</file>
         </testsuite>
     </testsuites>

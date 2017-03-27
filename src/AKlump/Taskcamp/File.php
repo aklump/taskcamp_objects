@@ -14,7 +14,7 @@ namespace AKlump\Taskcamp;
  */
 class File extends Object implements ObjectInterface {
 
-    public function getAvailableFlags()
+    public static function getAvailableFlags()
     {
         return array('bc');
     }

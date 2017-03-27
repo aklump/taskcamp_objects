@@ -1,42 +1,49 @@
 <?php
+
 namespace AKlump\Taskcamp;
 
 /**
  * Class List
  */
 class Priorities extends Object implements ObjectInterface {
-  protected $list;
 
-  public function __construct($title = '', $description = '', $config = array()) {
-    parent::__construct('', $config);
-    $this->setTitle($title);
-    $this->setDescription($description);
-    $this->list = new ObjectList();
-  }
+    protected $list;
 
-  public function getAvailableFlags(){
-    return array('w', 'e', 'm', 'p');
-  }
-
-  public function __toString() {
-    $output = parent::__toString();
-    if ($this->getList()->count()) {
-      $output .= PHP_EOL . (string) $this->list;
+    public function __construct($title = '', $description = '', $config = array())
+    {
+        parent::__construct('', $config);
+        $this->setTitle($title);
+        $this->setDescription($description);
+        $this->list = new ObjectList();
     }
 
-    return $output;
-  }  
+    public static function getAvailableFlags()
+    {
+        return array('w', 'e', 'm', 'p');
+    }
 
-  /**
-   * Return the sorted list object
-   *
-   * @return ObjectList
-   */
-  public function getList() {
-    return $this->list;
-  }  
+    public function __toString()
+    {
+        $output = parent::__toString();
+        if ($this->getList()->count()) {
+            $output .= PHP_EOL . (string) $this->list;
+        }
 
-  protected function parse() {
+        return $output;
+    }
 
-  }
+    protected function parse()
+    {
+
+    }
+
+    /**
+     * Return the sorted list object
+     *
+     * @return ObjectList
+     */
+    public function getList()
+    {
+        return $this->list;
+    }
 }

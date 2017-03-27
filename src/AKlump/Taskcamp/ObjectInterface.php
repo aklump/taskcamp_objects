@@ -8,23 +8,9 @@ namespace AKlump\Taskcamp;
 interface ObjectInterface {
 
     /**
-     * Mark an object complete and add a done timestamp
-     *
-     * This will only work if the object is not already completed.  If you want
-     * to update the @d flag use setFlag('done', ...) instead.
-     *
-     * @param  string $time The datetime string or NULL for now
-     *
-     * @return $this
+     * @return array
      */
-    public function complete($time = null);
-
-    /**
-     * Remove the complete status and done timestamp from an object
-     *
-     * @return $this
-     */
-    public function unComplete();
+    public static function getAvailableFlags();
 
     /**
      * Set the config array.
@@ -43,9 +29,11 @@ interface ObjectInterface {
     /**
      * Adds a single config
      *
-     * @param mixed $config
+     * @param $key
+     * @param $value
      *
      * @return $this
+     * @internal param mixed $config
      */
     public function setConfigItem($key, $value);
 
@@ -187,6 +175,8 @@ interface ObjectInterface {
     /**
      * Return a key from $this->parsed
      *
+     * @param $key
+     *
      * @return mixed
      */
     public function getParsed($key);
@@ -194,7 +184,9 @@ interface ObjectInterface {
     /**
      * Deletes a single line of content by line number
      *
-     * @return string  The string content of the deleted line.
+     * @param $line_number
+     *
+     * @return string The string content of the deleted line.
      */
     public function deleteLine($line_number);
 }

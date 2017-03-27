@@ -2,12 +2,19 @@
 
 namespace AKlump\Taskcamp;
 
+use AKlump\LoftDataGrids\ExportData;
+
 /**
  * Class Object
  */
 abstract class Object implements ObjectInterface {
 
+    const DATE_FORMAT_DATETIME = 'Y-m-d\TH:iO';
+    const DATE_FORMAT_DATE = 'Y-m-d';
+    const DATE_FORMAT_TIME = 'H:iO';
+
     protected $parsed, $flags;
+    protected $cache = [];
 
     protected $title = '';
     protected $description = '';
@@ -29,7 +36,12 @@ abstract class Object implements ObjectInterface {
         $this->parsed = new \stdClass;
         $this->flags = array();
         $this->setConfig($config);
-        $this->setSource($source);
+        $source && $this->setSource($source);
+    }
+
+    public static function dateRegex()
+    {
+        return '(P[A-Z0-9]{2,})|(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}[+-]\d{4})|(\d{4}-\d{2}-\d{2})|(\d{2}:\d{2}[+-]\d{4})|(\d{2}:\d{2})';
     }
 
     public function setQuestions($questions)
@@ -71,10 +83,11 @@ abstract class Object implements ObjectInterface {
     {
         $this->data['config'] = new \stdClass;
         $config = (array) $config + array(
-                'timezone'    => 'UTC',
-                'milestone'   => 14 * 86400,
-                'flag_prefix' => '@',
-                'weight'      => 1000,
+                'date_default' => 'now',
+                'timezone'     => 'UTC',
+                'milestone'    => 14 * 86400,
+                'flag_prefix'  => '@',
+                'weight'       => 1000,
             );
         foreach ($config as $key => $value) {
             $this->setConfigItem($key, $value);
@@ -106,16 +119,6 @@ abstract class Object implements ObjectInterface {
         }
 
         return isset($this->parsed->{$key}) ? $this->parsed->{$key} : null;
-    }
-
-    public function complete($time = null)
-    {
-        return $this;
-    }
-
-    public function unComplete()
-    {
-        return $this;
     }
 
     public function setFlag($flag, $value)
@@ -196,13 +199,12 @@ abstract class Object implements ObjectInterface {
      *   - name
      *   - regex
      *   - hide_empty bool Should we hide an empty flag, say for @id0 or @w0
+     *   - dateContext array An array of ids to use as date context, if
+     *   possible before relying on configuration and now.
      */
     public function getFlagSchema()
     {
-        static $schema = null;
-
-        if ($schema === null) {
-
+        if (!isset($this->cache['schema'])) {
             $all_flags = array(
                 (object) array(
                     'flag'        => 'id',
@@ -233,11 +235,11 @@ abstract class Object implements ObjectInterface {
                 ),
                 (object) array(
                     'flag'        => 'e',
-                    'type'        => 'float',
-                    'description' => 'The estimated hours to done.',
+                    'type'        => 'int',
+                    'description' => 'The estimated mins to done.',
                     'id'          => 'estimate',
                     'name'        => 'Estimate',
-                    'regex'       => '(e)([.\d]+)',
+                    'regex'       => '(e)(\d+)',
                     'hide_empty'  => true,
                 ),
                 (object) array(
@@ -257,7 +259,7 @@ abstract class Object implements ObjectInterface {
                     'description'  => 'The date to start work.',
                     'id'           => 'start',
                     'name'         => 'Start Time',
-                    'regex'        => '(s)(' . $this->dateRegex() . ')?',
+                    'regex'        => '(s)(' . static::dateRegex() . ')?',
                     'hide_empty'   => true,
                 ),
                 (object) array(
@@ -268,7 +270,7 @@ abstract class Object implements ObjectInterface {
                     'description'  => 'The next milestone date.',
                     'id'           => 'milestone',
                     'name'         => 'Milestone',
-                    'regex'        => '(m)(' . $this->dateRegex() . ')?',
+                    'regex'        => '(m)(' . static::dateRegex() . ')?',
                     'hide_empty'   => true,
                 ),
                 (object) array(
@@ -279,18 +281,19 @@ abstract class Object implements ObjectInterface {
                     'description'  => 'The date it needs to be finished.',
                     'id'           => 'finish',
                     'name'         => 'Finish',
-                    'regex'        => '(f)(' . $this->dateRegex() . ')?',
+                    'regex'        => '(f)(' . static::dateRegex() . ')?',
                     'hide_empty'   => true,
                 ),
                 (object) array(
                     'flag'        => 'd',
                     'type'        => 'datetime',
-                    'granularity' => 'datetime',
+                    'granularity' => 'time',
                     'description' => 'The date it was done and complete.',
                     'id'          => 'done',
                     'name'        => 'Completed',
-                    'regex'       => '(d)(' . $this->dateRegex() . ')?',
+                    'regex'       => '(d)(' . static::dateRegex() . ')?',
                     'hide_empty'  => true,
+                    'dateContext' => 'start',
                 ),
                 (object) array(
                     'flag'        => 'h',
@@ -346,22 +349,24 @@ abstract class Object implements ObjectInterface {
             }
 
             $schema = $filtered2;
+
+            $this->cache['schema'] = $schema;
         }
 
-        return $schema;
-    }
-
-    public static function dateRegex()
-    {
-        return '(P[A-Z0-9]{2,})|(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}[+-]\d{4})|(\d{4}-\d{2}-\d{2})|(\d{2}:\d{2}[+-]\d{4})|(\d{2}:\d{2})';
+        return $this->cache['schema'];
     }
 
     /**
-     * Return an array of flags usable in this object
+     * Exposes the parsed object properties as if on the object.
      *
-     * @return array e.g. array('e', 'm');
+     * @return null
+     * @internal param $key
+     *
      */
-    abstract public function getAvailableFlags();
+    //    public function __get($key)
+    //    {
+    //        return isset($this->parsed->{$key}) ? $this->parsed->{$key} : null;
+    //    }
 
     public function __toString()
     {
@@ -373,11 +378,177 @@ abstract class Object implements ObjectInterface {
         return implode(PHP_EOL, $build);
     }
 
+    public function convertFlagsToParsed()
+    {
+        if (empty($this->flags)) {
+            return;
+        }
+        foreach ($this->getFlagSchema() as $item) {
+            $subject = &$this->parsed->{$item->id};
+            if (($value = isset($this->flags[$item->id]) ? $this->flags[$item->id] : null)) {
+                switch ($item->type) {
+                    case 'string':
+                        $value = strval($value);
+                        break;
+                    case 'float':
+                        $value = floatval($value);
+                        break;
+                    case 'int':
+                        $value = intval($value);
+                        break;
+                    case 'datetime':
+                        $method = 'getDateTime';
+                        if ($item->granularity === 'time') {
+                            $method = 'getTime';
+                        }
+                        elseif ($item->granularity === 'date') {
+                            $method = 'getDate';
+                        }
+                        $value = new \DateTime($this->{$method}($value), new \DateTimeZone($this->getConfig('timezone')));
+                        break;
+                }
+            }
+
+            $subject = $value;
+        }
+    }
+
+    /**
+     * Return a formated DATE string of now (or from string)
+     *
+     * @param  string $string Optional. Defaults to now
+     *
+     * @return string
+     *
+     * @see  ObjectInterface::createDate()
+     */
+    public function getDate($string = null)
+    {
+        return $this->createDate($string)->format(static::DATE_FORMAT_DATE);
+    }
+
+    /**
+     * Return a formated DATETIME string of now (or from string)
+     *
+     * @param  string $string Optional. Defaults to now
+     *
+     * @return string
+     *
+     * @see  ObjectInterface::createDate()
+     */
+    public function getDateTime($string = null)
+    {
+        return $this->createDate($string)->format(static::DATE_FORMAT_DATETIME);
+    }
+
+    /**
+     * Return a formatted TIME string of now (or from string)
+     *
+     * @param  string $string Optional. Defaults to now
+     *
+     * @return string
+     *
+     * @see  ObjectInterface::createDate()
+     */
+    public function getTime($string = null)
+    {
+        return $this->createDate($string)->format(static::DATE_FORMAT_TIME);
+    }
+
+    /**
+     * Create a DateTime object from a string using context with config
+     * fallback.
+     *
+     * @param  string $string  DateTime string  Can be either one of our
+     *                         supported string formats: DATE_FORMATE_DATE,
+     *                         DATE_FORMATE_DATETIME, DATE_FORMATE_TIME or a
+     *                         string representing a period, e.g. 'PT1H'.
+     * @param  string $context DateTime string If provided this string will be
+     *                         used to make up for missing elements in $string.
+     *
+     * @return DateTime
+     */
+    public function createDate($string = null, $context = null)
+    {
+        $now = new \DateTime($this->getConfig('date_default'), new \DateTimeZone($this->getConfig('timezone')));
+
+        // Convert a DateInterval beginning with P
+        if (substr($string, 0, 1) === 'P') {
+            $string = date_add($now, new \DateInterval($string))->format(static::DATE_FORMAT_DATETIME);
+        }
+        $input = $this->parseDateString($string);
+        $configuration = $this->parseDateString($now->format(static::DATE_FORMAT_DATETIME));
+        $context = $this->parseDateString($context);
+        $date = $this->datesMerge($input, $context, $configuration);
+        $date = new \DateTime($this->dateFlatten($date));
+
+        return $date;
+    }
+
+    /**
+     * Return an ExportData object.
+     */
+    public function getExportData()
+    {
+        if (!isset($this->exportData)) {
+            $this->exportData = new ExportData;
+        }
+
+        return $this->exportData;
+    }
+
+    protected function datesMerge()
+    {
+        $dates = func_get_args();
+        $final = array_fill(0, 3, null);
+        while ($candidate = array_shift($dates)) {
+            foreach ($candidate as $key => $item) {
+                if (empty($final[$key])) {
+                    $final[$key] = $item;
+                }
+            }
+        }
+
+        return $final;
+    }
+
+    protected function dateFlatten(array $date)
+    {
+        return $date[0] . 'T' . $date[1] . $date[2];
+    }
+
+    protected function parseDateString($string)
+    {
+        $date_parts = '(?:(\d{4}-\d{2}-\d{2}))?T?(?:(\d{2}:\d{2}))?(?:([+-]\d{4}))?';
+        $parts = array();
+        if (!empty(trim($string)) && preg_match("/$date_parts/", $string, $parts)) {
+            array_shift($parts);
+        }
+        $parts += array_fill(0, 3, null);
+
+        return $parts;
+    }
+
+    protected function resetParsed()
+    {
+        $this->parsed = new \stdClass;
+
+        // Setup the defaults
+        $this->parsed->valid_syntax = false;
+        $this->parsed->complete = false;
+
+        foreach ($this->getFlagSchema() as $data) {
+            $this->parsed->{$data->id} = null;
+        }
+    }
+
     /**
      * Transforms Object::source into Object::parsed
      */
     protected function parse()
     {
+        //        $this->cache['date'] = [null, null, null];
+
         // Trim front/back whitespace
         $source = trim($this->getSource());
 
@@ -400,7 +571,6 @@ abstract class Object implements ObjectInterface {
 
         // Extract the questions
         foreach ($this->parsed->p as $p) {
-            $matches = array();
             if ($value = $this->isQuestion($p)) {
                 $this->addQuestion($value);
             }
@@ -441,6 +611,9 @@ abstract class Object implements ObjectInterface {
      * @param  string $text
      *
      * @return  string The trimmed string with flags removed.
+     *
+     *
+     * // TODO needs cleaning up. $this->parsed isn't really used anymore.
      */
     protected function parseFlags($text)
     {
@@ -451,16 +624,29 @@ abstract class Object implements ObjectInterface {
             if (preg_match($regex, $text, $matches)) {
                 $text = str_replace($matches[0], '', $text);
                 $value = array_key_exists(2, $matches) ? trim($matches[2], ' "') : true;
+                $value = $flag->type === 'float' ? floatval($value) : $value;
+                $value = $flag->type === 'int' ? intval($value) : $value;
+
                 $this->flags[$flag->id] = $value;
             }
         }
 
-        // @todo move to getFlag?
+        //
+        //
+        // Expand truthy values
+        //
         if (isset($this->flags['milestone']) && $this->flags['milestone'] === true) {
-            $this->flags['milestone'] = $this->getDate("+ {$this->getConfig('milestone')} seconds");
+            $this->flags['milestone'] = $this->getDate('PT' . $this->getConfig('milestone') . 'S');
+        }
+        if (isset($this->flags['start']) && $this->flags['start'] === true) {
+            $this->flags['start'] = $this->getDateTime();
+        }
+        if (isset($this->flags['done']) && $this->flags['done'] === true) {
+            $this->flags['done'] = $this->getDateTime();
         }
 
         foreach ($flags as $flag) {
+
             // Now for TRUE values we may need to insert time
             if ($this->flags[$flag->id] === true
                 && in_array($flag->granularity, array(
@@ -482,6 +668,7 @@ abstract class Object implements ObjectInterface {
                         $this->flags[$flag->id] = $this->getTime();
                         break;
                 }
+                $this->parsed->{$flag->id} = $this->flags[$flag->id];
             }
 
             // Convert DateIntervals
@@ -500,122 +687,82 @@ abstract class Object implements ObjectInterface {
                         break;
                 }
             }
-        }
 
-        // // Append start time
-        if (isset($this->flags['start']) && $this->flags['start'] === true) {
-            $this->flags['start'] = $this->getTime();
-        }
+            //
+            //
+            // Setting the value on our ExportData object.
+            //
+            $method = "set{$flag->id}";
+            if (isset($this->flags[$flag->id]) && method_exists($this, $method)) {
+                $value = $this->flags[$flag->id];
+                if (in_array($flag->type, ['int', 'float', 'string'])) {
+                    $this->{$method}($value);
+                }
+                elseif (in_array($flag->type, ['datetime'])) {
 
-        // Adjust a boolean done to complete
-        if (isset($this->flags['done']) && $this->flags['done']) {
-            $time = $this->flags['done'] === true ? $this->getDateTime() : $this->flags['done'];
-            $this->complete($time);
+                    // Get the context
+                    $context = !empty($flag->dateContext) && !empty($this->flags[$flag->dateContext]) ? $this->flags[$flag->dateContext] : null;
+                    $date = $this->createDate($value, $context);
+                    $this->{$method}($date);
+                }
+            }
         }
 
         return trim($text);
-    }    public function setTitle($title)
-    {
-        $this->title = (string) trim($title);
     }
 
-    /**
-     * Return a formated DATETIME string of now (or from string)
-     *
-     * @param  string $string Optional. Defaults to now
-     *
-     * @return string
-     *
-     * @see  ObjectInterface::createDate()
-     */
-    public function getDateTime($string = 'now')
+    protected function get($key, $default = null)
     {
-        return $this->createDate($string)->format('Y-m-d\TH:iO');
+        $value = $this->getExportData()->getValue($key);
+
+        return !is_null($value) ? $value : $default;
     }
 
-    /**
-     * Return a formated DATE string of now (or from string)
-     *
-     * @param  string $string Optional. Defaults to now
-     *
-     * @return string
-     *
-     * @see  ObjectInterface::createDate()
-     */
-    public function getDate($string = 'now')
+    protected function set($key, $value = null)
     {
-        return $this->createDate($string)->format('Y-m-d');
-    }
+        //
+        //
+        // Setting null values for some types will auto-generate a value.
+        //
+        if (is_null($value)) {
+            $schema = $this->getFlagSchema();
+            foreach ($schema as $item) {
+                if (strcasecmp($item->id, $key) === 0) {
+                    break;
+                }
+                $item = null;
+            };
 
-    /**
-     * Return a formated TIME string of now (or from string)
-     *
-     * @param  string $string Optional. Defaults to now
-     *
-     * @return string
-     *
-     * @see  ObjectInterface::createDate()
-     */
-    public function getTime($string = 'now')
-    {
-        return $this->createDate($string)->format('H:iO');
-    }    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * Create a DateTime object from a string using config timezone
-     *
-     * @param  string $string  DateTime string
-     * @param  string $context DateTime string The date and timezone will be
-     *                         pulled from this string if missing from $string.
-     *
-     * @return DateTime
-     */
-    public function createDate($string = 'now', $context = null)
-    {
-
-        // Convert a DateInterval beginning with P
-        if (substr($string, 0, 1) === 'P') {
-            $now = new \DateTime('now', new \DateTimeZone($this->getConfig('timezone')));
-
-            return date_add($now, new \DateInterval($string));
+            // For date's that are null use now
+            if ($item && in_array($item->type, ['date', 'time', 'datetime'])) {
+                $value = $this->createDate();
+            }
         }
 
-        // Otherwise we're dealing with a string
-        $date_parts = '(?:(\d{4}-\d{2}-\d{2}))?T?(?:(\d{2}:\d{2}))?(?:([+-]\d{4}))?';
-        if (preg_match("/$date_parts/", $string, $matches) && count(array_filter($matches))) {
-            array_shift($matches);
+        $this->getExportData()->add($key, $value);
 
-            if (preg_match("/$date_parts/", $context, $context)) {
-                array_shift($context);
-            }
-
-            if (empty($matches[0]) && !empty($context[0])) {
-                $matches[0] = $context[0];
-            }
-
-            if (empty($matches[2]) && !empty($context[2])) {
-                $matches[2] = $context[2];
-            }
-
-            $matches[0] .= 'T';
-            $string = implode('', $matches);
-        }
-
-        $date = new \DateTime($string, new \DateTimeZone($this->getConfig('timezone')));
-
-        return $date;
+        return $this;
     }
 
+    public function setTitle($title)
+    {
+        $title = (string) trim($title);
+        $this->title = $title;
+
+        return $this->set('title', $title);
+    }
+
+
+    public function getTitle()
+    {
+        return $this->get('title');
+    }
 
 
     public function setDescription($description)
     {
         $this->description = (string) trim($description);
     }
-
 
 
     public function getDescription()
