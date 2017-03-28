@@ -11,6 +11,13 @@ use AKlump\Taskcamp\Todo as Todo;
 
 class TodoTest extends TestBase {
 
+
+    public function testVariance()
+    {
+        $todo = new Todo('- [X] This is done @e30 @s10:30 @d10:55');
+        $this->assertSame(-5, $todo->getVariance());
+    }
+
     public function testSetNotDone()
     {
         $todo = new Todo('- [X] This is done @d15:27');
@@ -111,31 +118,22 @@ class TodoTest extends TestBase {
         $this->assertSame('+0200', $date->format('O'));
     }
 
-    public function testDiscoverWhenDateComesLater()
-    {
-
-        // Test creating a date which is a time string and has context, pulls
-        // the context day into the time string
-        $todo = new Todo('- a long time ago @s11:47 @d2000-01-01T12:47+0000');
-        $this->assertEquals(3600, $todo->getDuration(), 'Assert start without date uses the date element from the done flag for duration');
-    }
-
     public function testDurationStartHasDateNotDone()
     {
         $todo = new Todo('- a long time ago @s2000-01-01T11:47+0000 @d12:47');
-        $this->assertEquals(3600, $todo->getDuration(), 'Assert done without date uses the date element from the start flag for duration');
+        $this->assertEquals(60, $todo->getDuration(), 'Assert done without date uses the date element from the start flag for duration');
     }
 
     function testDuration()
     {
         $todo = new Todo('- design the logo @s15:12');
-        $this->assertEquals(false, $todo->getDuration());
+        $this->assertEquals(null, $todo->getDuration());
 
         $todo = new Todo('- design the logo @s15:12 @d16:12');
-        $this->assertEquals(3600, $todo->getDuration());
+        $this->assertEquals(60, $todo->getDuration());
 
         $todo = new Todo('- design the logo @s2014-01-01T15:12+0000 @d2014-01-02T16:12+0000');
-        $this->assertEquals(3600 + 86400, $todo->getDuration());
+        $this->assertEquals(60 + 1440, $todo->getDuration());
     }
 
     public function testParsingDone()
@@ -163,6 +161,7 @@ class TodoTest extends TestBase {
         $todo = new Todo('- ensure the file exists @e20 @s07:48 @d18:23 @pAaron');
         $this->assertTodoValue('ensure the file exists', $todo, 'title');
     }
+
     function testIsDoneNoXShouldBeFalse()
     {
         $todo = new Todo('- [ ] Some todo item that is pending.');
@@ -202,8 +201,8 @@ class TodoTest extends TestBase {
                                                            ->format(\DATE_ISO8601));
         $this->assertSame('2017-03-26T08:15:00-0700', $todo->getDone()
                                                            ->format(\DATE_ISO8601));
-        $this->assertSame(1800, $todo->getDuration());
-        $this->assertSame(900, $todo->getCarryover());
+        $this->assertSame(30, $todo->getDuration());
+        $this->assertSame(-15, $todo->getVariance());
     }
 
     public function testGetEstimate()
@@ -480,19 +479,19 @@ class TodoTest extends TestBase {
         $this->assertEquals('2004-02-12T15:19+0000', $todo->getDateTime('2004-02-12T15:19+0000'));
     }
 
-    function testCarryover()
+    function testGetVariance()
     {
         $todo = new Todo('- design the logo @s15:12 @d16:12');
-        $this->assertSame(false, $todo->getCarryover());
+        $this->assertSame(null, $todo->getVariance());
 
         $todo = new Todo('- design the logo @e60 @s15:12 @d16:12');
-        $this->assertSame(0, $todo->getCarryover());
+        $this->assertSame(0, $todo->getVariance());
 
         $todo = new Todo('- design the logo @e30 @s15:12 @d16:12');
-        $this->assertEquals(-1800, $todo->getCarryover());
+        $this->assertEquals(30, $todo->getVariance());
 
         $todo = new Todo('- design the logo @e90 @s15:12 @d16:12');
-        $this->assertEquals(1800, $todo->getCarryover());
+        $this->assertEquals(-30, $todo->getVariance());
     }
 
     function testStart()

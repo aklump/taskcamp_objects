@@ -83,9 +83,20 @@ trait TaskTrait {
         return boolval($this->get('done', $default));
     }
 
-    public function getOverUnder($default = null)
+    public function getVariance($default = null)
     {
-        return $this->get('overUnder', $default);
+        $estimate = $this->get('estimate', null);
+        $duration = $this->getDuration();
+
+        return is_null($estimate) || is_null($duration) ? $default : $duration - $estimate;
+    }
+
+    public function getDuration($default = null)
+    {
+        $start = $this->get('start');
+        $done = $this->get('done');
+
+        return is_null($start) || is_null($done) ? $default : ($done->format('U') - $start->format('U')) / 60;
     }
 
     public function getPerson($default = null)
