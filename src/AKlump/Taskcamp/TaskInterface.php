@@ -30,7 +30,19 @@ interface TaskInterface {
 
     public function isDone($default = null);
 
-    public function getOverUnder($default = null);
+    /**
+     * Returns the difference between the estimate and the actual.  Negative means under budget.
+     *
+     * @return int|null
+     */
+    public function getVariance();
+
+    /**
+     * The actual duration in minutes.
+     *
+     * @return int|null
+     */
+    public function getDuration();
 
     public function getPerson($default = null);
 

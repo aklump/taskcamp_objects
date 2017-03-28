@@ -22,8 +22,8 @@ namespace AKlump\Taskcamp;
  * // $item->start === \DateTime object
  * // $item->done === \DateTime object
  * // $item->person === Aaron
- * // $item->getDuration() === 1800
- * // $item->getCarryOver === 900
+ * // $item->getDuration() === 30
+ * // $item->getVariance === -15
  * @endcode
  *
  * @package AKlump\Taskcamp
@@ -192,33 +192,5 @@ class Todo extends Object implements TaskInterface, SortableInterface {
         }
 
         return $this->parsed->valid_syntax;
-    }
-
-    public function getDuration()
-    {
-        $start = $this->getFlag('start');
-        $done = $this->getFlag('done');
-        if (empty($start) || empty($done)) {
-            return false;
-        }
-
-        $startObject = $this->createDate($start, $done);
-        $doneObject = $this->createDate($done, $start);
-
-        return $doneObject->format('U') - $startObject->format('U');
-    }
-
-    public function getCarryover()
-    {
-        $estimate = $this->getFlag('estimate');
-        $duration = $this->getDuration();
-        if (empty($estimate) || empty($duration)) {
-            return false;
-        }
-
-        // Convert minutes (@e) to seconds (duration)
-        $estimate *= 60;
-
-        return $estimate - $duration;
     }
 }
