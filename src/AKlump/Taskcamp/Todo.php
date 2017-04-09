@@ -141,7 +141,7 @@ class Todo extends Object implements TaskInterface, SortableInterface {
 
     public static function getAvailableFlags()
     {
-        return array('id', 'p', 'bc', 'mt', 'e', 's', 'm', 'f', 'd', 'h', 'w');
+        return array('id', 'p', 'bc', 'mt', 'e', 's', 'm', 'f', 'd', 'h', 'w', 'g');
     }
 
     /**
