@@ -12,6 +12,37 @@ use AKlump\Taskcamp\Todo as Todo;
 class TodoTest extends TestBase {
 
 
+    public function testGroup()
+    {
+        $todo = new Todo('- ensure the file exists @e20% @s07:48 @d18:23 @pAaron @gdelayed');
+        $this->assertTodoValue('delayed', $todo, 'group');
+
+        $todo = new Todo('- ensure the file exists @e20% @s07:48 @d18:23 @pAaron @g?');
+        $this->assertTodoValue('?', $todo, 'group');
+    }
+    public function testGetEstimatePercentage()
+    {
+        $todo = new Todo('- ensure the file exists @e20% @s07:48 @d18:23 @pAaron');
+        $this->assertTodoValue('20%', $todo, 'estimate');
+    }
+
+    public function testGetTask()
+    {
+        $todo = new Todo('- [X] This is done. @e30 @s10:30 @d10:55');
+
+        $this->assertSame('This is done.', $todo->getTask());
+
+        $todo = new Todo();
+        $this->assertSame('Default is returned.', $todo->getTask('Default is returned.'));
+    }
+
+    public function testSetTask()
+    {
+        $todo = new Todo('- [X] This is done. @e30 @s10:30 @d10:55');
+        $this->assertSame('Do it again!', $todo->setTask('Do it again!')
+                                                ->getTask());
+    }
+
     public function testVariance()
     {
         $todo = new Todo('- [X] This is done @e30 @s10:30 @d10:55');
@@ -204,6 +235,7 @@ class TodoTest extends TestBase {
         $this->assertSame(30, $todo->getDuration());
         $this->assertSame(-15, $todo->getVariance());
     }
+
 
     public function testGetEstimate()
     {
