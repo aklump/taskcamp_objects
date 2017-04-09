@@ -1,17 +1,17 @@
 ## Table of Flags/Headers
 `@see Object::getFlagSchema()`
 
-| flag | type | header key | meaning |
-|------|---------|----------|----------|
-| @a  | int      | Actual | Actual time to complete in minutes  |
-| @d  | time or date       | Done  | When it was done/finished/completed |
-| @e  | int      | Estimate | Estimated time to complete in minutes  |
-| @f  | date \| interval | Finish  | Targeted finish date |
-| @g  | string     | Group  | The group name |
-| @m  | date \| interval       | Milestone  | Milestone other than finish date |
-| @p  | string     | Person  | Person responsible |
-| @s  | time or date \| interval   | Start  | Start Time |
-| @w  | int \| float | Weight | Weight (or Priority Rank) |
+| flag | example | type | header key | meaning |
+|------|------|-----|----------|----------|
+| @a  | @a35 | int      | Actual | Actual time to complete in minutes  |
+| @d  | @d08:34 | time or date       | Done  | When it was done/finished/completed |
+| @e  | @60 | int      | Estimate | Estimated time to complete in minutes  |
+| @f  | @2017-05-10 | date \| interval | Finish  | Targeted finish date |
+| @g  | @gdelayed | string     | Group  | The group name |
+| @m  | @2017-04-26 | date \| interval       | Milestone  | Milestone other than finish date |
+| @p  | @paaron | string     | Person  | Person responsible |
+| @s  | @s08:04 | time or date \| interval   | Start  | Start Time |
+| @w  | @w5 | int \| float | Weight | Weight (or Priority Rank) |
 
 ### Deprecated?
 
@@ -21,6 +21,7 @@
 | @bc | string     | Basecamp  | Basecamp uuid of the item |
 | @mt  | string    | Mantis  | Mantis uuid |
 | @qb | string     | Quickbooks | Quickbooks uuid |
+
 
 ## Dates, times and intervals
 For dates you must use one of the following formats:

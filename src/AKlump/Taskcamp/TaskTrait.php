@@ -7,6 +7,16 @@ trait TaskTrait {
 
     protected $exportData;
 
+    public function getTask($default = null)
+    {
+        return $this->get('title', $default);
+    }
+
+    public function setTask($task)
+    {
+        return $this->setTitle($task);
+    }
+
     public function getStart($default = null)
     {
         return $this->get('start', $default);

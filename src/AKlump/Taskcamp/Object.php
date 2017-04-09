@@ -239,7 +239,7 @@ abstract class Object implements ObjectInterface {
                     'description' => 'The estimated mins to done.',
                     'id'          => 'estimate',
                     'name'        => 'Estimate',
-                    'regex'       => '(e)(\d+)',
+                    'regex'       => '(e)(\d+%?)',
                     'hide_empty'  => true,
                 ),
                 (object) array(
