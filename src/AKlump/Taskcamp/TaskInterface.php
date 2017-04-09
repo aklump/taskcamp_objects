@@ -4,6 +4,10 @@ namespace AKlump\Taskcamp;
 
 interface TaskInterface {
 
+    public function getTask($default = null);
+
+    public function setTask($task);
+
     public function getStart($default = null);
 
     public function setStart(\DateTime $start = null);

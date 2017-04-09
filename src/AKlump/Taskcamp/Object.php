@@ -235,11 +235,11 @@ abstract class Object implements ObjectInterface {
                 ),
                 (object) array(
                     'flag'        => 'e',
-                    'type'        => 'int',
+                    'type'        => 'int|percent',
                     'description' => 'The estimated mins to done.',
                     'id'          => 'estimate',
                     'name'        => 'Estimate',
-                    'regex'       => '(e)(\d+)',
+                    'regex'       => '(e)(\d+%?)',
                     'hide_empty'  => true,
                 ),
                 (object) array(
@@ -624,9 +624,17 @@ abstract class Object implements ObjectInterface {
             if (preg_match($regex, $text, $matches)) {
                 $text = str_replace($matches[0], '', $text);
                 $value = array_key_exists(2, $matches) ? trim($matches[2], ' "') : true;
-                $value = $flag->type === 'float' ? floatval($value) : $value;
-                $value = $flag->type === 'int' ? intval($value) : $value;
-
+                switch($flag->type){
+                    case 'float':
+                        $value = floatval($value);
+                        break;
+                    case 'int':
+                        $value = intval($value);
+                        break;
+                    case 'int|percent':
+                        $value = substr($value, -1, 1) === '%' ? $value : intval($value);
+                        break;
+                }
                 $this->flags[$flag->id] = $value;
             }
         }
@@ -695,7 +703,7 @@ abstract class Object implements ObjectInterface {
             $method = "set{$flag->id}";
             if (isset($this->flags[$flag->id]) && method_exists($this, $method)) {
                 $value = $this->flags[$flag->id];
-                if (in_array($flag->type, ['int', 'float', 'string'])) {
+                if (in_array($flag->type, ['int', 'float', 'string', 'int|percent'])) {
                     $this->{$method}($value);
                 }
                 elseif (in_array($flag->type, ['datetime'])) {
